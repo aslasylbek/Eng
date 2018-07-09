@@ -15,5 +15,7 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:minHeight= "?attr/actionBarSize"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:subtitleTextAppearance="@style/ToolbarSubtitleAppearance"
+        app:titleTextAppearance="@style/ToolbarTitleAppearance"/>
 </android.support.design.widget.AppBarLayout>

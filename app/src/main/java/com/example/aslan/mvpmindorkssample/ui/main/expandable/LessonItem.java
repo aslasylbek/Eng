@@ -1,4 +1,4 @@
-package com.example.aslan.mvpmindorkssample.main.expandable;
+package com.example.aslan.mvpmindorkssample.ui.main.expandable;
 
 
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;

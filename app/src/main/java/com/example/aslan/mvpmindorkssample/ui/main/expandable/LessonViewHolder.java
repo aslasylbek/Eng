@@ -1,6 +1,5 @@
-package com.example.aslan.mvpmindorkssample.main.expandable;
+package com.example.aslan.mvpmindorkssample.ui.main.expandable;
 
-import android.graphics.Color;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -9,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.aslan.mvpmindorkssample.R;
-import com.example.aslan.mvpmindorkssample.main.expandable.LessonItem;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 

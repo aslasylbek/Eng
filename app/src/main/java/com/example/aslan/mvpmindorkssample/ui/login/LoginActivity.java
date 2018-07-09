@@ -5,22 +5,20 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.aslan.mvpmindorkssample.ui.main.MainActivity;
+import com.example.aslan.mvpmindorkssample.general.LoadingDialog;
+import com.example.aslan.mvpmindorkssample.general.LoadingView;
+import com.example.aslan.mvpmindorkssample.ui.main.Main2Activity;
 import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
-import com.example.aslan.mvpmindorkssample.utils.CommonUtils;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -28,7 +26,8 @@ import butterknife.OnClick;
  */
 public class LoginActivity extends BaseActivity implements LoginMvpView {
 
-    LoginPresenter loginPresenter;
+    private LoginPresenter loginPresenter;
+    //private LoadingView mLoadingDialog;
     @BindView(R.id.email) EditText editTextEmail;
     @BindView(R.id.password) EditText editTextPassword;
     @BindView(R.id.email_sign_in_button) Button button;
@@ -41,9 +40,11 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     @Override
     protected void init(@Nullable Bundle state) {
+        //mLoadingDialog = LoadingDialog.view(getSupportFragmentManager());
         DataManager dataManager = ((MvpApp)getApplication()).getDataManager();
         loginPresenter = new LoginPresenter(dataManager);
-        loginPresenter.attachView(this);
+        loginPresenter.attachView(LoginActivity.this);
+
     }
 
     @Override
@@ -53,7 +54,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     @Override
     public void openMainActivity() {
-        Intent intent = MainActivity.getStartIntent(this);
+        Intent intent = Main2Activity.getStartIntent(this);
         startActivity(intent);
         finish();
 
@@ -81,8 +82,10 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         loginPresenter.detachView();
+        super.onDestroy();
     }
+
+
 }
 

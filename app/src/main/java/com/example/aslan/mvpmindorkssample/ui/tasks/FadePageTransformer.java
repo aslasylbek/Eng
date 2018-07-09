@@ -1,4 +1,4 @@
-package com.example.aslan.mvpmindorkssample.tasks;
+package com.example.aslan.mvpmindorkssample.ui.tasks;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;

@@ -1,40 +1,24 @@
-package com.example.aslan.mvpmindorkssample.tasks;
+package com.example.aslan.mvpmindorkssample.ui.tasks;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.Constraints;
 import android.support.constraint.Group;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.aslan.mvpmindorkssample.R;
-import com.example.aslan.mvpmindorkssample.tinderCard.DashActivity;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-import static android.support.constraint.Constraints.TAG;
-import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class ViewPagerAdapter extends PagerAdapter{

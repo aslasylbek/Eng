@@ -1,6 +1,5 @@
-package com.example.aslan.mvpmindorkssample.main.expandable;
+package com.example.aslan.mvpmindorkssample.ui.main.expandable;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,10 +8,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.aslan.mvpmindorkssample.R;
-import com.example.aslan.mvpmindorkssample.main.Main2Activity;
-import com.example.aslan.mvpmindorkssample.main.SyllabusFragment;
-import com.example.aslan.mvpmindorkssample.main.expandable.LessonTopicItem;
-import com.example.aslan.mvpmindorkssample.tasks.TaskChoiceActivity;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 import butterknife.BindView;
@@ -45,7 +40,6 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
                         .load(item.getTopicPhoto())
                         .apply(new RequestOptions()
                                 .centerCrop()
-                                .placeholder(R.drawable.ic_sync)
                                 .error(R.drawable.ic_sentiment_very_dissatisfied)
                         )
                         .into(mTopicPhoto);

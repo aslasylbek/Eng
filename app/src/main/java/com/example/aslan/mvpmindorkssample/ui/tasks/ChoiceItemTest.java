@@ -1,4 +1,4 @@
-package com.example.aslan.mvpmindorkssample.tasks;
+package com.example.aslan.mvpmindorkssample.ui.tasks;
 
 public class ChoiceItemTest {
 

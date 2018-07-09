@@ -1,4 +1,4 @@
-package com.example.aslan.mvpmindorkssample.main;
+package com.example.aslan.mvpmindorkssample.ui.main;
 
 
 import android.os.Bundle;

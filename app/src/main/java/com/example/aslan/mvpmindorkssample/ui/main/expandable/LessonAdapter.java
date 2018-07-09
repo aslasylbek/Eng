@@ -1,6 +1,5 @@
-package com.example.aslan.mvpmindorkssample.main.expandable;
+package com.example.aslan.mvpmindorkssample.ui.main.expandable;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;

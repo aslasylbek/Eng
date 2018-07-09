@@ -92,7 +92,7 @@ public class DataManager implements DataManagerContract {
 
     @Override
     public void setLoggedMode(boolean loggedIn) {
-        prefsHelper.setLoggedMode(true);
+        prefsHelper.setLoggedMode(loggedIn);
     }
 
     public interface GetTokenCallbacks{

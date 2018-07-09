@@ -1,4 +1,4 @@
-package com.example.aslan.mvpmindorkssample.main.expandable;
+package com.example.aslan.mvpmindorkssample.ui.main.expandable;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -15,10 +15,8 @@ public class LessonTopicItem implements Parcelable{
         this.mTopicPhoto = mTopicPhoto;
     }
     protected LessonTopicItem(Parcel in){
-        String[] data = new String[2];
-        in.readStringArray(data);
-        mTopicName = data[0];
-        mTopicPhoto = data[1];
+        mTopicName = in.readString();
+        mTopicPhoto = in.readString();
     }
     public String getTopicName() {
         return mTopicName;
@@ -52,11 +50,12 @@ public class LessonTopicItem implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[]{mTopicName, mTopicPhoto});
+        dest.writeString(mTopicName);
+        dest.writeString(mTopicPhoto);
 
     }
 
-    final static Creator<LessonTopicItem> CREATOR = new Creator<LessonTopicItem>() {
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
         public LessonTopicItem createFromParcel(Parcel source) {
             return new LessonTopicItem(source);

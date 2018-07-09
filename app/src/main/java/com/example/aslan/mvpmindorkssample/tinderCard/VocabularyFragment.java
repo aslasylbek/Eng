@@ -18,8 +18,6 @@ public class VocabularyFragment extends Fragment {
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

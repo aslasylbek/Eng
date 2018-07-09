@@ -1,5 +1,6 @@
 package com.example.aslan.mvpmindorkssample.ui.login;
 
+import com.example.aslan.mvpmindorkssample.general.LoadingView;
 import com.example.aslan.mvpmindorkssample.ui.base.MvpView;
 
 /**

@@ -1,11 +1,10 @@
-package com.example.aslan.mvpmindorkssample.main;
+package com.example.aslan.mvpmindorkssample.ui.main;
 
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,11 +16,12 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 
 import com.example.aslan.mvpmindorkssample.R;
-import com.example.aslan.mvpmindorkssample.main.expandable.LessonAdapter;
-import com.example.aslan.mvpmindorkssample.main.expandable.LessonItem;
-import com.example.aslan.mvpmindorkssample.main.expandable.LessonTopicItem;
-import com.example.aslan.mvpmindorkssample.main.expandable.TopicClickListener;
-import com.example.aslan.mvpmindorkssample.tasks.TaskChoiceActivity;
+import com.example.aslan.mvpmindorkssample.ui.base.BaseFragment;
+import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonAdapter;
+import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonItem;
+import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonTopicItem;
+import com.example.aslan.mvpmindorkssample.ui.main.expandable.TopicClickListener;
+import com.example.aslan.mvpmindorkssample.ui.tasks.TaskChoiceActivity;
 import com.example.aslan.mvpmindorkssample.widget.DividerItemDecoration;
 import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
 
@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SyllabusFragment extends Fragment implements TopicClickListener {
+public class SyllabusFragment extends BaseFragment implements TopicClickListener {
 
     private static final String TAG = "SyllabusFragment";
 
@@ -43,10 +43,28 @@ public class SyllabusFragment extends Fragment implements TopicClickListener {
 
     private LessonAdapter adapter;
     private LinearLayoutManager linearLayoutManager;
-    private View view;
+    //private View view;
 
 
     @Override
+    protected void init(@Nullable Bundle bundle) {
+        List<LessonItem> empty = new ArrayList<>();
+        adapter = new LessonAdapter(empty, this);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        mRView.setLayoutManager(linearLayoutManager);
+        mRView.setAdapter(adapter);
+        if (getActivity()!=null)
+            mRView.addItemDecoration(new DividerItemDecoration(getActivity()));
+        mRView.setHasFixedSize(true);
+        changedData(getDummyDataToPass());
+    }
+
+    @Override
+    protected int getContentResource() {
+        return R.layout.fragment_syllabus;
+    }
+
+   /* @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (view==null) {
@@ -64,12 +82,8 @@ public class SyllabusFragment extends Fragment implements TopicClickListener {
         mRView.setHasFixedSize(true);
         changedData(getDummyDataToPass());
         return view;
-    }
+    }*/
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
 
 
     @Override
@@ -94,22 +108,6 @@ public class SyllabusFragment extends Fragment implements TopicClickListener {
         });
     }
 
-    private void scroolList(int pos){
-
-        mRView.post(new Runnable() {
-            int index;
-            @Override
-            public void run() {
-                mRView.smoothScrollToPosition(index);
-
-            }
-            public Runnable init (int pos){
-                this.index = pos;
-                return (this);
-            }
-        }.init(pos));
-    }
-
 
     private List<LessonItem> getDummyDataToPass() {
         List<LessonItem> parent = new ArrayList<>();
@@ -126,11 +124,12 @@ public class SyllabusFragment extends Fragment implements TopicClickListener {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         Log.d(TAG, "onDestroyView: ");
         if (adapter!=null && mRView!=null){
             mRView.setAdapter(null);
             adapter = null;
         }
+        super.onDestroyView();
+
     }
 }

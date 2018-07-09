@@ -1,5 +1,7 @@
-package com.example.aslan.mvpmindorkssample.main;
+package com.example.aslan.mvpmindorkssample.ui.main;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -7,14 +9,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,36 +22,41 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
+import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
+import com.example.aslan.mvpmindorkssample.ui.splash.SplashActivity;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class Main2Activity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MainActivityView {
+public class Main2Activity extends BaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener, MainMvpView {
 
 
     @BindView(R.id.fab) FloatingActionButton mFab;
     @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.nav_view) NavigationView mNavView;
-    @BindView(R.id.frameMainFragment)
-    FrameLayout mFrameFragment;
-    View mHeaderLayout;
+    @BindView(R.id.frameMainFragment) FrameLayout mFrameFragment;
+    private View mHeaderLayout;
+    private Main2Presenter presenter;
 
     private ActionBarDrawerToggle mToggle;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
-        ButterKnife.bind(this);
-        init();
+
+    public static Intent getStartIntent(Context context){
+        return new Intent(context, Main2Activity.class);
     }
 
     @Override
-    public void init() {
+    protected int getContentResource() {
+        return R.layout.activity_main2;
+    }
+
+    @Override
+    protected void init(@Nullable Bundle state) {
         setSupportActionBar(mToolbar);
         mToggle = new ActionBarDrawerToggle(
                 this,
@@ -61,8 +66,12 @@ public class Main2Activity extends AppCompatActivity
                 R.string.navigation_drawer_close);
 
         mDrawerLayout.addDrawerListener(mToggle);
-        setNavigationView();
         mNavView.setNavigationItemSelectedListener(this);
+        DataManager manager = ((MvpApp)getApplication()).getDataManager();
+        presenter = new Main2Presenter(manager);
+        presenter.attachView(this);
+        presenter.requestForNavigationView();
+        presenter.requestForHeaderView();
 
     }
 
@@ -77,10 +86,12 @@ public class Main2Activity extends AppCompatActivity
         //Set Information from local db
         mHeaderLayout = mNavView.getHeaderView(0);
         ImageView mHeaderPhoto = mHeaderLayout.findViewById(R.id.iv_header);
-        TextView mHeaderName = mHeaderPhoto.findViewById(R.id.tv_header);
-        TextView mHeaderLevel = mHeaderPhoto.findViewById(R.id.tv_sub_header);
+        TextView mHeaderName = mHeaderLayout.findViewById(R.id.tv_header);
+        TextView mHeaderLevel = mHeaderLayout.findViewById(R.id.tv_sub_header);
         //SetProfile Information
         mHeaderPhoto.setImageResource(R.drawable.leak_canary_icon);
+        mHeaderName.setText("Jubak");
+        mHeaderLevel.setText("Elementary");
     }
 
     @Override
@@ -98,7 +109,7 @@ public class Main2Activity extends AppCompatActivity
                 .setCheckable(true);
 
         SubMenu subMenu = menum.addSubMenu("Viva");
-        subMenu.add(2, 1, 0, "Java").setIcon(R.drawable.leak_canary_icon);
+        subMenu.add(2, 1, 0, "Sign out").setIcon(R.drawable.leak_canary_icon);
 
 
         //Coverage this lines
@@ -152,15 +163,17 @@ public class Main2Activity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        int groupId = item.getGroupId();
 
         Fragment fragment = null;
 
-        if (id == 1) {
+        if (id == 1&&groupId==0) {
             fragment = new SyllabusFragment();
         }
         else if(id == 2)
             fragment = new MyDictionaryFragment();
-
+        else if (id==1&groupId==2)
+            presenter.setUserLogOut();
 
         if (fragment!=null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -170,5 +183,20 @@ public class Main2Activity extends AppCompatActivity
         setTitle(item.getTitle());
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+
+    @Override
+    public void openSlashActivity() {
+        Intent intent = SplashActivity.getStartIntent(this);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.detachView();
     }
 }

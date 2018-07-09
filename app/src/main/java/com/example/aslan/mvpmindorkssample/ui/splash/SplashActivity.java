@@ -8,11 +8,10 @@ import android.support.annotation.Nullable;
 import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.ui.main.Main2Activity;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
 import com.example.aslan.mvpmindorkssample.ui.login.LoginActivity;
-import com.example.aslan.mvpmindorkssample.ui.main.MainActivity;
 
-import butterknife.ButterKnife;
 
 public class SplashActivity extends BaseActivity implements SplashMvpView {
 
@@ -23,16 +22,6 @@ public class SplashActivity extends BaseActivity implements SplashMvpView {
     public static Intent getStartIntent(Context context){
         return new Intent(context, SplashActivity.class);
     }
-
-    /*@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-        DataManager dataManager = ((MvpApp)getApplication()).getDataManager();
-        splashPresenter = new SplashPresenter(dataManager);
-        splashPresenter.onAttach(this);
-        splashPresenter.decideNextActivty();
-    }*/
 
     @Override
     protected void init(@Nullable Bundle state) {
@@ -49,7 +38,7 @@ public class SplashActivity extends BaseActivity implements SplashMvpView {
 
     @Override
     public void openMainActivity() {
-        Intent intent = MainActivity.getStartIntent(this);
+        Intent intent = Main2Activity.getStartIntent(this);
         startActivity(intent);
         finish();
     }
@@ -64,7 +53,7 @@ public class SplashActivity extends BaseActivity implements SplashMvpView {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         splashPresenter.detachView();
+        super.onDestroy();
     }
 }

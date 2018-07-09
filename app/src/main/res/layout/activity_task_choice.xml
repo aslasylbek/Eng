@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:context=".tasks.TaskChoiceActivity">
+    tools:context=".ui.tasks.TaskChoiceActivity">
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -15,7 +15,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="0dp" />
 
-    <com.example.aslan.mvpmindorkssample.tasks.DynamicViewPager
+    <com.example.aslan.mvpmindorkssample.ui.tasks.DynamicViewPager
         android:id="@+id/mChoiceViewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    </com.example.aslan.mvpmindorkssample.tasks.DynamicViewPager>
+    </com.example.aslan.mvpmindorkssample.ui.tasks.DynamicViewPager>
 
 
     <include

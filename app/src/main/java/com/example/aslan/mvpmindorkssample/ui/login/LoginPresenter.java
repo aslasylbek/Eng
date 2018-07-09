@@ -8,6 +8,8 @@ import com.example.aslan.mvpmindorkssample.data.content.LoginResponse;
 import com.example.aslan.mvpmindorkssample.ui.base.BasePresenter;
 import com.example.aslan.mvpmindorkssample.utils.CommonUtils;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by aslan on 17.05.2018.
  */
@@ -37,28 +39,7 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
         }
 
 
-        /*RepositoryProvider
-                .provideMoodleRepository()
-                .loginResponse(user.getBarcode(), user.getPassword())
-                .enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful()) {
-                    RepositoryProvider.providePreferenceHelper().setLoggedMode(true);
-                    RepositoryProvider.providePreferenceHelper().putToken(response.body().getToken());
-                    getMvpView().openMainActivity();
-                }
-                else {
-                    getMvpView().showToast(R.string.action_sign_in_short);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-
-            }
-        });*/
-
+        getMvpView().showLoading();
         getDataManager()
                 .sendForToken(user.getBarcode(), user.getPassword(), new DataManager.GetTokenCallbacks() {
             @Override
@@ -80,6 +61,8 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
                 Log.d("MC", "BUG");
             }
         });
+        //getMvpView().hideLoading();
+
 
     }
 }

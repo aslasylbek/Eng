@@ -1,7 +1,6 @@
-package com.example.aslan.mvpmindorkssample.main.expandable;
+package com.example.aslan.mvpmindorkssample.ui.main.expandable;
 
 import android.view.View;
-import android.widget.ImageView;
 
 public interface TopicClickListener {
 
