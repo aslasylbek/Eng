@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.example.aslan.mvpmindorkssample.tinderCard.Profile;
+import com.example.aslan.mvpmindorkssample.ui.tinderCard.Profile;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

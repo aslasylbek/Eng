@@ -1,7 +1,8 @@
-package com.example.aslan.mvpmindorkssample.tinderCard;
+package com.example.aslan.mvpmindorkssample.ui.tinderCard;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +19,7 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 
 @Layout(R.layout.words_card_view)
-class WordsCard {
+class WordsCard{
 
     @View(R.id.profileImageView)
     ImageView profileImageView;
@@ -28,6 +29,9 @@ class WordsCard {
 
     @View(R.id.locationNameTxt)
     TextView locationNameTxt;
+
+    @View(R.id.mPlayAudios)
+    Button mPlayAudio;
 
     private Profile mProfile;
     private Context mContext;
@@ -42,16 +46,16 @@ class WordsCard {
     @Resolve
     public void onResolved(){
         Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
-
         Log.d("EVENT", mProfile.getImageUrl());
         nameAgeTxt.setText(mProfile.getName() + ", " + mProfile.getAge());
         locationNameTxt.setText(mProfile.getLocation());
+        mPlayAudio.setText(mProfile.getAge());
     }
 
     @SwipeOut
     public void onSwipedOut(){
         Log.d("EVENT", "onSwipedOut");
-        mSwipeView.addView(this);
+        //mSwipeView.addView(this);
     }
 
     @SwipeCancelState
@@ -62,7 +66,6 @@ class WordsCard {
     @SwipeIn
     public void onSwipeIn(){
         Log.d("EVENT", "onSwipedIn");
-        mSwipeView.addView(this);
     }
 
     @SwipeInState

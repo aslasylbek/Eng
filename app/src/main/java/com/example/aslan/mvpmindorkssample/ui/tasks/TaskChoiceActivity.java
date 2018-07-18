@@ -1,7 +1,11 @@
 package com.example.aslan.mvpmindorkssample.ui.tasks;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +13,8 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -29,14 +35,14 @@ import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.general.LoadingDialog;
 import com.example.aslan.mvpmindorkssample.general.LoadingView;
 import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonTopicItem;
-import com.example.aslan.mvpmindorkssample.tinderCard.DashActivity;
+import com.example.aslan.mvpmindorkssample.ui.tinderCard.VocabularyTrainActivity;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
+import com.example.aslan.mvpmindorkssample.ui.vocabulary.VocabularyActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter.ChoiceClickListener,
         ViewPager.OnPageChangeListener, TaskChoiceMvpView {
@@ -54,12 +60,12 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
     ConstraintLayout mRootLayout;
 
     @BindView(R.id.mChoiceViewPager)
-    DynamicViewPager mViewPager;
+    CustomViewPager mViewPager;
 
     private ViewPagerAdapter adapter;
     private List<ChoiceItemTest> choiceItemTests;
-    private LoadingView loadingView;
     private TaskChoicePresenter presenter;
+    private float mLastPositionOffset = 0f;
 
 
     public static void navigate(@NonNull AppCompatActivity activity, @NonNull View transitionImage, @NonNull LessonTopicItem topicItem) {
@@ -79,11 +85,11 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
         adapter = new ViewPagerAdapter( this);
         mViewPager.addOnPageChangeListener(this);
 
-        loadingView = LoadingDialog.view(getSupportFragmentManager());
         DataManager manager = ((MvpApp)getApplication()).getDataManager();
         presenter = new TaskChoicePresenter(manager);
         presenter.attachView(this);
         presenter.initPresenter();
+        presenter.testRequest();
         presenter.requestForTasks();
         //mViewPager.setPageTransformer(false, new FadePageTransformer());
     }
@@ -111,20 +117,16 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
 
     @Override
     public void onViewPageClicked(ChoiceItemTest choiceItemTest) {
-        Intent intent = new Intent(this, DashActivity.class);
+        Intent intent = new Intent(this, VocabularyActivity.class);
         startActivity(intent);
     }
 
     @Override
     public void setViewPagerData() {
         choiceItemTests = new ArrayList<>();
-        for (int i =0; i<12; i++){
-            choiceItemTests.add(new ChoiceItemTest(
-                    i,
-                    "ChocoLoco"+i,
-                    R.drawable.ic_menu_gallery,
-                    "In this section you can listen music or ..."));
-        }
+        choiceItemTests.add(new ChoiceItemTest(1, "Vocabulary", R.drawable.ic_menu_gallery, "In this section you can listen music or ..."));
+        choiceItemTests.add(new ChoiceItemTest(2, "Grammar", R.drawable.ic_menu_gallery, "In this section you can listen music or ..."));
+        choiceItemTests.add(new ChoiceItemTest(3, "Listening", R.drawable.ic_menu_gallery, "In this section you can listen music or ..."));
 
         mViewPager.setOffscreenPageLimit(choiceItemTests.size());
         adapter.setNewData(choiceItemTests);
@@ -133,18 +135,21 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
     @Override
     public void showTopicDetails(LessonTopicItem topicItem) {
         String title = topicItem.getTopicName();
-        getSupportActionBar().setTitle("AAA");
+        getSupportActionBar().setTitle(title);
         //getSupportActionBar().setSubtitle("This");
         mToolbar.post(new Runnable() {
             @Override
             public void run() {
-                getSupportActionBar().setSubtitle("klasldk");
+                getSupportActionBar().setSubtitle("My family");
             }
         });
         Log.d(TAG, "showTopicDetails: "+getSupportActionBar().getSubtitle());
-        Glide.with(this)
+        mViewPager.setMaxPages(MAX_PAGES);
+        mViewPager.setBackgroundAsset(R.drawable.uibmain);
+        mViewPager.setAdapter(adapter);
+        /*Glide.with(this)
                 .asBitmap()
-                .load(topicItem.getTopicPhoto())
+                .load("https://images.unsplash.com/photo-1438893254896-34a5db3e4a8f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=93417cb32ab3b6e611c3b4140ab3a965&auto=format&fit=crop&w=1500&q=80")
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -153,7 +158,22 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
                         mViewPager.setBackgroundAsset(resource);
                         mViewPager.setAdapter(adapter);
                     }
-                });
+                });*/
+    }
+
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 
     @Override
@@ -162,6 +182,13 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
             onPageSelected(position);
             cnt++;
         }
+        
+        if(positionOffset < mLastPositionOffset && positionOffset < 0.9) {
+            mViewPager.setCurrentItem(position);
+        } else if(positionOffset > mLastPositionOffset && positionOffset > 0.1) {
+            mViewPager.setCurrentItem(position+1);
+        }
+        mLastPositionOffset = positionOffset;
     }
 
     @Override
@@ -187,10 +214,11 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (adapter!=null||mViewPager!=null) {
-            mViewPager.setAdapter(null);
+        if (adapter!=null){
             adapter = null;
         }
+        if (mViewPager!=null)
+            mViewPager.setAdapter(null);
         presenter.detachView();
     }
 
@@ -202,15 +230,5 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void showLoading() {
-        loadingView.showLoading();
-    }
-
-    @Override
-    public void hideLoading() {
-        loadingView.hideLoading();
     }
 }

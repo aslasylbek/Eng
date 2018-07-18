@@ -34,7 +34,8 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
         lessonTopicItem  = item;
         if (item!=null) {
             mTopicTitle.setText(item.getTopicName());
-            if (item.getTopicPhoto()!=null && !item.getTopicPhoto().isEmpty()){
+            mTopicPhoto.setImageResource(R.drawable.uibmain);
+            /*if (item.getTopicPhoto()!=null && !item.getTopicPhoto().isEmpty()){
                 Glide.with(mTopicPhoto.getContext())
                         .asDrawable()
                         .load(item.getTopicPhoto())
@@ -43,7 +44,7 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
                                 .error(R.drawable.ic_sentiment_very_dissatisfied)
                         )
                         .into(mTopicPhoto);
-            }
+            }*/
         }
     }
 

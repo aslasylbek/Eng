@@ -6,4 +6,6 @@ public interface TaskChoiceMvpPresenter<V extends TaskChoiceMvpView> extends Mvp
 
     void requestForTasks();
     void initPresenter();
+
+    void testRequest();
 }

@@ -1,4 +1,4 @@
-package com.example.aslan.mvpmindorkssample.tinderCard;
+package com.example.aslan.mvpmindorkssample.ui.tinderCard;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -15,7 +15,7 @@ public class Profile {
 
     @SerializedName("age")
     @Expose
-    private Integer age;
+    private String age;
 
     @SerializedName("location")
     @Expose
@@ -37,11 +37,11 @@ public class Profile {
         this.imageUrl = imageUrl;
     }
 
-    public Integer getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(Integer age) {
+    public void setAge(String age) {
         this.age = age;
     }
 

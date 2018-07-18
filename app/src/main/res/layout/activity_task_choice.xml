@@ -15,11 +15,10 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="0dp" />
 
-    <com.example.aslan.mvpmindorkssample.ui.tasks.DynamicViewPager
+    <com.example.aslan.mvpmindorkssample.ui.tasks.CustomViewPager
         android:id="@+id/mChoiceViewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/ic_menu_camera"
         android:clipToPadding="false"
         android:overScrollMode="never"
         android:paddingLeft="@dimen/padding_60"
@@ -30,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    </com.example.aslan.mvpmindorkssample.ui.tasks.DynamicViewPager>
+    </com.example.aslan.mvpmindorkssample.ui.tasks.CustomViewPager>
 
 
     <include

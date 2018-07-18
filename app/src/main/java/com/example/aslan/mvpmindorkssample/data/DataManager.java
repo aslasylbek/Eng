@@ -1,6 +1,7 @@
 package com.example.aslan.mvpmindorkssample.data;
 
 import com.example.aslan.mvpmindorkssample.data.content.LoginResponse;
+import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.example.aslan.mvpmindorkssample.data.local.PreferenceHelper;
 import com.example.aslan.mvpmindorkssample.data.local.SharedPrefsHelper;
 import com.example.aslan.mvpmindorkssample.data.remote.ApiFactory;
@@ -37,7 +38,23 @@ public class DataManager implements DataManagerContract {
             }
         });
 
+    }
 
+    public void requestForWordTranslate(String word, final GetWordTranslation callback){
+        ApiFactory
+                .getApiService()
+                .getWordTranslate("http://api.lingualeo.com/gettranslates?word="+word)
+                .enqueue(new Callback<TranslationResponse>() {
+                    @Override
+                    public void onResponse(Call<TranslationResponse> call, Response<TranslationResponse> response) {
+                        callback.onSuccess(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<TranslationResponse> call, Throwable t) {
+                        callback.onError();
+                    }
+                });
     }
 
     @Override
@@ -97,6 +114,11 @@ public class DataManager implements DataManagerContract {
 
     public interface GetTokenCallbacks{
         void onSuccess(LoginResponse response);
+        void onError();
+    }
+
+    public interface GetWordTranslation{
+        void onSuccess(TranslationResponse response);
         void onError();
     }
 }
