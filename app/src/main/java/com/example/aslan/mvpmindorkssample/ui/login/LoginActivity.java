@@ -70,7 +70,6 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     public User getUser() {
         String barcodeId = editTextEmail.getText().toString();
         String passwordId = editTextPassword.getText().toString();
-
         return new User(barcodeId, passwordId, saveBarcode.isChecked(), savePass.isChecked());
     }
 
@@ -79,6 +78,11 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
         Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void wrongLoginOrPassword() {
+        editTextEmail.setError("Incorrect barcode");
+        editTextPassword.setError("Or Incorrect password");
+    }
 
     @Override
     protected void onDestroy() {

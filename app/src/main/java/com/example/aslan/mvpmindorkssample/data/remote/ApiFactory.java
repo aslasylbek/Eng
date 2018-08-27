@@ -10,6 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public final class ApiFactory {
 
+    public static String apiBaseUrl = BuildConfig.API_ENDPOINT_MOODLE;
     private static OkHttpClient sClient;
     private static volatile ApiService mApiService;
 
@@ -23,7 +24,7 @@ public final class ApiFactory {
             synchronized (ApiService.class){
                 service = mApiService;
                 if (service==null){
-                    service = mApiService = buildRetrofit().create(ApiService.class);
+                    service = mApiService = builder.create(ApiService.class);
                 }
             }
         }
@@ -33,14 +34,30 @@ public final class ApiFactory {
     public static void recreate(){
         sClient = null;
         sClient = getClient();
-        mApiService = buildRetrofit().create(ApiService.class);
+        mApiService = builder.create(ApiService.class);
     }
 
-    @NonNull
+    /*@NonNull
     private static Retrofit buildRetrofit(){
         return new Retrofit.Builder()
-                .baseUrl(BuildConfig.API_ENDPOINT)
+                .baseUrl(apiBaseUrl)
                 .client(getClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+*/
+    private static Retrofit builder =
+            new Retrofit.Builder()
+            .baseUrl(apiBaseUrl)
+            .client(getClient())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    public static void changeApiBaseUrl(String newApiBaseUrl){
+        apiBaseUrl = newApiBaseUrl;
+        builder = new Retrofit.Builder()
+                .baseUrl(apiBaseUrl)
+                .client(buildClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

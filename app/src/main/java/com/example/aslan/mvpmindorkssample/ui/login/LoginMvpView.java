@@ -13,5 +13,6 @@ public interface LoginMvpView extends MvpView {
     void onLoginButtonClick();
     User getUser();
     void showToast(int resId);
+    void wrongLoginOrPassword();
 
 }

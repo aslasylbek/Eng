@@ -1,31 +1,34 @@
 package com.example.aslan.mvpmindorkssample.ui.vocabulary.correctchoice;
 
 
+import android.content.Context;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.aslan.mvpmindorkssample.R;
-import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.FakeContent;
+import com.example.aslan.mvpmindorkssample.playbutton.PlayPauseView;
+import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.FragmentsListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.regex.Matcher;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +37,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BuildWordFragment extends Fragment {
+public class BuildWordFragment extends Fragment implements View.OnKeyListener{
 
     private static final String TAG = "BuildWordFragment";
 
@@ -47,18 +50,24 @@ public class BuildWordFragment extends Fragment {
     Button mButtonNext;
 
     @BindView(R.id.btnPlayAudio)
-    Button mPlayAudio;
+    PlayPauseView mPlayAudio;
 
     @BindView(R.id.llChoice)
     LinearLayout linearLayout;
 
+    @BindView(R.id.frameAudioButton)
+    FrameLayout mAudioFrame;
+
     Button buttons[] = new Button[4];
+    private EditText editText;
 
     private FragmentsListener listener;
-    private TranslationResponse st;
+    private Word st;
     private ArrayList<String> fakeList;
 
     private int indexCorrect;
+
+    private int isCorrect = 0;
 
 
     @Override
@@ -75,19 +84,30 @@ public class BuildWordFragment extends Fragment {
         buttons[2] = view.findViewById(R.id.btn3);
         buttons[3] = view.findViewById(R.id.btn4);
 
-
-        st = getArguments().getParcelable("ed");
         fakeList = new ArrayList<>();
-        fakeList.addAll(getArguments().getStringArrayList("fk"));
-
-        setButtonsData();
+        if (getArguments()!=null){
+            st = getArguments().getParcelable("ed");
+            int trigger = getArguments().getInt("trigger");
+            if (trigger==3){
+                rebuildView();
+            }
+            else if (trigger==4){
+                rebuildViewForMultipleChoice();
+                fakeList.addAll(getArguments().getStringArrayList("fk"));
+                setButtonsData();
+            }
+            else {
+                fakeList.addAll(getArguments().getStringArrayList("fk"));
+                setButtonsData();
+            }
+        }
         mButtonNext.setVisibility(View.INVISIBLE);
         mButtonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mediaPlayer.release();
                 mediaPlayer = null;
-                listener.sendData(1);
+                listener.sendData(isCorrect, st.getId());
             }
         });
 
@@ -97,6 +117,57 @@ public class BuildWordFragment extends Fragment {
             playAudio();
         }
         return view;
+    }
+
+    public void rebuildView(){
+        for (int i=0; i<4; i++){
+            buttons[i].setVisibility(View.GONE);
+        }
+        editText = new EditText(getActivity());
+        editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        editText.setHint("Word");
+        editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        editText.setImeActionLabel("Check", KeyEvent.KEYCODE_ENTER);
+        editText.setOnKeyListener(this);
+        linearLayout.addView(editText);
+    }
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        Log.d(TAG, "onKey: "+keyCode+ "   "+event.getKeyCode()+"  "+editText.getImeOptions()+" "+editText.getImeActionId());
+        if (keyCode == EditorInfo.IME_ACTION_DONE||event.getKeyCode()==KeyEvent.KEYCODE_ENTER||event.getKeyCode()==KeyEvent.ACTION_DOWN){
+            closeKeyboard();
+            if (editText.getText().toString().matches(""))
+                return true;
+            else if (st.getWord().equals(editText.getText().toString())) {
+                mButtonNext.setVisibility(View.VISIBLE);
+                editText.setFocusable(false);
+                isCorrect = 1;
+            }
+            else {
+                editText.setError("Incorrect");
+                mButtonNext.setVisibility(View.VISIBLE);
+                editText.setFocusable(false);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void closeKeyboard(){
+        View view = getActivity().getCurrentFocus();
+        if (view!=null){
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public void rebuildViewForMultipleChoice(){
+        mPlayAudio.setVisibility(View.GONE);
+        TextView mTextViewWord = new TextView(getActivity());
+        mTextViewWord.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mTextViewWord.setText(st.getWord());
+        mAudioFrame.addView(mTextViewWord);
     }
 
 
@@ -109,39 +180,16 @@ public class BuildWordFragment extends Fragment {
     public void onChoiceClicked(View v) {
         switch (v.getId()) {
             case R.id.btn1:
-                if (buttons[0].getText().equals(st.getWordForms().get(0).getWord())||
-                        buttons[0].getText().equals(st.getTranslate().get(0).getValue()))
-                    buttons[0].setBackgroundColor(Color.GREEN);
-                else {
-                    buttons[0].setBackgroundColor(Color.RED);
-                    buttons[indexCorrect].setBackgroundColor(Color.GREEN);
-                }
+                checkIsCorrectAnswer(0);
                 break;
-
-
             case R.id.btn2:
-                if (buttons[1].getText().equals(st.getWordForms().get(0).getWord()))
-                    buttons[1].setBackgroundColor(Color.GREEN);
-                else {
-                    buttons[1].setBackgroundColor(Color.RED);
-                    buttons[indexCorrect].setBackgroundColor(Color.GREEN);
-                }
+                checkIsCorrectAnswer(1);
                 break;
             case R.id.btn3:
-                if (buttons[2].getText().equals(st.getWordForms().get(0).getWord()))
-                    buttons[2].setBackgroundColor(Color.GREEN);
-                else {
-                    buttons[2].setBackgroundColor(Color.RED);
-                    buttons[indexCorrect].setBackgroundColor(Color.GREEN);
-                }
+                checkIsCorrectAnswer(2);
                 break;
             case R.id.btn4:
-                if (buttons[3].getText().equals(st.getWordForms().get(0).getWord()))
-                    buttons[3].setBackgroundColor(Color.GREEN);
-                else {
-                    buttons[3].setBackgroundColor(Color.RED);
-                    buttons[indexCorrect].setBackgroundColor(Color.GREEN);
-                }
+                checkIsCorrectAnswer(3);
                 break;
         }
         buttons[0].setClickable(false);
@@ -149,6 +197,18 @@ public class BuildWordFragment extends Fragment {
         buttons[2].setClickable(false);
         buttons[3].setClickable(false);
         mButtonNext.setVisibility(View.VISIBLE);
+    }
+
+    public void checkIsCorrectAnswer(int choice){
+        if (buttons[choice].getText().equals(st.getWord())||
+                buttons[choice].getText().equals(st.getTranslateWord())) {
+            buttons[choice].setBackgroundColor(Color.GREEN);
+            isCorrect = 1;
+        }
+        else {
+            buttons[choice].setBackgroundColor(Color.RED);
+            buttons[indexCorrect].setBackgroundColor(Color.GREEN);
+        }
     }
 
 
@@ -162,6 +222,7 @@ public class BuildWordFragment extends Fragment {
     }
 
     public void playAudio(){
+        mPlayAudio.toggle();
         mediaPlayer.reset();
         try {
             mediaPlayer.setDataSource(st.getSoundUrl());
@@ -172,6 +233,12 @@ public class BuildWordFragment extends Fragment {
                     mediaPlayer.start();
                 }
             });
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mPlayAudio.toggle();
+                }
+            });
         } catch (IOException e) {
             Log.e("AA", "prepare() failed");
         }
@@ -180,11 +247,11 @@ public class BuildWordFragment extends Fragment {
     public void setButtonsData(){
         Collections.shuffle(fakeList);
 
-        if (fakeList.contains(st.getWordForms().get(0).getWord())){
-            indexCorrect = fakeList.indexOf(st.getWordForms().get(0).getWord());
+        if (fakeList.contains(st.getWord())){
+            indexCorrect = fakeList.indexOf(st.getWord());
         }
-        else if (fakeList.contains(st.getTranslate().get(0).getValue()))
-            indexCorrect = fakeList.indexOf(st.getTranslate().get(0).getValue());
+        else if (fakeList.contains(st.getTranslateWord()))
+            indexCorrect = fakeList.indexOf(st.getTranslateWord());
         //fakeList.add(st.getWordForms().get(0).getWord());
         for (int i=0; i<fakeList.size(); i++){
             buttons[i].setText(fakeList.get(i));

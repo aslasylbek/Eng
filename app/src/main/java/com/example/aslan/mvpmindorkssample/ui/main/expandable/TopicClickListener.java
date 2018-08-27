@@ -4,6 +4,6 @@ import android.view.View;
 
 public interface TopicClickListener {
 
-    void itemTopicClick(LessonTopicItem lessonTopicItem, View imageView);
+    void itemTopicClick(LessonChildItem lessonChildItem, View imageView);
 
 }

@@ -38,8 +38,8 @@ public class LessonAdapter extends ExpandableRecyclerViewAdapter<LessonViewHolde
 
     @Override
     public void onBindChildViewHolder(LessonTopicViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
-        final LessonTopicItem lessonTopicItem = ((LessonItem)group).getItems().get(childIndex);
-        holder.onBind(lessonTopicItem);
+        final LessonChildItem lessonChildItem = ((LessonParentItem)group).getItems().get(childIndex);
+        holder.onBind(lessonChildItem);
     }
 
     @Override

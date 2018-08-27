@@ -6,12 +6,23 @@ public class ChoiceItemTest {
     private String title;
     private int logo;
     private String subTitle;
+    private int section;
 
-    public ChoiceItemTest(int id, String title, int logo, String subTitle) {
+    public ChoiceItemTest(int id, String title, int logo, String subTitle, int section) {
         this.id = id;
         this.title = title;
         this.logo = logo;
         this.subTitle = subTitle;
+        this.section = section;
+
+    }
+
+    public int getSection() {
+        return section;
+    }
+
+    public void setSection(int section) {
+        this.section = section;
     }
 
     public int getId() {

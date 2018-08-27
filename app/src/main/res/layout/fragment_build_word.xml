@@ -21,21 +21,33 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/btnPlayAudio"
+    <FrameLayout
+        android:id="@+id/frameAudioButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
-        android:text="Play"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+    <com.example.aslan.mvpmindorkssample.playbutton.PlayPauseView
+        android:id="@+id/btnPlayAudio"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_gravity="center"
+        android:foreground="?android:selectableItemBackground"
+        android:stateListAnimator="@animator/button_elevation"
+        android:text="Play" />
+    </FrameLayout>
 
     <ScrollView
+        android:id="@+id/scrollViewButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
@@ -47,7 +59,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btnNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnPlayAudio"
+        app:layout_constraintTop_toBottomOf="@+id/frameAudioButton"
         app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout

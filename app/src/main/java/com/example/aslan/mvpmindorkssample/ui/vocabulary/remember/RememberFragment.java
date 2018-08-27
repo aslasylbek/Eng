@@ -16,10 +16,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
+import com.example.aslan.mvpmindorkssample.playbutton.PlayPauseView;
+import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.FragmentsListener;
 
 import java.io.IOException;
 
+import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -35,7 +38,7 @@ public class RememberFragment extends Fragment{
     TextView mTextWord;
 
     @BindView(R.id.btnReplay)
-    Button mBtnReplay;
+    PlayPauseView mBtnReplay;
 
     @BindView(R.id.btnNext)
     Button btnNext;
@@ -56,7 +59,7 @@ public class RememberFragment extends Fragment{
 
     private MediaPlayer mediaPlayer;
 
-    private TranslationResponse response;
+    private Word response;
 
 
     @Override
@@ -69,14 +72,16 @@ public class RememberFragment extends Fragment{
         mediaPlayer = new MediaPlayer();
         ButterKnife.bind(this, view);
         response = getArguments().getParcelable("ed");
-
+        for (int i=0; i<getArguments().getStringArrayList("fk").size(); i++){
+            Log.d(TAG, "onCreateView: "+response.getWord()+"   "+getArguments().getStringArrayList("fk").get(i));
+        }
 
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mediaPlayer.release();
                 mediaPlayer = null;
-                listener.sendData(1);
+                listener.sendData(2, response.getId());
                 btnNext.setClickable(false);
             }
         });
@@ -93,9 +98,9 @@ public class RememberFragment extends Fragment{
 
 
     public void setWordData(){
-        mTextWord.setText(response.getWordForms().get(0).getWord());
+        mTextWord.setText(response.getWord());
         mTextTranscribe.setText(response.getTranscription());
-        mTextTranslate.setText(response.getTranslate().get(0).getValue());
+        mTextTranslate.setText(response.getTranslateWord());
         Glide.with(getActivity()).load(response.getPicUrl()).into(mWordPhoto);
     }
 
@@ -114,6 +119,8 @@ public class RememberFragment extends Fragment{
     }
 
     public void playAudio(){
+        mBtnReplay.toggle();
+        mBtnReplay.setClickable(false);
         mediaPlayer.reset();
         try {
             mediaPlayer.setDataSource(response.getSoundUrl());
@@ -122,6 +129,13 @@ public class RememberFragment extends Fragment{
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mediaPlayer.start();
+                }
+            });
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mBtnReplay.toggle();
+                    mBtnReplay.setClickable(true);
                 }
             });
         } catch (IOException e) {

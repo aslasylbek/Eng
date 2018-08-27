@@ -27,7 +27,7 @@ public class LessonViewHolder extends GroupViewHolder {
     }
 
     public void setLessonTitle(ExpandableGroup group){
-        if (group instanceof LessonItem) {
+        if (group instanceof LessonParentItem) {
             mLessonName.setText(group.getTitle());
         }
 

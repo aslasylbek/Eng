@@ -1,28 +1,48 @@
 package com.example.aslan.mvpmindorkssample.ui.vocabulary;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
-import com.example.aslan.mvpmindorkssample.ui.tinderCard.VocabularyMvpView;
-import com.example.aslan.mvpmindorkssample.ui.tinderCard.VocabularyTrainPresenter;
+import com.example.aslan.mvpmindorkssample.ui.login.LoginActivity;
+import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
+import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonChildItem;
+import com.example.aslan.mvpmindorkssample.ui.tasks.TaskChoiceActivity;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.correctchoice.BuildWordFragment;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.finish.FinishFragment;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.remember.RememberFragment;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class VocabularyActivity extends BaseActivity implements VocabularyMvpView, FragmentsListener {
 
@@ -31,14 +51,35 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     @BindView(R.id.viewPager)
     ViewPager viewPager;
 
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
     private List<Fragment> fragmentList;
     private int item = 0;
     private VocabularyTrainPresenter presenter;
     private VocabularyAdapter adapter;
-    private String[] arr = new String[]{"asds", "Sond", "Hola"};
+    private int sizeOfData;
+    private int index;
+    private int correctAns;
+    private String topicId;
+    private JsonArray datas;
+    private JsonObject object;
+
+
+    public static Intent getVocabularyIntent(Context context){
+        return new Intent(context, VocabularyActivity.class);
+    }
 
     @Override
     protected void init(@Nullable Bundle state) {
+        mToolbar.setTitle("");
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         fragmentList = new ArrayList<>();
         viewPager.setCurrentItem(item);
         adapter = new VocabularyAdapter(getSupportFragmentManager(), fragmentList);
@@ -50,22 +91,15 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
                 return true;
             }
         });
+        index = getIntent().getIntExtra("position", 0);
+        topicId = getIntent().getStringExtra("topicId");
 
-        DataManager manager = ((MvpApp)getApplicationContext()).getDataManager();
+        datas = new JsonArray();
+
+        DataManager manager = ((MvpApp) getApplicationContext()).getDataManager();
         presenter = new VocabularyTrainPresenter(manager);
         presenter.attachView(this);
-        presenter.requestForWord("last");
-    }
-
-
-
-    @Override
-    public void sendData(int response) {
-        item++;
-        if (item>arr.length*3)
-            finish();
-        viewPager.setCurrentItem(item);
-
+        presenter.requestForWord(topicId);
     }
 
     @Override
@@ -74,57 +108,123 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     }
 
     @Override
-    public void setData(TranslationResponse response) {
-
+    public void setData(List<Word> response) {
+        sizeOfData = response.size();
+        mProgressBar.setMax(sizeOfData*2);
         ArrayList<String> fakeArr = new ArrayList<>();
-        fakeArr.add("hola");
-        fakeArr.add("Laliga");
-        fakeArr.add("Cabrone");
-        fakeArr.add("last");
-
         ArrayList<String> fakeTranslateArr = new ArrayList<>();
-        fakeTranslateArr.add("саламалейкум");
-        fakeTranslateArr.add("уалейкум");
-        fakeTranslateArr.add("как дела");
-        fakeTranslateArr.add("привет");
-        fakeTranslateArr.add("пшел нах");
-        fakeTranslateArr.add("последний");
+        for (int i=0; i<response.size(); i++) {
+            fakeArr.add(response.get(i).getWord());
+            fakeTranslateArr.add(response.get(i).getTranslateWord());
+        }
+        switch (index) {
+            case 0:
+                finish();
+                break;
+            case 1:
+                prepareFragmentList(fakeArr, response, 1);
+                break;
+            case 2:
+                prepareFragmentList(fakeTranslateArr, response, 2);
+                break;
+            case 3:
+                prepareFragmentList(fakeTranslateArr, response, 3);
+                break;
+            case 4:
+                prepareFragmentList(fakeTranslateArr, response, 4);
+                break;
 
-        //Arr must be TranslationResponse list length
-        for (int i = 0; i<arr.length; i++){
+        }
+        //fragmentList.add(new FinishFragment());
+        adapter.notifyDataSetChanged();
+    }
 
-            fakeArr.remove(response.getWordForms().get(0).getWord());
-            Collections.shuffle(fakeArr);
-            fakeArr.add(0, response.getWordForms().get(0).getWord());
+    public void prepareFragmentList(ArrayList<String> fakeArr, List<Word> response, int index){
 
-            fakeTranslateArr.remove(response.getTranslate().get(0).getValue());
-            Collections.shuffle(fakeTranslateArr);
-            fakeTranslateArr.add(0, response.getTranslate().get(0).getValue());
-
+        for (int i = 0; i < response.size(); i++) {
             Bundle bundle = new Bundle();
-            bundle.putParcelable("ed", response);
-            bundle.putStringArrayList("fk", new ArrayList<String>(fakeArr.subList(0,4)));
+            Collections.shuffle(fakeArr);
+            if (index==1) {
+                fakeArr.remove(response.get(i).getWord());
+                fakeArr.add(0, response.get(i).getWord());
+            }
+            else {
+                fakeArr.remove(response.get(i).getTranslateWord());
+                fakeArr.add(0, response.get(i).getTranslateWord());
+            }
+            bundle.putInt("trigger", index);
+            bundle.putParcelable("ed", response.get(i));
+            bundle.putStringArrayList("fk", new ArrayList<>(fakeArr.subList(0, 4)));
 
             RememberFragment fragment = new RememberFragment();
             BuildWordFragment fragmentEnglish = new BuildWordFragment();
 
             fragmentEnglish.setArguments(bundle);
             fragment.setArguments(bundle);
+
             fragmentList.add(0, fragment);
             fragmentList.add(fragmentEnglish);
         }
-        fragmentList.add(new FinishFragment());
-        adapter.notifyDataSetChanged();
-
-
     }
 
+    @Override
+    public void sendData(int responses, String wordId) {
+
+        if (responses!=2) {
+            try {
+                object = new JsonObject();
+                object.addProperty("wordId", wordId);
+                object.addProperty("isCorrect", responses);
+                datas.add(object);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            correctAns = correctAns+responses;
+        }
+        item++;
+        mProgressBar.setProgress(item);
+        if (item == sizeOfData * 2) {
+            JsonObject res = new JsonObject();
+            res.addProperty("topicId", topicId);
+            res.addProperty("chapter", "ch"+index);
+            res.addProperty("result", correctAns*100/sizeOfData);
+            res.addProperty("datas", new Gson().toJson(datas));
+            presenter.requestSendResult(res);
+        }
+        viewPager.setCurrentItem(item);
+    }
+
+    @Override
+    public ResultContent sendExerciseData() {
+        int result = correctAns*100/sizeOfData;
+        return new ResultContent("ch"+index, topicId, result);
+    }
+
+    @Override
+    public void addFinishFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("res", correctAns*100/sizeOfData);
+        FinishFragment finishFragment = new FinishFragment();
+        finishFragment.setArguments(bundle);
+        fragmentList.add(finishFragment);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onDestroy() {
-        if (adapter!=null)
+        if (adapter != null)
             adapter = null;
-        if (viewPager!=null)
+        if (viewPager != null)
             viewPager.setAdapter(null);
         presenter.detachView();
         super.onDestroy();

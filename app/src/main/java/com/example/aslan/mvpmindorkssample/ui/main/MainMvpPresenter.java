@@ -7,7 +7,7 @@ public interface MainMvpPresenter<V extends MvpView> extends MvpPresenter<V> {
 
 
     void setUserLogOut();
-    void requestForNavigationView();
+    void requestForStudentDiscipline();
     void requestForHeaderView();
 
 

@@ -23,7 +23,6 @@
     <dimen name="margin_side">16dp</dimen>
 
 
-
     <dimen name="padding_xsmall">4dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_10">10dp</dimen>
@@ -47,5 +46,13 @@
 
 
     <dimen name="padding_60">90dp</dimen>
+
+    <dimen name="pause_bar_width">15dp</dimen>
+    <dimen name="pause_bar_distance">14dp</dimen>
+    <dimen name="pause_bar_height">70dp</dimen>
+
+    <dimen name="audio_player_height">72dp</dimen>
+    <dimen name="control_play_button1_height">36dp</dimen>
+    <dimen name="control_play_button2_height">32dp</dimen>
 
 </resources>

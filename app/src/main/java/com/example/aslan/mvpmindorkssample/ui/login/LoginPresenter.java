@@ -48,20 +48,22 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
                     Log.d("MC", response.getMessage()+"");
                     getDataManager().setLoggedMode(true);
                     getDataManager().putToken(response.getToken());
+                    getDataManager().putUserId(response.getUserID());
                     getMvpView().openMainActivity();
                 }
                 else {
                     getMvpView().showToast(R.string.toast_barcode_cor);
-                    Log.d("MC", response.getMessage()+"ccc");
+                    getMvpView().wrongLoginOrPassword();
                 }
+                getMvpView().hideLoading();
 
             }
             @Override
             public void onError() {
                 Log.d("MC", "BUG");
+                getMvpView().hideLoading();
             }
         });
-        //getMvpView().hideLoading();
 
 
     }

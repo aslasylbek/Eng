@@ -28,17 +28,18 @@
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".ui.tinderCard.VocabularyTrainActivity"
-            android:label="@string/title_activity_dash" />
-        <activity
             android:name=".ui.main.Main2Activity"
             android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.tasks.TaskChoiceActivity"
             android:theme="@style/ThemeFullSCreen"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".ui.vocabulary.VocabularyActivity">
+        <activity
+            android:name=".ui.vocabulary.VocabularyActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.reading.ReaderActivity" />
+        <activity android:name=".ui.grammar.GrammarActivity">
 
         </activity>
     </application>

@@ -3,6 +3,7 @@ package com.example.aslan.mvpmindorkssample;
 import android.app.Application;
 
 import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.data.local.AppDatabase;
 import com.example.aslan.mvpmindorkssample.data.local.SharedPrefsHelper;
 import com.example.aslan.mvpmindorkssample.data.remote.ApiFactory;
 import com.squareup.leakcanary.LeakCanary;
@@ -19,17 +20,15 @@ public class MvpApp extends Application {
 
     DataManager dataManager;
     SharedPrefsHelper sharedPrefsHelper;
+    AppDatabase appDatabase;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this))
-            return;
-        LeakCanary.install(this);
-
         sharedPrefsHelper = new SharedPrefsHelper(this);
-        dataManager = new DataManager(sharedPrefsHelper);
+        appDatabase = AppDatabase.getAppDatabase(this);
+        dataManager = new DataManager(sharedPrefsHelper, appDatabase);
         ApiFactory.recreate();
         ViewPump.init(ViewPump.builder()
                 .addInterceptor(new CalligraphyInterceptor(
@@ -38,12 +37,18 @@ public class MvpApp extends Application {
                                 .setFontAttrId(R.attr.fontPath)
                                 .build())).
                         build());
+
+        if (LeakCanary.isInAnalyzerProcess(this))
+            return;
+        LeakCanary.install(this);
     }
 
     public DataManager getDataManager(){
         if (dataManager==null){
             sharedPrefsHelper = new SharedPrefsHelper(this);
-            dataManager = new DataManager(sharedPrefsHelper);
+            appDatabase = AppDatabase.getAppDatabase(this);
+
+            dataManager = new DataManager(sharedPrefsHelper, appDatabase);
         }
         return dataManager;
     }

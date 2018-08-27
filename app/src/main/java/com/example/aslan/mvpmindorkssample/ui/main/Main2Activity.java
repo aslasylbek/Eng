@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,14 +20,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.ui.main.content.Info;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
+import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
+import com.example.aslan.mvpmindorkssample.ui.main.syllabus.SyllabusFragment;
 import com.example.aslan.mvpmindorkssample.ui.splash.SplashActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -35,18 +41,24 @@ public class Main2Activity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainMvpView {
 
 
-    @BindView(R.id.fab) FloatingActionButton mFab;
-    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.nav_view) NavigationView mNavView;
-    @BindView(R.id.frameMainFragment) FrameLayout mFrameFragment;
-    private View mHeaderLayout;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.nav_view)
+    NavigationView mNavView;
+    @BindView(R.id.frameMainFragment)
+    FrameLayout mFrameFragment;
+
     private Main2Presenter presenter;
-
     private ActionBarDrawerToggle mToggle;
+    private FragmentManager mFragmentManager;
+    private List<Topic> topicList;
 
 
-    public static Intent getStartIntent(Context context){
+    public static Intent getStartIntent(Context context) {
         return new Intent(context, Main2Activity.class);
     }
 
@@ -58,21 +70,22 @@ public class Main2Activity extends BaseActivity
     @Override
     protected void init(@Nullable Bundle state) {
         setSupportActionBar(mToolbar);
+        mFragmentManager = getSupportFragmentManager();
         mToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
                 mToolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
-
         mDrawerLayout.addDrawerListener(mToggle);
+        topicList = new ArrayList<>();
         mNavView.setNavigationItemSelectedListener(this);
-        DataManager manager = ((MvpApp)getApplication()).getDataManager();
+        DataManager manager = ((MvpApp) getApplication()).getDataManager();
         presenter = new Main2Presenter(manager);
         presenter.attachView(this);
-        presenter.requestForNavigationView();
-        presenter.requestForHeaderView();
 
+        Log.d("AAA", "init: ");
+        presenter.requestForStudentDiscipline();
     }
 
     @Override
@@ -82,16 +95,18 @@ public class Main2Activity extends BaseActivity
     }
 
     @Override
-    public void setHeaderView() {
+    public void setHeaderView(Info information) {
+
+        Log.d("AAA", "setHeaderView: "+information.getFio());
         //Set Information from local db
-        mHeaderLayout = mNavView.getHeaderView(0);
-        ImageView mHeaderPhoto = mHeaderLayout.findViewById(R.id.iv_header);
-        TextView mHeaderName = mHeaderLayout.findViewById(R.id.tv_header);
+        View mHeaderLayout = mNavView.getHeaderView(0);
+        TextView mHeaderName = mHeaderLayout.findViewById(R.id.tv_header_fio);
+        TextView mHeaderGroup = mHeaderLayout.findViewById(R.id.tv_group);
         TextView mHeaderLevel = mHeaderLayout.findViewById(R.id.tv_sub_header);
         //SetProfile Information
-        mHeaderPhoto.setImageResource(R.drawable.leak_canary_icon);
-        mHeaderName.setText("Jubak");
-        mHeaderLevel.setText("Elementary");
+        mHeaderName.setText(information.getFio());
+        mHeaderLevel.setText(information.getProgram());
+        mHeaderGroup.setText(information.getGroup());
     }
 
     @Override
@@ -99,27 +114,31 @@ public class Main2Activity extends BaseActivity
         //Have receive some object from internet
         Menu menum = mNavView.getMenu();
         menum
-                .add(0, 1, 0, "My English" )
-                .setIcon(R.drawable.leak_canary_icon)
+                .add(0, 1, 0, "Dashboard")
+                .setIcon(R.drawable.ic_dashboard_black_24dp)
                 .setCheckable(true)
                 .setChecked(true);
         menum
-                .add(0, 2, 0, "My Dictionary" )
+                .add(0, 2, 0, "My Dictionary")
                 .setIcon(R.drawable.leak_canary_icon)
                 .setCheckable(true);
 
-        SubMenu subMenu = menum.addSubMenu("Viva");
-        subMenu.add(2, 1, 0, "Sign out").setIcon(R.drawable.leak_canary_icon);
-
+        SubMenu subMenu = menum.addSubMenu("Settings");
+        subMenu.add(2, 1, 0, "Sign out").setIcon(R.drawable.ic_error_outline);
 
         //Coverage this lines
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.frameMainFragment, new SyllabusFragment()).commit();
-        }
+    }
+
+    @Override
+    public List<Topic> setHolderData(List<Topic> topics) {
+        topicList = topics;
+        return topicList;
+    }
 
     @OnClick(R.id.fab)
-    public void onFabClicked(View view){
+    public void onFabClicked(View view) {
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
@@ -135,7 +154,6 @@ public class Main2Activity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main2, menu);
         return true;
     }
@@ -146,15 +164,12 @@ public class Main2Activity extends BaseActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        switch (id)
-        {
+        switch (id) {
             case R.id.action_settings:
                 break;
             case R.id.someExample:
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -164,27 +179,22 @@ public class Main2Activity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         int groupId = item.getGroupId();
-
         Fragment fragment = null;
-
-        if (id == 1&&groupId==0) {
+        if (id == 1 && groupId == 0) {
             fragment = new SyllabusFragment();
-        }
-        else if(id == 2)
+        } else if (id == 2)
             fragment = new MyDictionaryFragment();
-        else if (id==1&groupId==2)
+        else if (id == 1 & groupId == 2)
             presenter.setUserLogOut();
 
-        if (fragment!=null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.frameMainFragment, fragment).commit();
+        if (fragment != null) {
+            mFragmentManager.beginTransaction().replace(R.id.frameMainFragment, fragment).commit();
         }
 
         setTitle(item.getTitle());
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
 
     @Override

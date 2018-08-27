@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.example.aslan.mvpmindorkssample.ui.base.BasePresenter;
-import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonTopicItem;
+import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonChildItem;
 
 public class TaskChoicePresenter<V extends TaskChoiceMvpView>extends BasePresenter<V> implements TaskChoiceMvpPresenter<V> {
 
@@ -13,23 +13,10 @@ public class TaskChoicePresenter<V extends TaskChoiceMvpView>extends BasePresent
         super(mDataManager);
     }
 
-    @Override
-    public void initPresenter() {
-        LessonTopicItem topicItem = getMvpView().getTopicsGeneral();
-        getMvpView().showTopicDetails(topicItem);
-
-    }
-
-    @Override
-    public void requestForTasks() {
-        //getMvpView().showLoading();
-        getMvpView().setViewPagerData();
-        //getMvpView().hideLoading();
-    }
 
     @Override
     public void testRequest() {
-        getDataManager().requestForWordTranslate("hello", new DataManager.GetWordTranslation() {
+        /*getDataManager().requestForWordTranslate("hello", new DataManager.GetWordTranslation() {
             @Override
             public void onSuccess(TranslationResponse response) {
                 Log.d("AAA", "onSuccess: "+response);
@@ -39,6 +26,6 @@ public class TaskChoicePresenter<V extends TaskChoiceMvpView>extends BasePresent
             public void onError() {
                 Log.d("AAA", "onError: ");
             }
-        });
+        });*/
     }
 }
