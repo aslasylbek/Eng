@@ -27,7 +27,6 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     private LoginPresenter loginPresenter;
-    //private LoadingView mLoadingDialog;
     @BindView(R.id.email) EditText editTextEmail;
     @BindView(R.id.password) EditText editTextPassword;
     @BindView(R.id.email_sign_in_button) Button button;
@@ -40,10 +39,19 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     @Override
     protected void init(@Nullable Bundle state) {
-        //mLoadingDialog = LoadingDialog.view(getSupportFragmentManager());
         DataManager dataManager = ((MvpApp)getApplication()).getDataManager();
         loginPresenter = new LoginPresenter(dataManager);
         loginPresenter.attachView(LoginActivity.this);
+        loginPresenter.setPrefsIfExist();
+    }
+
+    @Override
+    public void setLoginPassword(String barcode, String password) {
+        if (barcode!=null)
+            editTextEmail.setText(barcode);
+        if (password!=null){
+            editTextPassword.setText(password);
+        }
 
     }
 
@@ -80,8 +88,8 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     @Override
     public void wrongLoginOrPassword() {
-        editTextEmail.setError("Incorrect barcode");
-        editTextPassword.setError("Or Incorrect password");
+        editTextEmail.setError(getString(R.string.error_invalid_email));
+        editTextPassword.setError(getString(R.string.error_incorrect_password));
     }
 
     @Override

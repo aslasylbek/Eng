@@ -1,6 +1,7 @@
 package com.example.aslan.mvpmindorkssample.ui.main.content;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,6 +9,8 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 @Entity (tableName = "reading")
 public class Reading {
@@ -20,13 +23,14 @@ public class Reading {
     @SerializedName("reading")
     @Expose
     private String reading;
-    @SerializedName("sound_url")
+    @Ignore
+    @SerializedName("questionanswer")
     @Expose
-    private String soundUrl;
-    @SerializedName("translate")
+    private List<Questionanswer> questionanswer = null;
+    @Ignore
+    @SerializedName("truefalse")
     @Expose
-    private String translate;
-
+    private List<Truefalse> truefalse = null;
     private String topic_id;
 
     public String getId() {
@@ -45,21 +49,22 @@ public class Reading {
         this.reading = reading;
     }
 
-    public String getSoundUrl() {
-        return soundUrl;
+    public List<Questionanswer> getQuestionanswer() {
+        return questionanswer;
     }
 
-    public void setSoundUrl(String soundUrl) {
-        this.soundUrl = soundUrl;
+    public void setQuestionanswer(List<Questionanswer> questionanswer) {
+        this.questionanswer = questionanswer;
     }
 
-    public String getTranslate() {
-        return translate;
+    public List<Truefalse> getTruefalse() {
+        return truefalse;
     }
 
-    public void setTranslate(String translate) {
-        this.translate = translate;
+    public void setTruefalse(List<Truefalse> truefalse) {
+        this.truefalse = truefalse;
     }
+
 
     public String getTopic_id() {
         return topic_id;
@@ -68,4 +73,5 @@ public class Reading {
     public void setTopic_id(String topic_id) {
         this.topic_id = topic_id;
     }
+
 }

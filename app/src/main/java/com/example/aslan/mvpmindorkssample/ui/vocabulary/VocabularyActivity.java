@@ -2,39 +2,27 @@ package com.example.aslan.mvpmindorkssample.ui.vocabulary;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ProgressBar;
 
 import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
-import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
+import com.example.aslan.mvpmindorkssample.ui.FragmentsListener;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
-import com.example.aslan.mvpmindorkssample.ui.login.LoginActivity;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
-import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonChildItem;
-import com.example.aslan.mvpmindorkssample.ui.tasks.TaskChoiceActivity;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.correctchoice.BuildWordFragment;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.finish.FinishFragment;
+import com.example.aslan.mvpmindorkssample.ui.FinishFragment;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.remember.RememberFragment;
+import com.example.aslan.mvpmindorkssample.widget.VocabularyViewPager;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,14 +30,12 @@ import java.util.List;
 
 import butterknife.BindView;
 
-import static android.support.constraint.Constraints.TAG;
-
 public class VocabularyActivity extends BaseActivity implements VocabularyMvpView, FragmentsListener {
 
     private static final String TAG = "VocabularyActivity";
 
     @BindView(R.id.viewPager)
-    ViewPager viewPager;
+    VocabularyViewPager viewPager;
 
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
@@ -61,7 +47,8 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     private int item = 0;
     private VocabularyTrainPresenter presenter;
     private VocabularyAdapter adapter;
-    private int sizeOfData;
+    private int sizeOfData = 0;
+    private int sizeOfResponse = 0;
     private int index;
     private int correctAns;
     private String topicId;
@@ -84,13 +71,8 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
         viewPager.setCurrentItem(item);
         adapter = new VocabularyAdapter(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(adapter);
-        final View view = findViewById(R.id.viewPager);
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+
+        viewPager.disableScroll(true);
         index = getIntent().getIntExtra("position", 0);
         topicId = getIntent().getStringExtra("topicId");
 
@@ -109,8 +91,7 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
 
     @Override
     public void setData(List<Word> response) {
-        sizeOfData = response.size();
-        mProgressBar.setMax(sizeOfData*2);
+        sizeOfResponse = sizeOfData = response.size();
         ArrayList<String> fakeArr = new ArrayList<>();
         ArrayList<String> fakeTranslateArr = new ArrayList<>();
         for (int i=0; i<response.size(); i++) {
@@ -142,17 +123,19 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     public void prepareFragmentList(ArrayList<String> fakeArr, List<Word> response, int index){
 
         for (int i = 0; i < response.size(); i++) {
-            Bundle bundle = new Bundle();
             Collections.shuffle(fakeArr);
+            Word word = response.get(i);
             if (index==1) {
-                fakeArr.remove(response.get(i).getWord());
-                fakeArr.add(0, response.get(i).getWord());
+                fakeArr.remove(word.getWord());
+                fakeArr.add(0, word.getWord());
+                fragmentList.add(0, RememberFragment.newInstance(word));
+                sizeOfData++;
             }
             else {
-                fakeArr.remove(response.get(i).getTranslateWord());
-                fakeArr.add(0, response.get(i).getTranslateWord());
+                fakeArr.remove(word.getTranslateWord());
+                fakeArr.add(0, word.getTranslateWord());
             }
-            bundle.putInt("trigger", index);
+            /*bundle.putInt("trigger", index);
             bundle.putParcelable("ed", response.get(i));
             bundle.putStringArrayList("fk", new ArrayList<>(fakeArr.subList(0, 4)));
 
@@ -160,18 +143,43 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
             BuildWordFragment fragmentEnglish = new BuildWordFragment();
 
             fragmentEnglish.setArguments(bundle);
-            fragment.setArguments(bundle);
+            fragment.setArguments(bundle);*/
 
-            fragmentList.add(0, fragment);
-            fragmentList.add(fragmentEnglish);
+            fragmentList.add(BuildWordFragment.newInstance(index, word, fakeArr.subList(0,4)));
         }
+        mProgressBar.setMax(sizeOfData);
     }
 
     @Override
     public void sendData(int responses, String wordId) {
 
-        if (responses!=2) {
+        if (responses!=2){
+            presenter.addToJson(wordId, responses);
+            correctAns = correctAns+responses;
+        }
+
+        item++;
+        mProgressBar.setProgress(item);
+        if (item == sizeOfData) {
+            JsonObject res = new JsonObject();
+            int result;
+            if (sizeOfData==sizeOfResponse) {
+                 result = correctAns * 100 / sizeOfData;
+            }
+            else result = correctAns *100 / (sizeOfData/2);
+            res.addProperty("topicId", topicId);
+            res.addProperty("chapter", "ch"+index);
+            presenter.requestSendResult(res, result);
+        }
+        viewPager.setCurrentItem(item);
+
+        /*if (responses==2&&item==0) {
+            sizeOfData = sizeOfData/2;
+            Log.d(TAG, "sendData: "+sizeOfData);
+        }
+        else if (responses!=2){
             try {
+                Log.d(TAG, "sendData: "+responses);
                 object = new JsonObject();
                 object.addProperty("wordId", wordId);
                 object.addProperty("isCorrect", responses);
@@ -183,16 +191,20 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
         }
         item++;
         mProgressBar.setProgress(item);
-        if (item == sizeOfData * 2) {
+        if (item == sizeOfData) {
             JsonObject res = new JsonObject();
+            int result = correctAns*100/sizeOfData;
             res.addProperty("topicId", topicId);
             res.addProperty("chapter", "ch"+index);
-            res.addProperty("result", correctAns*100/sizeOfData);
+            res.addProperty("result", result);
             res.addProperty("datas", new Gson().toJson(datas));
-            presenter.requestSendResult(res);
+            presenter.requestSendResult(res, result);
         }
-        viewPager.setCurrentItem(item);
+        viewPager.setCurrentItem(item);*/
+
+
     }
+
 
     @Override
     public ResultContent sendExerciseData() {
@@ -201,12 +213,8 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     }
 
     @Override
-    public void addFinishFragment() {
-        Bundle bundle = new Bundle();
-        bundle.putInt("res", correctAns*100/sizeOfData);
-        FinishFragment finishFragment = new FinishFragment();
-        finishFragment.setArguments(bundle);
-        fragmentList.add(finishFragment);
+    public void addFinishFragment(int result) {
+        fragmentList.add(FinishFragment.newInstance(result));
         adapter.notifyDataSetChanged();
     }
 

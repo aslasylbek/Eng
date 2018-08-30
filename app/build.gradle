@@ -54,6 +54,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:3.4.1"
 
 
+    implementation 'com.google.firebase:firebase-messaging:17.3.0'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -90,4 +91,9 @@ dependencies {
     implementation 'com.android.support:gridlayout-v7:27.1.1'
 
     implementation 'com.github.timrijckaert:FloatingMusicActionButton:v2.0.4'
+
+
+    implementation 'com.danikula:videocache:2.7.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

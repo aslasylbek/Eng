@@ -23,6 +23,7 @@ import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.ui.grammar.GrammarActivity;
+import com.example.aslan.mvpmindorkssample.ui.listening.ListeningActivity;
 import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonChildItem;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
 import com.example.aslan.mvpmindorkssample.ui.reading.ReaderActivity;
@@ -56,6 +57,10 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
     private TaskChoicePresenter presenter;
     private float mLastPositionOffset = 0f;
 
+    /*
+    @toDo Refactor all things
+     */
+
 
     public static void navigate(@NonNull AppCompatActivity activity, @NonNull View transitionImage, @NonNull LessonChildItem topicItem) {
         Intent intent = new Intent(activity, TaskChoiceActivity.class);
@@ -73,20 +78,19 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
         }
         adapter = new ViewPagerAdapter( this);
         mViewPager.addOnPageChangeListener(this);
-        LessonChildItem lessonChildItem = getIntent().getParcelableExtra(EXTRA);
+        final LessonChildItem lessonChildItem = getIntent().getParcelableExtra(EXTRA);
         topicId = lessonChildItem.getTopicId();
         mViewPager.setMaxPages(MAX_PAGES);
         mViewPager.setBackgroundAsset(lessonChildItem.getTopicPhoto());
         mViewPager.setAdapter(adapter);
-        String title = lessonChildItem.getTopicName();
+        String title = lessonChildItem.getLessonName();
         getSupportActionBar().setTitle(title);
         mToolbar.post(new Runnable() {
             @Override
             public void run() {
-                getSupportActionBar().setSubtitle("My family");
+                getSupportActionBar().setSubtitle(lessonChildItem.getTopicName());
             }
         });
-
         DataManager manager = ((MvpApp)getApplication()).getDataManager();
         presenter = new TaskChoicePresenter(manager);
         presenter.attachView(this);
@@ -100,6 +104,7 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
 
     private void prepareWindowForAnimation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Log.e(TAG, "prepareWindowForAnimation: " );
             Slide transition = new Slide();
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -120,8 +125,9 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
         else if (lessonChildItem.getTopicName().equals("Reading")){
             choiceItemTests.add(new ChoiceItemTest(1, "Reading "+1, R.drawable.ic_menu_gallery, "Read the text and try to understand", 2));
         }
+
         else if (lessonChildItem.getTopicName().equals("Listening")){
-            choiceItemTests.add(new ChoiceItemTest(1, "Exercise"+1, R.drawable.ic_menu_gallery, "Listen man", 3));
+            choiceItemTests.add(new ChoiceItemTest(1, "Exercise"+1, R.drawable.ic_menu_gallery, "Listen and Answer the questions", 3));
 
         }
         else if (lessonChildItem.getTopicName().equals("Grammar")){
@@ -149,10 +155,9 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
                 startActivity(intent);
                 break;
             case 3:
-                Log.d(TAG, "onViewPageClicked: "+3);
-                Log.d(TAG, "onViewPageClicked: "+2);
-                intent = VocabularyActivity.getVocabularyIntent(this);
+                intent = ListeningActivity.getListeningIntent(this);
                 intent.putExtra("position", choiceItemTest.getId());
+                intent.putExtra("topicId", topicId);
                 startActivity(intent);
                 break;
             case 4:

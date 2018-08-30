@@ -12,16 +12,19 @@
 
     <TextView
         android:id="@+id/lessonName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="5"
         android:textSize="@dimen/text.22"
         android:textStyle="bold"
         android:autoSizeMaxTextSize="@dimen/text.24"
-        android:text="string" />
+        android:text="@string/error_message" />
 
     <ImageView
         android:id="@+id/imageArrow"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/arrow_down_float" />
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/selector_expand" />
 </LinearLayout>

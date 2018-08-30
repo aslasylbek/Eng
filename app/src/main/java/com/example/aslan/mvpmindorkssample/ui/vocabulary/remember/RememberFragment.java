@@ -3,7 +3,6 @@ package com.example.aslan.mvpmindorkssample.ui.vocabulary.remember;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +14,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.aslan.mvpmindorkssample.R;
-import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.example.aslan.mvpmindorkssample.playbutton.PlayPauseView;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.FragmentsListener;
+import com.example.aslan.mvpmindorkssample.ui.FragmentsListener;
+import com.example.aslan.mvpmindorkssample.ui.reading.ReaderFragment;
 
 import java.io.IOException;
 
-import be.rijckaert.tim.animatedvector.FloatingMusicActionButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,7 +30,9 @@ import butterknife.OnClick;
  */
 public class RememberFragment extends Fragment{
 
+
     private static final String TAG = "RememberFragment";
+    private static final String WORD_DATA = "wordData";
 
     @BindView(R.id.tvWord)
     TextView mTextWord;
@@ -61,6 +61,14 @@ public class RememberFragment extends Fragment{
 
     private Word response;
 
+    public static RememberFragment newInstance(Word word) {
+        Bundle args = new Bundle();
+        RememberFragment fragment = new RememberFragment();
+        args.putParcelable(WORD_DATA, word);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,18 +79,16 @@ public class RememberFragment extends Fragment{
             listener = (FragmentsListener)getActivity();
         mediaPlayer = new MediaPlayer();
         ButterKnife.bind(this, view);
-        response = getArguments().getParcelable("ed");
-        for (int i=0; i<getArguments().getStringArrayList("fk").size(); i++){
-            Log.d(TAG, "onCreateView: "+response.getWord()+"   "+getArguments().getStringArrayList("fk").get(i));
-        }
+        response = getArguments().getParcelable(WORD_DATA);
 
+        btnNext.setEnabled(false);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnNext.setEnabled(false);
                 mediaPlayer.release();
                 mediaPlayer = null;
                 listener.sendData(2, response.getId());
-                btnNext.setClickable(false);
             }
         });
         isViewShown = true;
@@ -136,10 +142,11 @@ public class RememberFragment extends Fragment{
                 public void onCompletion(MediaPlayer mp) {
                     mBtnReplay.toggle();
                     mBtnReplay.setClickable(true);
+                    btnNext.setEnabled(true);
+
                 }
             });
         } catch (IOException e) {
-            Log.e("AA", "prepare() failed");
         }
     }
 

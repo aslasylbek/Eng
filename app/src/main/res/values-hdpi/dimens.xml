@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="margin_border">20dp</dimen>
-    <dimen name="margin_side">4dp</dimen>
-    <dimen name="audio_player_height">72dp</dimen>
+	<dimen name="margin_border">15dp</dimen>
+	<dimen name="margin_side">3dp</dimen>
+	<dimen name="audio_player_height">72dp</dimen>
 </resources>

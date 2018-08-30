@@ -7,8 +7,10 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.aslan.mvpmindorkssample.MvpApp;
+import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.general.LoadingDialog;
 import com.example.aslan.mvpmindorkssample.general.LoadingView;
@@ -22,6 +24,9 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
  * Created by aslan on 17.05.2018.
  */
 
+/*
+@Todo potom dopishu
+ */
 public abstract class BaseActivity extends AppCompatActivity implements MvpView, BaseFragment.Callback {
     private LoadingView mLoadingView;
     private Unbinder mUnbinder;
@@ -65,6 +70,12 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView,
     }
 
     @Override
+    public void showToastMessage(int resId) {
+        Toast.makeText(getApplicationContext(),
+                getString(resId), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onFragmentAttached() {
 
     }
@@ -81,5 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView,
         }
         super.onDestroy();
     }
+
+
 
 }

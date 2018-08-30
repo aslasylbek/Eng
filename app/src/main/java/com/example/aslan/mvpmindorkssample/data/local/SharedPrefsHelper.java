@@ -41,8 +41,8 @@ public class SharedPrefsHelper implements PreferenceHelper{
     }
 
     @Override
-    public void putUserId(String password){
-        mSharedPreferences.edit().putString(USER_ID, password).apply();
+    public void putUserId(String user_id){
+        mSharedPreferences.edit().putString(USER_ID, user_id).apply();
     }
 
     @Override
@@ -69,5 +69,15 @@ public class SharedPrefsHelper implements PreferenceHelper{
     @Override
     public void setLoggedMode(boolean loggedIn){
         mSharedPreferences.edit().putBoolean("IS_LOGGED_IN", loggedIn).apply();
+    }
+
+    @Override
+    public void putCourseId(String course_id) {
+        mSharedPreferences.edit().putString(COURSE_ID, course_id).apply();
+    }
+
+    @Override
+    public String getCourseId() {
+        return mSharedPreferences.getString(COURSE_ID, null);
     }
 }

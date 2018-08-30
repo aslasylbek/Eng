@@ -21,26 +21,36 @@ public class Grammar{
     @SerializedName("sentence")
     @Expose
     private String sentence;
-    @SerializedName("sound_url")
+    @SerializedName("question")
     @Expose
-    private String soundUrl;
+    private String question;
+    @SerializedName("answer")
+    @Expose
+    private String answer;
     @SerializedName("translate")
     @Expose
     private String translate;
+    @SerializedName("sound_url")
+    @Expose
+    private String soundUrl;
+
     private String topic_id;
 
-    public Grammar(String id, String sentence, String soundUrl, String translate) {
+    public Grammar(@NonNull String id, String sentence, String question, String answer, String translate, String soundUrl) {
         this.id = id;
         this.sentence = sentence;
-        this.soundUrl = soundUrl;
+        this.question = question;
+        this.answer = answer;
         this.translate = translate;
+        this.soundUrl = soundUrl;
     }
 
+    @NonNull
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
@@ -52,12 +62,20 @@ public class Grammar{
         this.sentence = sentence;
     }
 
-    public String getSoundUrl() {
-        return soundUrl;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setSoundUrl(String soundUrl) {
-        this.soundUrl = soundUrl;
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
     public String getTranslate() {
@@ -66,6 +84,14 @@ public class Grammar{
 
     public void setTranslate(String translate) {
         this.translate = translate;
+    }
+
+    public String getSoundUrl() {
+        return soundUrl;
+    }
+
+    public void setSoundUrl(String soundUrl) {
+        this.soundUrl = soundUrl;
     }
 
     public String getTopic_id() {

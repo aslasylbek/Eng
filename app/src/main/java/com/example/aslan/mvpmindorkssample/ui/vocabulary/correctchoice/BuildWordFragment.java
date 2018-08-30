@@ -22,13 +22,15 @@ import android.widget.TextView;
 
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.playbutton.PlayPauseView;
+import com.example.aslan.mvpmindorkssample.ui.main.content.Listening;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.FragmentsListener;
+import com.example.aslan.mvpmindorkssample.ui.FragmentsListener;
+import com.example.aslan.mvpmindorkssample.ui.reading.ReaderFragment;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.regex.Matcher;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +42,9 @@ import butterknife.OnClick;
 public class BuildWordFragment extends Fragment implements View.OnKeyListener{
 
     private static final String TAG = "BuildWordFragment";
-
+    private static final String TRIGGED = "trigged";
+    private static final String FAKE_LIST = "fakeList";
+    private static final String WORD_DATA = "wordData";
 
     private boolean isViewShown = false;
     private boolean isViewToUser = false;
@@ -69,6 +73,16 @@ public class BuildWordFragment extends Fragment implements View.OnKeyListener{
 
     private int isCorrect = 0;
 
+    public static BuildWordFragment newInstance(int index, Word word, List<String> fakeList) {
+        Bundle args = new Bundle();
+        BuildWordFragment fragment = new BuildWordFragment();
+        args.putInt(TRIGGED, index);
+        args.putParcelable(WORD_DATA, word);
+        args.putStringArrayList(FAKE_LIST, new ArrayList<String>(fakeList));
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,18 +100,18 @@ public class BuildWordFragment extends Fragment implements View.OnKeyListener{
 
         fakeList = new ArrayList<>();
         if (getArguments()!=null){
-            st = getArguments().getParcelable("ed");
-            int trigger = getArguments().getInt("trigger");
+            st = getArguments().getParcelable(WORD_DATA);
+            int trigger = getArguments().getInt(TRIGGED);
             if (trigger==3){
                 rebuildView();
             }
             else if (trigger==4){
                 rebuildViewForMultipleChoice();
-                fakeList.addAll(getArguments().getStringArrayList("fk"));
+                fakeList.addAll(getArguments().getStringArrayList(FAKE_LIST));
                 setButtonsData();
             }
             else {
-                fakeList.addAll(getArguments().getStringArrayList("fk"));
+                fakeList.addAll(getArguments().getStringArrayList(FAKE_LIST));
                 setButtonsData();
             }
         }

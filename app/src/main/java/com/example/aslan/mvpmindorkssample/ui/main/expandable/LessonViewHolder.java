@@ -36,12 +36,14 @@ public class LessonViewHolder extends GroupViewHolder {
     @Override
     public void expand() {
         //rootItem.setBackgroundColor(Color.rgb(3,155,231));
+        animateExpand();
 
     }
 
     @Override
     public void collapse() {
         //rootItem.setBackgroundColor(Color.rgb(255, 255, 255 ));
+        animateCollapse();
     }
 
 

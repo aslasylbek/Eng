@@ -11,11 +11,15 @@ import java.util.List;
 
 public class VocabularyAdapter extends FragmentPagerAdapter {
 
-    List<Fragment> fragmentList;
+    private List<Fragment> fragmentList;
 
     public VocabularyAdapter(FragmentManager fm, List<Fragment> fragmentList) {
         super(fm);
         this.fragmentList = fragmentList;
+    }
+
+    public void setFragmentList(List<Fragment> fragmentList){
+        notifyDataSetChanged();
     }
 
     @Override

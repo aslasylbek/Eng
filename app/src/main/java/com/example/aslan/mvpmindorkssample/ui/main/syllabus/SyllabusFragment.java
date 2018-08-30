@@ -4,6 +4,7 @@ package com.example.aslan.mvpmindorkssample.ui.main.syllabus;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -95,16 +96,17 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     public void setTopicsData(List<Topic> topicsData) {
         List<LessonParentItem> parent = new ArrayList<>();
         for (int j = 0; j <topicsData.size(); j++){
+            String mTitle = topicsData.get(j).getTitle();
             List<LessonChildItem> list = new ArrayList<>();
             if (topicsData.get(j).isHaveGrammar())
-                list.add(new LessonChildItem("Grammar", R.drawable.grammar_background, topicsData.get(j).getTopicId()));
+                list.add(new LessonChildItem(getString(R.string.item_grammar), R.drawable.grammar_background, topicsData.get(j).getTopicId(), mTitle));
             if (topicsData.get(j).isHaveListening())
-                list.add(new LessonChildItem("Listening", R.drawable.listening_background, topicsData.get(j).getTopicId()));
+                list.add(new LessonChildItem(getString(R.string.item_listening), R.drawable.listening_background, topicsData.get(j).getTopicId(), mTitle));
             if (topicsData.get(j).isHaveReading())
-                list.add(new LessonChildItem("Reading", R.drawable.reading_background, topicsData.get(j).getTopicId()));
+                list.add(new LessonChildItem(getString(R.string.item_reading), R.drawable.reading_background, topicsData.get(j).getTopicId(), mTitle));
             if (topicsData.get(j).isHaveWords())
-                list.add(new LessonChildItem("Vocabulary", R.drawable.vocabulary_background, topicsData.get(j).getTopicId()));
-            parent.add(new LessonParentItem(topicsData.get(j).getTitle(), list));
+                list.add(new LessonChildItem(getString(R.string.item_vocabulary), R.drawable.vocabulary_background, topicsData.get(j).getTopicId(), mTitle));
+            parent.add(new LessonParentItem(mTitle, list));
         }
         changedData(parent);
     }
@@ -118,5 +120,14 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         syllabusPresenter.detachView();
         super.onDestroyView();
 
+    }
+
+    static class WordItemAnimator extends DefaultItemAnimator {
+
+        @Override
+        public boolean animateMove(
+                RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
+            return false;
+        }
     }
 }

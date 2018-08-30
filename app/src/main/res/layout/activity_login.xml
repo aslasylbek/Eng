@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/background_design"
     tools:context="com.example.aslan.mvpmindorkssample.ui.login.LoginActivity">
 
     <android.support.v7.widget.CardView
@@ -41,7 +42,7 @@
                     android:hint="@string/prompt_barcode"
                     android:cursorVisible="true"
                     android:gravity="center|left|bottom"                    android:maxLength="50"
-                    android:inputType="numberSigned"
+                    android:inputType="numberSigned|textAutoComplete"
                     android:paddingBottom="10dp"
                     android:maxLines="50"
                     android:singleLine="true" />
@@ -81,7 +82,6 @@
 
             <Button
                 android:id="@+id/email_sign_in_button"
-                style="?android:buttonStyle"
                 android:background="@drawable/btn_check"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

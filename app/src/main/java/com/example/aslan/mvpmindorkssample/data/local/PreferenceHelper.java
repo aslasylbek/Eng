@@ -7,26 +7,30 @@ public interface PreferenceHelper {
     String PASSWORD = "PASSWORD";
     String TOKEN = "TOKEN";
     String USER_ID = "USER_ID";
+    String COURSE_ID = "COURSE_ID";
 
     void clear();
 
     void putPassword(String password);
-
     String getPrefPassword();
 
-    void putToken(String token);
 
+    void putToken(String token);
     String getPrefToken();
 
-    void putUserId(String password);
 
+    void putUserId(String user_id);
     String getPrefUserid();
 
-    void putBarcode(String barcode);
 
+    void putBarcode(String barcode);
     String getBarcode();
 
-    boolean getLoggedMode();
 
+    boolean getLoggedMode();
     void setLoggedMode(boolean loggedIn);
+
+
+    void putCourseId(String course_id);
+    String getCourseId();
 }

@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.aslan.mvpmindorkssample.general.LoadingDialog;
 import com.example.aslan.mvpmindorkssample.general.LoadingView;
@@ -56,6 +57,12 @@ public abstract class BaseFragment extends Fragment implements MvpView {
         if (mActivity!=null)
             return mActivity.isNetworkConnected();
         return false;
+    }
+
+    @Override
+    public void showToastMessage(int resId) {
+        Toast.makeText(getContext(),
+                getString(resId), Toast.LENGTH_SHORT).show();
     }
 
     @Override

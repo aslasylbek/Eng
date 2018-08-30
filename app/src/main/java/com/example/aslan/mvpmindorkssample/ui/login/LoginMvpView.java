@@ -15,4 +15,6 @@ public interface LoginMvpView extends MvpView {
     void showToast(int resId);
     void wrongLoginOrPassword();
 
+    void setLoginPassword(String barcode, String password);
+
 }

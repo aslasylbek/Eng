@@ -4,8 +4,6 @@ package com.example.aslan.mvpmindorkssample.ui.grammar;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.aslan.mvpmindorkssample.R;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.FragmentsListener;
+import com.example.aslan.mvpmindorkssample.ui.FragmentsListener;
+import com.example.aslan.mvpmindorkssample.ui.reading.TrueFalseFragment;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.ResultContent;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +27,10 @@ import butterknife.ButterKnife;
  * A simple {@link Fragment} subclass.
  */
 public class GrammarFragment extends Fragment {
+
+    private static final String TAG = "GrammarFragment";
+    private static final String TEXT = "text";
+    private static final String TRANSLATE = "translate";
 
     @BindView(R.id.textView3)
     TextView mBuilder;
@@ -47,10 +47,15 @@ public class GrammarFragment extends Fragment {
 
     private int correct = 0;
 
-    public GrammarFragment() {
-        // Required empty public constructor
-    }
 
+    public static GrammarFragment newInstance(String text, String translate) {
+        Bundle args = new Bundle();
+        GrammarFragment fragment = new GrammarFragment();
+        args.putString(TEXT, text);
+        args.putString(TRANSLATE, translate);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,10 +66,10 @@ public class GrammarFragment extends Fragment {
 
         listener = (FragmentsListener)getActivity();
 
-        String translate = getArguments().getString("keyTrans");
+        String translate = getArguments().getString(TRANSLATE);
         mGrammarTranslate.setText(translate);
 
-        String text = getArguments().getString("keyText");
+        String text = getArguments().getString(TEXT);
         String[] arr = text.split(" ");
         final List<ResultContent> testList = new ArrayList<>();
 
@@ -102,7 +107,7 @@ public class GrammarFragment extends Fragment {
                         button1.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                listener.sendData(correct, "");
+                                listener.sendData(correct, "cons");
                             }
                         });
                     }

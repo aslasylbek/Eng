@@ -12,5 +12,5 @@ public interface VocabularyMvpView extends MvpView{
 
     ResultContent sendExerciseData();
 
-    void addFinishFragment();
+    void addFinishFragment(int result);
 }

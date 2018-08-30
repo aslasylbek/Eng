@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6971f55ccbde898f5a97e56669ff4b54",
+    "identityHash": "33098382a86371661faf3a72bf4f4524",
     "entities": [
       {
         "tableName": "topics",
@@ -124,7 +124,7 @@
       },
       {
         "tableName": "reading",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `reading` TEXT, `soundUrl` TEXT, `translate` TEXT, `topic_id` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `reading` TEXT, `topic_id` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -135,18 +135,6 @@
           {
             "fieldPath": "reading",
             "columnName": "reading",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "soundUrl",
-            "columnName": "soundUrl",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "translate",
-            "columnName": "translate",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -168,7 +156,7 @@
       },
       {
         "tableName": "grammar",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `sentence` TEXT, `soundUrl` TEXT, `translate` TEXT, `topic_id` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `sentence` TEXT, `question` TEXT, `answer` TEXT, `translate` TEXT, `soundUrl` TEXT, `topic_id` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -183,14 +171,26 @@
             "notNull": false
           },
           {
-            "fieldPath": "soundUrl",
-            "columnName": "soundUrl",
+            "fieldPath": "question",
+            "columnName": "question",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "answer",
+            "columnName": "answer",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "translate",
             "columnName": "translate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "soundUrl",
+            "columnName": "soundUrl",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -213,7 +213,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"6971f55ccbde898f5a97e56669ff4b54\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"33098382a86371661faf3a72bf4f4524\")"
     ]
   }
 }

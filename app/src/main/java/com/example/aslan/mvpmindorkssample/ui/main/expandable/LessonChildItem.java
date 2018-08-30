@@ -9,16 +9,19 @@ public class LessonChildItem implements Parcelable{
     private String mTopicName;
     private int mTopicPhoto;
     private String mTopicId;
+    private String mLessonName;
 
-    public LessonChildItem(String mTopicName, int mTopicPhoto, String mTopicId) {
+    public LessonChildItem(String mTopicName, int mTopicPhoto, String mTopicId, String mLessonName) {
         this.mTopicName = mTopicName;
         this.mTopicPhoto = mTopicPhoto;
         this.mTopicId = mTopicId;
+        this.mLessonName = mLessonName;
     }
     protected LessonChildItem(Parcel in){
         mTopicName = in.readString();
         mTopicPhoto = in.readInt();
         mTopicId = in.readString();
+        mLessonName = in.readString();
     }
     public String getTopicName() {
         return mTopicName;
@@ -44,6 +47,14 @@ public class LessonChildItem implements Parcelable{
         this.mTopicId = mTopicId;
     }
 
+    public String getLessonName() {
+        return mLessonName;
+    }
+
+    public void setLessonName(String mLessonName) {
+        this.mLessonName = mLessonName;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -55,6 +66,7 @@ public class LessonChildItem implements Parcelable{
         dest.writeString(mTopicName);
         dest.writeInt(mTopicPhoto);
         dest.writeString(mTopicId);
+        dest.writeString(mLessonName);
 
     }
 

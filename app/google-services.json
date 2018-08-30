@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "582919793610",
+    "firebase_url": "https://uibenglish-4ee4e.firebaseio.com",
+    "project_id": "uibenglish-4ee4e",
+    "storage_bucket": "uibenglish-4ee4e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582919793610:android:e41e20664f822583",
+        "android_client_info": {
+          "package_name": "com.example.aslan.mvpmindorkssample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "582919793610-tn3vf7esl6cvn1mig83qook84kteu0pg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aslan.mvpmindorkssample",
+            "certificate_hash": "5cc02ac7d8f56bb0d5dd6fabb432066d54f490a0"
+          }
+        },
+        {
+          "client_id": "582919793610-l0qu8qretlmst8cq4aninfq520pcd506.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDL3aL-3CIIcZDe8JhRgETzx_ihAE2pTRg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "582919793610-l0qu8qretlmst8cq4aninfq520pcd506.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

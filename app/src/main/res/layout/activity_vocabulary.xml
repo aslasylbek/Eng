@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <android.support.v4.view.ViewPager
+    <com.example.aslan.mvpmindorkssample.widget.VocabularyViewPager
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"

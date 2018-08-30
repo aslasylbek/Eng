@@ -30,6 +30,7 @@ import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
 import com.example.aslan.mvpmindorkssample.ui.main.syllabus.SyllabusFragment;
 import com.example.aslan.mvpmindorkssample.ui.splash.SplashActivity;
+import com.example.aslan.mvpmindorkssample.ui.word_wallet.WordBookFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class Main2Activity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainMvpView {
 
 
+    private static final String TAG = "Main2Activity";
     @BindView(R.id.fab)
     FloatingActionButton mFab;
     @BindView(R.id.drawer_layout)
@@ -83,8 +85,6 @@ public class Main2Activity extends BaseActivity
         DataManager manager = ((MvpApp) getApplication()).getDataManager();
         presenter = new Main2Presenter(manager);
         presenter.attachView(this);
-
-        Log.d("AAA", "init: ");
         presenter.requestForStudentDiscipline();
     }
 
@@ -96,8 +96,7 @@ public class Main2Activity extends BaseActivity
 
     @Override
     public void setHeaderView(Info information) {
-
-        Log.d("AAA", "setHeaderView: "+information.getFio());
+        Log.d(TAG, "setHeaderView: ");
         //Set Information from local db
         View mHeaderLayout = mNavView.getHeaderView(0);
         TextView mHeaderName = mHeaderLayout.findViewById(R.id.tv_header_fio);
@@ -107,11 +106,17 @@ public class Main2Activity extends BaseActivity
         mHeaderName.setText(information.getFio());
         mHeaderLevel.setText(information.getProgram());
         mHeaderGroup.setText(information.getGroup());
+
+        mNavView.setCheckedItem(R.id.category_dashboard);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.frameMainFragment, new SyllabusFragment()).commit();
+        setTitle(R.string.category_dashboard);
+
     }
 
     @Override
     public void setNavigationView() {
-        //Have receive some object from internet
+        /*//Have receive some object from internet
         Menu menum = mNavView.getMenu();
         menum
                 .add(0, 1, 0, "Dashboard")
@@ -120,15 +125,14 @@ public class Main2Activity extends BaseActivity
                 .setChecked(true);
         menum
                 .add(0, 2, 0, "My Dictionary")
-                .setIcon(R.drawable.leak_canary_icon)
+                .setIcon(R.drawable.ic_word_book)
                 .setCheckable(true);
 
-        SubMenu subMenu = menum.addSubMenu("Settings");
-        subMenu.add(2, 1, 0, "Sign out").setIcon(R.drawable.ic_error_outline);
 
-        //Coverage this lines
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.add(R.id.frameMainFragment, new SyllabusFragment()).commit();
+        SubMenu subMenu = menum.addSubMenu("Settings");
+        subMenu.add(2, 10, 0, "Sign out").setIcon(R.drawable.ic_error_outline);
+
+        mNavView.setCheckedItem(1);*/
     }
 
     @Override
@@ -165,9 +169,7 @@ public class Main2Activity extends BaseActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_settings:
-                break;
-            case R.id.someExample:
+            case R.id.my_profile:
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -179,20 +181,34 @@ public class Main2Activity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         int groupId = item.getGroupId();
-        Fragment fragment = null;
-        if (id == 1 && groupId == 0) {
-            fragment = new SyllabusFragment();
-        } else if (id == 2)
-            fragment = new MyDictionaryFragment();
-        else if (id == 1 & groupId == 2)
-            presenter.setUserLogOut();
 
-        if (fragment != null) {
-            mFragmentManager.beginTransaction().replace(R.id.frameMainFragment, fragment).commit();
+        Intent intent;
+        FragmentManager fm;
+        FragmentTransaction ft;
+        Fragment newFragment;
+        switch (id) {
+            case R.id.category_dashboard:
+                fm = getSupportFragmentManager();
+                newFragment = new SyllabusFragment();
+                fm.beginTransaction().replace(R.id.frameMainFragment,
+                            newFragment)
+                            .commit();
+                break;
+            case R.id.custom_word_book:
+                ft = getSupportFragmentManager().beginTransaction();
+                newFragment = new WordBookFragment();
+                ft.replace(R.id.frameMainFragment, newFragment).commit();
+                break;
+            case R.id.sign_out:
+                presenter.setUserLogOut();
+                break;
+            default:
+                return false;
         }
 
         setTitle(item.getTitle());
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout!=null)
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -206,7 +222,7 @@ public class Main2Activity extends BaseActivity
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         presenter.detachView();
+        super.onDestroy();
     }
 }

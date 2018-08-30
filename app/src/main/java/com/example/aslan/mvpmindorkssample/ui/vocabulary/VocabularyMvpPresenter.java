@@ -7,5 +7,7 @@ public interface VocabularyMvpPresenter<V extends VocabularyMvpView> extends Mvp
 
     void requestForWord(String topicId);
 
-    void requestSendResult(JsonObject jsonObject);
+    void requestSendResult(JsonObject jsonObject, int res);
+
+    void addToJson(String wordId, int result);
 }

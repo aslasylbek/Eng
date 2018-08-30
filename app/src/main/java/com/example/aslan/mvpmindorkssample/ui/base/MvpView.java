@@ -10,5 +10,7 @@ public interface MvpView extends LoadingView {
 
     boolean isNetworkConnected();
 
+    void showToastMessage(int resId);
+
 
 }

@@ -20,6 +20,14 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
         super(mDataManager);
     }
 
+
+    @Override
+    public void setPrefsIfExist() {
+        getMvpView().showLoading();
+        getMvpView().setLoginPassword(getDataManager().getBarcode(), getDataManager().getPrefPassword());
+        getMvpView().hideLoading();
+    }
+
     @Override
     public void startLogin() {
         User user = getMvpView().getUser();
@@ -27,17 +35,20 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
             getMvpView().showToast(R.string.toast_barcode_correct);
             return;
         }
-        if (user.getPassword().isEmpty()){
+        else if (user.getPassword().isEmpty()){
             getMvpView().showToast(R.string.toast_password_cor);
             return;
         }
-        if (user.isSaveBarcode()){
+        else if (user.isSaveBarcode()){
             getDataManager().putBarcode(user.getBarcode());
         }
-        if (user.isSavePassword()){
+        else if (user.isSavePassword()){
+            getDataManager().putBarcode(user.getBarcode());
             getDataManager().putPassword(user.getPassword());
         }
-
+        else{
+            getDataManager().clear();
+        }
 
         getMvpView().showLoading();
         getDataManager()
@@ -45,7 +56,6 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
             @Override
             public void onSuccess(LoginResponse response) {
                 if (response.getSuccess()==1){
-                    Log.d("MC", response.getMessage()+"");
                     getDataManager().setLoggedMode(true);
                     getDataManager().putToken(response.getToken());
                     getDataManager().putUserId(response.getUserID());
@@ -59,12 +69,14 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
 
             }
             @Override
-            public void onError() {
-                Log.d("MC", "BUG");
+            public void onError(Throwable t) {
+                getMvpView().showToastMessage(R.string.get_wrong);
                 getMvpView().hideLoading();
             }
         });
 
 
     }
+
+
 }

@@ -2,56 +2,45 @@ package com.example.aslan.mvpmindorkssample.ui.reading;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.MenuItem;
 
 import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.ui.AddWordListener;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.finish.FinishFragment;
+import com.example.aslan.mvpmindorkssample.ui.main.content.Reading;
+import com.example.aslan.mvpmindorkssample.ui.FragmentsListener;
+import com.example.aslan.mvpmindorkssample.ui.vocabulary.VocabularyAdapter;
+import com.example.aslan.mvpmindorkssample.widget.VocabularyViewPager;
+import com.example.aslan.mvpmindorkssample.ui.FinishFragment;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class ReaderActivity extends BaseActivity implements ReaderMvpContract.ReaderMvpView {
+public class ReaderActivity extends BaseActivity implements ReaderMvpContract.ReaderMvpView, FragmentsListener, AddWordListener {
 
-    @BindView(R.id.textView)
-    TextView textView;
+    private static final String TAG = "ReaderActivity";
 
-    @BindView(R.id.llButtons)
-    LinearLayout mLlButtons;
-
-    @BindView(R.id.btnFinishReading)
-    Button mFinishReading;
-
-    @BindView(R.id.scrollView2)
-    ScrollView scrollViewText;
+    @BindView(R.id.viewPagerReader)
+    VocabularyViewPager mArticleViewPager;
 
     private ReaderPresenter presenter;
-
+    private VocabularyAdapter mArticleAdapter;
     private String topicId;
+    private List<Fragment> fragmentList;
+    private int item = 0;
+
+    private int result_ans = 0;
+    private int total_ans = 0;
+    private int result_tf = 0;
+    private int total_tf = 0;
+    private long startTime = 0;
 
 
     public static Intent getReaderIntent(Context context){
@@ -60,10 +49,17 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
 
     @Override
     protected void init(@Nullable Bundle state) {
-        mFinishReading.setText("I understand all text");
-
+        setTitle(getString(R.string.item_reading));
+        if (getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         topicId = getIntent().getStringExtra("topicId");
 
+        mArticleViewPager.disableScroll(true);
+        mArticleViewPager.setCurrentItem(item);
+        fragmentList = new ArrayList<>();
+        mArticleAdapter = new VocabularyAdapter(getSupportFragmentManager(), fragmentList);
+        mArticleViewPager.setAdapter(mArticleAdapter);
         DataManager dataManager = ((MvpApp)getApplicationContext()).getDataManager();
         presenter = new ReaderPresenter(dataManager);
         presenter.attachView(this);
@@ -76,70 +72,74 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
     }
 
     @Override
-    public void setTextFromDb(String textFromDb) {
-        String definition = textFromDb.trim();
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/GoogleSans-Medium.ttf");
-        textView.setTypeface(typeface);
-        textView.setMovementMethod(LinkMovementMethod.getInstance());
-        textView.setLinkTextColor(Color.BLACK);
-        textView.setText(definition, TextView.BufferType.EDITABLE);
-        Spannable spans = (Spannable) textView.getText();
-        BreakIterator iterator = BreakIterator.getWordInstance(Locale.US);
-        iterator.setText(definition);
-        int start = iterator.first();
-        for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator
-                .next()) {
-            String possibleWord = definition.substring(start, end);
-            if (Character.isLetterOrDigit(possibleWord.charAt(0))) {
-                ClickableSpan clickSpan = getClickableSpan(possibleWord);
-                spans.setSpan(clickSpan, start, end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
+    public void spreadTextToFragments(List<Reading> readingList) {
+        startTime = System.currentTimeMillis()/1000;
+        /**
+         * get Also position
+         */
+        Reading reading = readingList.get(0);
+        fragmentList.add(ReaderFragment.newInstance(reading.getReading()));
+        for (int i=0; i<reading.getQuestionanswer().size(); i++) {
+            fragmentList.add(TrueFalseFragment.newInstance(reading.getQuestionanswer().get(i).getQuestion(),
+                    reading.getQuestionanswer().get(i).getAnswer()));
+            total_ans++;
         }
-    }
 
-    private ClickableSpan getClickableSpan(final String word) {
-        return new ClickableSpan() {
-            final String mWord;
-            {
-                mWord = word;
-            }
-
-            @Override
-            public void onClick(View widget) {
-                mLlButtons.removeAllViews();
-                presenter.getWordTranslate(mWord);
-            }
-
-            public void updateDrawState(TextPaint ds) {
-                ds.setUnderlineText(false);
-
-            }
-        };
+        for (int i=0; i<reading.getTruefalse().size(); i++){
+            fragmentList.add(TrueFalseFragment.newInstance(reading.getTruefalse().get(i).getQuestion(),
+                    reading.getTruefalse().get(i).getTruefalse()));
+            total_tf++;
+        }
+        mArticleAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void setTranslate(String[] translates) {
-        for (int i=0; i<translates.length; i++){
-            final Button button = new Button(this);
-            button.setText(translates[i]);
-            button.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            mLlButtons.addView(button);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Snackbar.make(v, button.getText()+" - was added to your dictionary", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            });
+    public void sendData(int isCorrect, String wordId) {
+        item++;
+        if (wordId.equals("tf")){
+            result_tf +=isCorrect;
+        }
+        else if (wordId.equals("qa")){
+            result_ans+=isCorrect;
         }
 
-}
+        if (item==fragmentList.size()){
+            result_tf = result_tf*100/total_tf;
+            result_ans = result_ans*100/total_ans;
+            presenter.postResultToServer(topicId, result_tf, result_ans, startTime);
+        }
 
-    @OnClick(R.id.btnFinishReading)
-    public void finishReading(){
-        finish();
+        mArticleViewPager.setCurrentItem(item);
+
+    }
+
+    @Override
+    public void addFinishFragment(int totalResult) {
+        fragmentList.add(FinishFragment.newInstance(totalResult));
+        mArticleAdapter.notifyDataSetChanged();
+        mArticleViewPager.setCurrentItem(item);
+    }
+
+    @Override
+    public void sendToWordBook(String mWord) {
+        presenter.addToDictionary(mWord);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setTranslate(String translates) {
+        /**
+         * Not using
+         */
     }
 
     @Override

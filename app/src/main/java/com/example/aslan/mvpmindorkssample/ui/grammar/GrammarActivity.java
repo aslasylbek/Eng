@@ -4,36 +4,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Grammar;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.FragmentsListener;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.VocabularyActivity;
+import com.example.aslan.mvpmindorkssample.ui.FragmentsListener;
+import com.example.aslan.mvpmindorkssample.ui.reading.TrueFalseFragment;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.VocabularyAdapter;
-import com.example.aslan.mvpmindorkssample.ui.vocabulary.finish.FinishFragment;
+import com.example.aslan.mvpmindorkssample.widget.VocabularyViewPager;
+import com.example.aslan.mvpmindorkssample.ui.FinishFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class GrammarActivity extends BaseActivity implements FragmentsListener, GrammarContract.GrammarMvpView{
 
+    private static final String TAG = "GrammarActivity";
    private int item = 0;
    private int correctAns = 0;
    private int sizeOfData;
@@ -42,8 +34,12 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
    private GrammarPresenter presenter;
    private String topicId;
 
+   private long startTime;
+   private int res_ans = 0;
+   private int res_cons = 0;
+
     @BindView(R.id.mGrammarViewPager)
-    ViewPager mGrammarViewPager;
+    VocabularyViewPager mGrammarViewPager;
 
     public static Intent getGrammarActivity(Context context){
         return new Intent(context, GrammarActivity.class);
@@ -51,36 +47,29 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
 
     @Override
     protected void init(@Nullable Bundle state) {
+        setTitle(getString(R.string.item_grammar));
+        if (getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         fragmentList = new ArrayList<>();
         adapter = new VocabularyAdapter(getSupportFragmentManager(), fragmentList);
-        final View view = findViewById(R.id.mGrammarViewPager);
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+        mGrammarViewPager.disableScroll(true);
         mGrammarViewPager.setAdapter(adapter);
         topicId = getIntent().getStringExtra("topicId");
-
-
         DataManager manager = ((MvpApp)getApplication()).getDataManager();
         presenter = new GrammarPresenter(manager);
         presenter.attachView(this);
-        presenter.getGrammarLocalData(topicId);
+        presenter.requestGrammarCollection(topicId);
     }
 
     @Override
     public void setNewDataFromRoom(List<Grammar> grammarList){
+        startTime = System.currentTimeMillis()/1000;
         sizeOfData = grammarList.size();
-
         for (int i=0; i<grammarList.size(); i++) {
-            GrammarFragment fragment = new GrammarFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("keyTrans", grammarList.get(i).getTranslate());
-            bundle.putString("keyText", grammarList.get(i).getSentence());
-            fragment.setArguments(bundle);
-            fragmentList.add(fragment);
+            Grammar grammar = grammarList.get(i);
+            fragmentList.add(GrammarFragment.newInstance(grammar.getSentence(), grammar.getTranslate()));
+            fragmentList.add(0, TrueFalseFragment.newInstance(grammar.getQuestion(), grammar.getAnswer()));
         }
         adapter.notifyDataSetChanged();
     }
@@ -92,22 +81,29 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
 
     @Override
     public void sendData(int isCorrect, String wordId) {
-        correctAns = correctAns+isCorrect;
         item++;
-        if (item==sizeOfData){
-            presenter.sendGrammarResult("ph"+3, topicId, correctAns*100/sizeOfData);
+        if (wordId.equals("cons")){
+            res_cons+=isCorrect;
+            Log.d(TAG, "sendData: "+res_cons);
         }
+        else if (wordId.equals("qa")){
+            res_ans+=isCorrect;
+            Log.d(TAG, "sendData: "+res_ans);
+        }
+        if (item==sizeOfData*2){
+            res_ans = res_ans*100/fragmentList.size();
+            res_cons = res_cons*100/fragmentList.size();
+            presenter.sendGrammarResult( topicId, res_ans, res_cons, startTime);
+        }
+
         mGrammarViewPager.setCurrentItem(item);
     }
 
     @Override
-    public void addFinishFragment() {
-        Bundle bundle = new Bundle();
-        bundle.putInt("res", correctAns*100/sizeOfData);
-        FinishFragment finishFragment = new FinishFragment();
-        finishFragment.setArguments(bundle);
-        fragmentList.add(finishFragment);
+    public void addFinishFragment(int result) {
+        fragmentList.add(FinishFragment.newInstance(result));
         adapter.notifyDataSetChanged();
+        mGrammarViewPager.setCurrentItem(item);
     }
 
     @Override

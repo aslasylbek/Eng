@@ -1,7 +1,9 @@
 package com.example.aslan.mvpmindorkssample.ui.grammar;
 
 import com.example.aslan.mvpmindorkssample.BuildConfig;
+import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.data.models.PostDataResponse;
 import com.example.aslan.mvpmindorkssample.data.remote.ApiFactory;
 import com.example.aslan.mvpmindorkssample.ui.base.BasePresenter;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Grammar;
@@ -16,30 +18,51 @@ public class GrammarPresenter<V extends GrammarContract.GrammarMvpView> extends 
         super(mDataManager);
     }
 
-    @Override
+    /*@Override
     public void getGrammarLocalData(String topic_id) {
         getMvpView().showLoading();
         List<Grammar> grammarList = getDataManager().getGrammarByTopicId(topic_id);
-        getMvpView().setNewDataFromRoom(grammarList);
+        if (grammarList!=null) {
+            getMvpView().setNewDataFromRoom(grammarList);
+        }
         getMvpView().hideLoading();
-    }
+    }*/
 
     @Override
-    public void sendGrammarResult(String ex_id, String topicId, int result) {
+    public void requestGrammarCollection(String topic_id) {
         getMvpView().showLoading();
-        getDataManager().requestPostTaskResult(ex_id, Integer.parseInt(topicId), result, new DataManager.GetVoidPostCallback() {
+        getDataManager().getGrammarArray(topic_id, new DataManager.GetGrammarListCallback() {
             @Override
-            public void onSuccess(Response<String> response) {
+            public void onSuccess(List<Grammar> grammarList) {
+                getMvpView().setNewDataFromRoom(grammarList);
                 getMvpView().hideLoading();
             }
 
             @Override
             public void onError(Throwable t) {
                 getMvpView().hideLoading();
+                getMvpView().showToastMessage(R.string.get_wrong);
             }
         });
+    }
 
-        getMvpView().addFinishFragment();
+    @Override
+    public void sendGrammarResult(String topicId, int result_ans, int result_cons, long startTime) {
+        getMvpView().showLoading();
+        getDataManager().postGrammarResult(topicId, result_ans, result_cons, startTime, new DataManager.GetVoidPostCallback() {
+            @Override
+            public void onSuccess(Response<PostDataResponse> response) {
+                getMvpView().hideLoading();
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                getMvpView().hideLoading();
+                getMvpView().showToastMessage(R.string.get_wrong);
+            }
+        });
+        int total = (result_ans+result_cons)/2;
+        getMvpView().addFinishFragment(total);
 
 
     }

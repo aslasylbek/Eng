@@ -1,0 +1,4 @@
+<resources>
+	<dimen name="margin_border">90dp</dimen>
+	<dimen name="margin_side">35dp</dimen>
+</resources>

@@ -10,4 +10,6 @@ public interface LoginMvpPresenter<V extends LoginMvpView> extends MvpPresenter<
 
     void startLogin();
 
+    void setPrefsIfExist();
+
 }

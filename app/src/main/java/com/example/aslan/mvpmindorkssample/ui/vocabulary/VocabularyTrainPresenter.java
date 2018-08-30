@@ -2,16 +2,23 @@ package com.example.aslan.mvpmindorkssample.ui.vocabulary;
 
 import android.util.Log;
 
+import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
+import com.example.aslan.mvpmindorkssample.data.models.PostDataResponse;
 import com.example.aslan.mvpmindorkssample.ui.base.BasePresenter;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.VocabularyMvpPresenter;
 import com.example.aslan.mvpmindorkssample.ui.vocabulary.VocabularyMvpView;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import retrofit2.Response;
 
 public class VocabularyTrainPresenter<V extends VocabularyMvpView> extends BasePresenter<V> implements VocabularyMvpPresenter<V> {
+
+    JsonObject object;
+    JsonArray datas;
 
     public VocabularyTrainPresenter(DataManager mDataManager) {
         super(mDataManager);
@@ -24,37 +31,36 @@ public class VocabularyTrainPresenter<V extends VocabularyMvpView> extends BaseP
             getMvpView().hideLoading();
         }
 
-
-    /*@Override
-    public void requestSendResult(JsonObject object) {
-        //ResultContent resultContent = getMvpView().sendExerciseData();
-        getMvpView().showLoading();
-        String user_id = getDataManager().getPrefUserid();
-        int u = Integer.parseInt(user_id);
-        int t = Integer.parseInt(resultContent.getTopic_id());
-        getDataManager().postChapterResult(resultContent.getChapter(), u, t, resultContent.getResult());
-        getMvpView().addFinishFragment();
-        getMvpView().hideLoading();
-    }*/
-
     @Override
-    public void requestSendResult(JsonObject object) {
-        //ResultContent resultContent = getMvpView().sendExerciseData();
+    public void requestSendResult(JsonObject object, int result) {
+        object.addProperty("result", result);
+        object.addProperty("datas", new Gson().toJson(datas));
         getMvpView().showLoading();
-        String user_id = getDataManager().getPrefUserid();
-        object.addProperty("userId", user_id);
         getDataManager().postChapterResult(object, new DataManager.GetVoidPostCallback() {
             @Override
-            public void onSuccess(Response<String> response) {
+            public void onSuccess(Response<PostDataResponse> response) {
                 getMvpView().hideLoading();
             }
 
             @Override
             public void onError(Throwable t) {
                 getMvpView().hideLoading();
+                getMvpView().showToastMessage(R.string.get_wrong);
             }
         });
-        getMvpView().addFinishFragment();
+        getMvpView().addFinishFragment(result);
 
+    }
+
+    @Override
+    public void addToJson(String wordId, int responses) {
+        try {
+            object = new JsonObject();
+            object.addProperty("wordId", wordId);
+            object.addProperty("isCorrect", responses);
+            datas.add(object);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

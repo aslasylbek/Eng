@@ -1,7 +1,11 @@
 package com.example.aslan.mvpmindorkssample;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.annotation.NonNull;
 
+import com.danikula.videocache.HttpProxyCacheServer;
+import com.example.aslan.mvpmindorkssample.audio.AudioFileNameGenerator;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.local.AppDatabase;
 import com.example.aslan.mvpmindorkssample.data.local.SharedPrefsHelper;
@@ -18,10 +22,21 @@ import io.github.inflationx.viewpump.ViewPump;
 
 public class MvpApp extends Application {
 
-    DataManager dataManager;
-    SharedPrefsHelper sharedPrefsHelper;
-    AppDatabase appDatabase;
+    private DataManager dataManager;
+    private SharedPrefsHelper sharedPrefsHelper;
+    private AppDatabase appDatabase;
+    private HttpProxyCacheServer mProxy;
 
+    public static HttpProxyCacheServer getProxy(Context context) {
+        MvpApp app = (MvpApp) context.getApplicationContext();
+        return app.mProxy == null ? (app.mProxy = app.newProxy(context)) : app.mProxy;
+    }
+    @NonNull
+    private HttpProxyCacheServer newProxy(Context context) {
+        return new HttpProxyCacheServer.Builder(context)
+                .fileNameGenerator(new AudioFileNameGenerator())
+                .build();
+    }
 
     @Override
     public void onCreate() {

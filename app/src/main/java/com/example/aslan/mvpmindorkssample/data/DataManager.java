@@ -1,5 +1,7 @@
 package com.example.aslan.mvpmindorkssample.data;
 
+import android.os.Build;
+import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 
 import com.example.aslan.mvpmindorkssample.BuildConfig;
@@ -10,24 +12,36 @@ import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.example.aslan.mvpmindorkssample.data.local.AppDatabase;
 import com.example.aslan.mvpmindorkssample.data.local.PreferenceHelper;
 import com.example.aslan.mvpmindorkssample.data.local.SharedPrefsHelper;
+import com.example.aslan.mvpmindorkssample.data.models.PostDataResponse;
+import com.example.aslan.mvpmindorkssample.data.models.WordCollection;
 import com.example.aslan.mvpmindorkssample.data.remote.ApiFactory;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Grammar;
+import com.example.aslan.mvpmindorkssample.ui.main.content.Listening;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Reading;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.support.constraint.Constraints.TAG;
 
 /**
  * Created by aslan on 17.05.2018.
  */
 
 public class DataManager implements DataManagerContract {
+
+    private static final String TAG = "DataManager";
 
     private PreferenceHelper prefsHelper;
     private AppDatabase appDatabase;
@@ -49,20 +63,33 @@ public class DataManager implements DataManagerContract {
 
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
-                        callback.onError();
+                        callback.onError(t);
                     }
                 });
 
     }
 
+
     public void requestForEnglishInformation(String userId, final GetEnglishInformation callback) {
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String newToken = instanceIdResult.getToken();
+                Log.e("newToken",newToken);
+
+            }
+        });
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_MOODLE);
+        ApiFactory.recreate();
         ApiFactory
                 .getApiService()
-                .getStudentSubjectInformation("25147")
+                .getStudentSubjectInformation(userId)
                 .enqueue(new Callback<EngInformationResponse>() {
                     @Override
                     public void onResponse(Call<EngInformationResponse> call, Response<EngInformationResponse> response) {
-                        callback.onSuccess(response.body());
+                        if (response.isSuccessful())
+                            callback.onSuccess(response.body());
                     }
 
                     @Override
@@ -79,8 +106,9 @@ public class DataManager implements DataManagerContract {
                 .enqueue(new Callback<TranslationResponse>() {
                     @Override
                     public void onResponse(Call<TranslationResponse> call, Response<TranslationResponse> response) {
-                        Log.d("", "onResponse: " + response.errorBody());
-                        callback.onSuccess(response.body().getTranslate());
+                        if (response.body().getErrorMsg().equals(""))
+                            callback.onSuccess(response.body());
+                        else callback.onError();
                     }
 
                     @Override
@@ -90,41 +118,214 @@ public class DataManager implements DataManagerContract {
                 });
     }
 
-    public void requestPostTaskResult(String ex_id, int topicId, int result, final GetVoidPostCallback callback) {
+
+    public void postChapterResult(JsonObject jsonObject, final GetVoidPostCallback callback) {
         ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
         ApiFactory.recreate();
+        jsonObject.addProperty("user_id", getPrefUserid());
         ApiFactory.getApiService()
-                .postGrammarResult(ex_id, getPrefUserid(), topicId, result)
-                .enqueue(new Callback<String>() {
+                .postTaskResult(String.valueOf(jsonObject))
+                .enqueue(new Callback<PostDataResponse>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        callback.onSuccess(response);
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response);
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                        callback.onError(t);
+                    }
+            });
+    }
+
+    public void postToChangeWordAsKnown(String word_id, final GetVoidPostCallback callback){
+        ApiFactory.getApiService()
+                .changeWordAsKnown(word_id)
+                .enqueue(new Callback<PostDataResponse>() {
+                    @Override
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
                         callback.onError(t);
                     }
                 });
     }
 
-
-    public void postChapterResult(JsonObject jsonObject, final GetVoidPostCallback callback) {
+    public void postUnknownWord(String word, final GetVoidPostCallback callback){
         ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
         ApiFactory.recreate();
         ApiFactory.getApiService()
-                .postTaskResult(String.valueOf(jsonObject))
-                .enqueue(new Callback<String>() {
+                .postUnknownWord(getPrefUserid(), getCourseId(), word)
+                .enqueue(new Callback<PostDataResponse>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        callback.onSuccess(response);
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response);
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
                         callback.onError(t);
                     }
-            });
+                });
+
+    }
+
+    public void getStudentDictionary(final GetWordCollectionCallback callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory.getApiService()
+                .getStudentWallet(getPrefUserid(), getCourseId())
+                .enqueue(new Callback<List<WordCollection>>() {
+                    @Override
+                    public void onResponse(Call<List<WordCollection>> call, Response<List<WordCollection>> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<WordCollection>> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
+    public void getReadingArray(String topic_id, final GetReadingListCallback callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory.getApiService()
+                .getReadingArray(topic_id)
+                .enqueue(new Callback<List<Reading>>() {
+                    @Override
+                    public void onResponse(Call<List<Reading>> call, Response<List<Reading>> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Reading>> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
+    public void postReadingResult(String topic_id, int result_tf, int result_ans, long startTime,  final GetVoidPostCallback callback){
+        ApiFactory.getApiService()
+                .postReadingResult(getPrefUserid(), topic_id, result_ans, result_tf, startTime)
+                .enqueue(new Callback<PostDataResponse>() {
+                    @Override
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        if (response.isSuccessful()){
+                            callback.onSuccess(response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+
+    }
+
+    public void getListeningArray(String topic_id, final GetListeningListCallback callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory.getApiService()
+                .getListeningArray(topic_id)
+                .enqueue(new Callback<List<Listening>>() {
+                    @Override
+                    public void onResponse(Call<List<Listening>> call, Response<List<Listening>> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Listening>> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
+    public void postListeningResult(String topic_id, int result_ans, long startTime,  final GetVoidPostCallback callback){
+        ApiFactory.getApiService()
+                .postListeningResult(getPrefUserid(), topic_id, result_ans, startTime)
+                .enqueue(new Callback<PostDataResponse>() {
+                    @Override
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        if (response.isSuccessful()){
+                            callback.onSuccess(response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
+    public void getGrammarArray(String topic_id, final GetGrammarListCallback callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory.getApiService()
+                .getGrammarArray(topic_id)
+                .enqueue(new Callback<List<Grammar>>() {
+                    @Override
+                    public void onResponse(Call<List<Grammar>> call, Response<List<Grammar>> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Grammar>> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
+    public void postGrammarResult(String topicId, int result_ans, int result_cons, long startTime, final GetVoidPostCallback callback) {
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory.getApiService()
+                .postGrammarResultNew(getPrefUserid(), topicId, result_ans, result_cons, startTime)
+                .enqueue(new Callback<PostDataResponse>() {
+                    @Override
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        if(response.isSuccessful())
+                            callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
+    public void deleteDeviceToken(final GetVoidPostCallback callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory.getApiService()
+                .postToDeleteDeviceToken(getPrefUserid())
+                .enqueue(new Callback<PostDataResponse>() {
+                    @Override
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+
     }
 
     public void saveTopics(Topic... topic) {
@@ -229,15 +430,24 @@ public class DataManager implements DataManagerContract {
         prefsHelper.setLoggedMode(loggedIn);
     }
 
+    @Override
+    public void putCourseId(String course_id) {
+        prefsHelper.putCourseId(course_id);
+    }
+
+    @Override
+    public String getCourseId() {
+        return prefsHelper.getCourseId();
+    }
+
     public interface GetTokenCallbacks {
         void onSuccess(LoginResponse response);
 
-        void onError();
+        void onError(Throwable t);
     }
 
     public interface GetWordTranslation {
-        void onSuccess(List<Translate> response);
-
+        void onSuccess(TranslationResponse response);
         void onError();
     }
 
@@ -248,7 +458,27 @@ public class DataManager implements DataManagerContract {
     }
 
     public interface GetVoidPostCallback {
-        void onSuccess(Response<String> response);
+        void onSuccess(Response<PostDataResponse> response);
+        void onError(Throwable t);
+    }
+
+    public interface GetWordCollectionCallback{
+        void onSuccess(List<WordCollection> wordCollectionList);
+        void onError(Throwable t);
+    }
+
+    public interface GetReadingListCallback{
+        void onSuccess(List<Reading> readingList);
+        void onError(Throwable t);
+    }
+
+    public interface GetListeningListCallback{
+        void onSuccess(List<Listening> readingList);
+        void onError(Throwable t);
+    }
+
+    public interface GetGrammarListCallback{
+        void onSuccess(List<Grammar> grammarList);
         void onError(Throwable t);
     }
 }

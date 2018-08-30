@@ -2,43 +2,60 @@
     <string name="app_name">UIB English</string>
     <string name="title_activity_login">Sign in</string>
 
-    <string name="default_text">No internet connection</string>
 
     <!-- Strings related to login -->
     <string name="prompt_barcode">Barcode</string>
     <string name="save_barcode">Save barcode</string>
     <string name="save_password">Save password</string>
     <string name="prompt_password">Password (UIB mobile)</string>
-    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in">SIGN IN</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_invalid_email">Invalid barcode</string>
+    <string name="error_invalid_password">Invalid password</string>
+    <string name="error_incorrect_password">Invalid password</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
 
-    <string name="get_wrong">Sorry, something get wrong</string>
-
-
     <string name="toast_barcode_cor">Enter correct barcode</string>
-    <string name="toast_password_cor">invalid password</string>
+    <string name="toast_password_cor">Invalid password</string>
     <string name="toast_barcode_correct">Enter correct barcode</string>
-    <string name="title_activity_dash">DashActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_main2">Main2Activity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
+
+
     <string name="action_settings">Settings</string>
+    <string name="my_profile">Profile</string>
+    <string name="category_dashboard">Exercises</string>
+    <string name="category_dictionary">My dictionary</string>
+    <string name="category_sign_out">Sign out</string>
+
+    <string name="button_understand">I understand all text</string>
+
+    <string name="percentage">%</string>
+
+    <!-- Errors handler -->
+
+    <string name="not_single_word">Don not use for sentence :)</string>
+    <string name="default_text">No internet connection</string>
+    <string name="get_wrong">Sorry, something get wrong</string>
+    <string name="error_message">Something wrong</string>
+
+    <string name="no_english">Probably you are not English student</string>
+    <string name="item_reading">Reading</string>
+    <string name="item_listening">Listening</string>
+    <string name="item_vocabulary">Vocabulary</string>
+    <string name="item_grammar">Grammar</string>
 
 
     <string name="loading">Loading…</string>
@@ -59,5 +76,30 @@
     <!-- Pause Icon -->
     <string name="pause_icon_upper_path_data">M 32 40 L 32 56  L 96 56 L 96 40 Z</string>
     <string name="pause_icon_bottom_path_data">M 32 88 L 32 72 L 96 72 L 96 88 Z</string>
+
+
+    <string name="audio_service_notification">Audio Service Notification</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="forward">Forward</string>
+    <string name="replay">Replay</string>
+    <string name="default_display_time">00:00</string>
+
+    <string name="cache_start">Downloading audio</string>
+    <string name="cache_complete">Completed</string>
+
+    <string name="add_to_word_book">+ WordBook</string>
+    <string name="added_to_word_book">Added to WordBook</string>
+    <string name="custom_word_book">Word Book</string>
+    <string name="no_audio">No audio</string>
+
+    <string name="definition">Definition</string>
+    <string name="add_to_favourites">Add to Favorites</string>
+
+
+    <string name="notification_new_content">New content from</string>
+    <string name="vocabulary_refactored">Word marked as known</string>
+    <string name="undo">undo</string>
+
 
 </resources>

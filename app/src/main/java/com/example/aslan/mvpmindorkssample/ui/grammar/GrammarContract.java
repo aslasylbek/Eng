@@ -10,11 +10,12 @@ public interface GrammarContract {
 
     interface GrammarMvpView extends MvpView{
         void setNewDataFromRoom(List<Grammar> grammarList);
-        void addFinishFragment();
+        void addFinishFragment(int result);
     }
 
     interface GrammarMvpPresenter<V extends GrammarMvpView> extends MvpPresenter<V>{
-        void getGrammarLocalData(String topic_id);
-        void sendGrammarResult(String ex_id, String topicId, int result);
+        void requestGrammarCollection(String topic_id);
+        void sendGrammarResult(String topicId, int result_ans, int result_cons, long start_time);
+
     }
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group_category"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/category_dashboard"
+            android:icon="@drawable/ic_world"
+            android:title="@string/category_dashboard"/>
+
+    </group>
+
+    <group
+        android:id="@+id/group_custom"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/custom_word_book"
+            android:icon="@drawable/ic_word_book"
+            android:title="@string/custom_word_book"/>
+    </group>
+
+    <group
+        android:id="@+id/group_other">
+
+        <item
+            android:id="@+id/category_setting"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/action_settings"/>
+        <item
+            android:id="@+id/sign_out"
+            android:icon="@drawable/ic_error_outline"
+            android:title="@string/category_sign_out"/>
+    </group>
+
+</menu>

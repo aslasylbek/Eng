@@ -2,11 +2,16 @@ package com.example.aslan.mvpmindorkssample.ui.main;
 
 import android.util.Log;
 
+import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.content.EngInformationResponse;
+import com.example.aslan.mvpmindorkssample.data.models.PostDataResponse;
 import com.example.aslan.mvpmindorkssample.data.remote.ApiFactory;
 import com.example.aslan.mvpmindorkssample.ui.base.BasePresenter;
+import com.example.aslan.mvpmindorkssample.ui.main.content.English;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
+
+import retrofit2.Response;
 
 public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> implements MainMvpPresenter<V> {
 
@@ -21,9 +26,22 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
         if (!isAttached()){
             return;
         }
-        getDataManager().setLoggedMode(false);
-        getMvpView().openSlashActivity();
-        getMvpView().hideLoading();
+        getDataManager().deleteDeviceToken(new DataManager.GetVoidPostCallback() {
+            @Override
+            public void onSuccess(Response<PostDataResponse> response) {
+                getDataManager().setLoggedMode(false);
+                getMvpView().openSlashActivity();
+                getMvpView().hideLoading();
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                getDataManager().setLoggedMode(false);
+                getMvpView().openSlashActivity();
+                getMvpView().hideLoading();
+            }
+        });
+
     }
 
     @Override
@@ -34,16 +52,17 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
             @Override
             public void onSuccess(EngInformationResponse response) {
                 if (response.getSuccess()==1){
+                    English english = response.getEnglish().get(0);
                     getMvpView().setHeaderView(response.getInfo().get(0));
                     //check if
                     if (!response.getEnglish().isEmpty()) {
-                        Log.d("AAA", "onSuccess: " + response.getEnglish().get(0).getTopics().get(0).getTopicId());
-                        getMvpView().setHolderData(response.getEnglish().get(0).getTopics());
 
-
+                        getMvpView().setHolderData(english.getTopics());
+                        getDataManager().putCourseId(english.getCourseId());
                         getDataManager().clearAllDatabase();
-                        for (int i = 0; i < response.getEnglish().get(0).getTopics().size(); i++) {
-                            Topic topic = response.getEnglish().get(0).getTopics().get(i);
+
+                        for (int i = 0; i < english.getTopics().size(); i++) {
+                            Topic topic = english.getTopics().get(i);
                             if (!topic.getWords().isEmpty()) {
                                 topic.setHaveWords(true);
                                 Log.d("AAA", "onSuccess: Have Words");
@@ -62,36 +81,32 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
                             }
                             getDataManager().saveTopics(topic);
 
-                            for (int j = 0; j < response.getEnglish().get(0).getTopics().get(i).getWords().size(); j++) {
-                                getDataManager().saveWords(response.getEnglish().get(0).getTopics().get(i).getWords().get(j),
-                                        response.getEnglish().get(0).getTopics().get(i).getTopicId());
+                            for (int j = 0; j < topic.getWords().size(); j++) {
+                                getDataManager().saveWords(topic.getWords().get(j), topic.getTopicId());
                             }
 
-                            for (int j = 0; j < response.getEnglish().get(0).getTopics().get(i).getReading().size(); j++) {
-                                getDataManager().saveReading(response.getEnglish().get(0).getTopics().get(i).getReading().get(j),
-                                        response.getEnglish().get(0).getTopics().get(i).getTopicId());
+                            for (int j = 0; j < topic.getReading().size(); j++) {
+                                getDataManager().saveReading(topic.getReading().get(j), topic.getTopicId());
                             }
 
-                            for (int j = 0; j < response.getEnglish().get(0).getTopics().get(i).getGrammar().size(); j++) {
-                                getDataManager().saveGrammar(response.getEnglish().get(0).getTopics().get(i).getGrammar().get(j),
-                                        response.getEnglish().get(0).getTopics().get(i).getTopicId());
+                            for (int j = 0; j < topic.getGrammar().size(); j++) {
+                                getDataManager().saveGrammar(topic.getGrammar().get(j), topic.getTopicId());
                             }
-
-
                         }
                     }
                     else {
-                        //You dont have any english subject
+                        getMvpView().showToastMessage(R.string.no_english);
                     }
                 }
                 else {
-
+                    getMvpView().showToastMessage(R.string.get_wrong);
                 }
                 getMvpView().hideLoading();
             }
 
             @Override
             public void onError() {
+                getMvpView().showToastMessage(R.string.get_wrong);
                 getMvpView().hideLoading();
             }
         });

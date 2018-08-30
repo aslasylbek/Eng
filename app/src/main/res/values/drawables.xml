@@ -5,4 +5,12 @@
     <item name="ic_menu_manage" type="drawable">@android:drawable/ic_menu_manage</item>
     <item name="ic_menu_share" type="drawable">@android:drawable/ic_menu_share</item>
     <item name="ic_menu_send" type="drawable">@android:drawable/ic_menu_send</item>
+    <item name="ic_pause" type="drawable">@android:drawable/ic_media_pause</item>
+    <item name="ic_forward_5" type="drawable">@android:drawable/ic_media_ff</item>
+    <item name="ic_replay_5" type="drawable">@android:drawable/ic_media_rew</item>
+    <item name="ic_play_arrow" type="drawable">@android:drawable/ic_media_play</item>
+    <item name="ic_headset" type="drawable">@android:drawable/ic_menu_compass</item>
+    <item name="ic_expanded" type="drawable">@android:drawable/arrow_down_float</item>
+    <item name="ic_collapse" type="drawable">@android:drawable/arrow_up_float</item>
+
 </resources>
