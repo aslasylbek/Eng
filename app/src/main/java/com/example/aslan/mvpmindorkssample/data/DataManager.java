@@ -66,20 +66,41 @@ public class DataManager implements DataManagerContract {
                         callback.onError(t);
                     }
                 });
+    }
+
+    public void sendToken(String newToken, final GetVoidPostCallback callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory
+                .getApiService()
+                .sendTokenToServer(getPrefUserid(), newToken)
+                .enqueue(new Callback<PostDataResponse>() {
+                    @Override
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
 
     }
 
 
     public void requestForEnglishInformation(String userId, final GetEnglishInformation callback) {
 
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
+        /*FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 String newToken = instanceIdResult.getToken();
                 Log.e("newToken",newToken);
 
             }
-        });
+        });*/
+
         ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_MOODLE);
         ApiFactory.recreate();
         ApiFactory

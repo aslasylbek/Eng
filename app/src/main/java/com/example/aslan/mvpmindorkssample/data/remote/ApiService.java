@@ -39,7 +39,7 @@ public interface ApiService {
      * @return
      */
     @FormUrlEncoded
-    @POST("mobile_eng/data.php")
+    @POST("mobile_eng/data")
     Call<EngInformationResponse> getStudentSubjectInformation(@Field("user_id") String user_id);
 
     /***
@@ -85,15 +85,18 @@ public interface ApiService {
     @POST("post/grammatika_questions.php")
     Call<PostDataResponse> postGrammarResultNew(@Field("user_id") String user_id, @Field("topic_id") String topic_id, @Field("result_ans") int result_ans, @Field("result_cons") int result_cons, @Field("start_time") long start_time);
 
+    @FormUrlEncoded
+    @POST("mobile/tokens.php")
+    Call<PostDataResponse> sendTokenToServer(@Field("user_id") String user_id, @Field("device_token") String device_token);
+
     /***
      *
      * @param user_id
      * @return
      */
     @FormUrlEncoded
-    @POST("post/grammatika_questions.php")
+    @POST("mobile/tokens.php")
     Call<PostDataResponse> postToDeleteDeviceToken(@Field("user_id") String user_id);
-
 
     //Get
     @FormUrlEncoded

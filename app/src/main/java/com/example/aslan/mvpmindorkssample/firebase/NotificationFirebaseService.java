@@ -13,10 +13,15 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
+import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.data.models.PostDataResponse;
 import com.example.aslan.mvpmindorkssample.ui.splash.SplashActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import retrofit2.Response;
 
 public class NotificationFirebaseService extends FirebaseMessagingService {
 
@@ -25,7 +30,7 @@ public class NotificationFirebaseService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
-        Log.e(TAG, "onNewToken: "+s);
+
     }
 
     @Override
