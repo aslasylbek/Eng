@@ -26,6 +26,7 @@ import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.example.aslan.mvpmindorkssample.data.models.WordCollection;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseFragment;
+import com.example.aslan.mvpmindorkssample.ui.listening.ArticleHolderFragment;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
 
 import java.io.IOException;
@@ -42,6 +43,8 @@ public class WordBookFragment extends BaseFragment implements
         WordBookAdapter.OnItemClickListener, WordBookContract.WordBookMvpView {
 
     private static final int WORD_BOOK_LOADER_ID = 64236;
+    private static final String POSITION = "position";
+
 
     @BindView(R.id.rv_word_book_list)
     RecyclerView recyclerView;
@@ -53,7 +56,13 @@ public class WordBookFragment extends BaseFragment implements
     private WordBookPresenter bookPresenter;
     private List<WordCollection> trashList;
 
-    public WordBookFragment() {
+
+    public static WordBookFragment newInstance(int rating) {
+        Bundle args = new Bundle();
+        WordBookFragment fragment = new WordBookFragment();
+        args.putInt(POSITION, rating);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -113,11 +122,15 @@ public class WordBookFragment extends BaseFragment implements
         getActivity().setTitle(R.string.custom_word_book);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         WordItemAnimator animator = new WordItemAnimator();
+
+        int rating = getArguments().getInt(POSITION);
+
         recyclerView.setItemAnimator(animator);
         mAdapter = new WordBookAdapter(getContext(), recyclerView, this);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(manager);
-        mSwipeToDeleteHelper.attachToRecyclerView(recyclerView);
+        if (rating==0)
+            mSwipeToDeleteHelper.attachToRecyclerView(recyclerView);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 manager.getOrientation());
@@ -127,7 +140,7 @@ public class WordBookFragment extends BaseFragment implements
         DataManager dataManager = ((MvpApp)getActivity().getApplicationContext()).getDataManager();
         bookPresenter = new WordBookPresenter(dataManager);
         bookPresenter.attachView(this);
-        bookPresenter.requestWordsCollection();
+        bookPresenter.requestWordsCollection(rating);
     }
 
 

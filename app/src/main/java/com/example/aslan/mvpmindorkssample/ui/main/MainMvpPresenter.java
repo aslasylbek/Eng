@@ -10,5 +10,7 @@ public interface MainMvpPresenter<V extends MvpView> extends MvpPresenter<V> {
     void requestForStudentDiscipline();
     void requestForHeaderView();
 
+    void sendDeviceToken();
+
 
 }

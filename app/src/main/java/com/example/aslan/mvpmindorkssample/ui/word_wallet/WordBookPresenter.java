@@ -21,44 +21,60 @@ public class WordBookPresenter<V extends WordBookContract.WordBookMvpView> exten
     }
 
     @Override
-    public void requestWordsCollection() {
+    public void requestWordsCollection(final int pagerPosition) {
         getMvpView().showLoading();
         getDataManager().getStudentDictionary(new DataManager.GetWordCollectionCallback() {
             @Override
             public void onSuccess(List<WordCollection> wordCollectionList) {
                 List<WordCollection> unknownWordsList = new ArrayList<>();
-                for (int i=0; i<wordCollectionList.size(); i++){
-                    if (wordCollectionList.get(i).getRating().equals("0")){
-                        unknownWordsList.add(wordCollectionList.get(i));
+                if (pagerPosition == 0) {
+                    for (int i = 0; i < wordCollectionList.size(); i++) {
+                        if (wordCollectionList.get(i).getRating().equals("0")) {
+                            unknownWordsList.add(wordCollectionList.get(i));
+                        }
                     }
                 }
-                getMvpView().setWordsCollection(unknownWordsList);
-                getMvpView().hideLoading();
-            }
+                else if (pagerPosition*2 == 4) {
+                    for (int i = 0; i < wordCollectionList.size(); i++) {
+                        if (wordCollectionList.get(i).getRating().equals("4")) {
+                            unknownWordsList.add(wordCollectionList.get(i));
+                        }
+                    }
+                }
+                else {
+                    for (int i = 0; i < wordCollectionList.size(); i++) {
+                        if (!wordCollectionList.get(i).getRating().equals("0") && !wordCollectionList.get(i).getRating().equals("4")) {
+                            unknownWordsList.add(wordCollectionList.get(i));
+                        }
+                    }
+                }
+                    getMvpView().setWordsCollection(unknownWordsList);
+                    getMvpView().hideLoading();
+                }
 
-            @Override
-            public void onError(Throwable t) {
-                getMvpView().showToastMessage(R.string.get_wrong);
-                getMvpView().hideLoading();
-            }
-        });
+                @Override
+                public void onError (Throwable t){
+                    getMvpView().showToastMessage(R.string.get_wrong);
+                    getMvpView().hideLoading();
+                }
+            });
+        }
+
+        @Override
+        public void addWordAsKnown (String word_id){
+            getMvpView().showLoading();
+            getDataManager().postToChangeWordAsKnown(word_id, new DataManager.GetVoidPostCallback() {
+                @Override
+                public void onSuccess(Response<PostDataResponse> response) {
+
+                    getMvpView().hideLoading();
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    getMvpView().showToastMessage(R.string.get_wrong);
+                    getMvpView().hideLoading();
+                }
+            });
+        }
     }
-
-    @Override
-    public void addWordAsKnown(String word_id) {
-        getMvpView().showLoading();
-        getDataManager().postToChangeWordAsKnown(word_id, new DataManager.GetVoidPostCallback() {
-            @Override
-            public void onSuccess(Response<PostDataResponse> response) {
-
-                getMvpView().hideLoading();
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                getMvpView().showToastMessage(R.string.get_wrong);
-                getMvpView().hideLoading();
-            }
-        });
-    }
-}

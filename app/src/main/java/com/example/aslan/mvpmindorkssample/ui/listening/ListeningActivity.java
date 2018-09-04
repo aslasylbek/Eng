@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 
 public class ListeningActivity extends BaseActivity implements ListeningContract.ListeningMvpView, FragmentsListener {
 
+    private static final String TAG = "ListeningActivity";
     private static final String AUDIO_PLAYER_FRAGMENT_TAG = "audioPlayerFragment";
     private static final String AUDIO_FILE_SOURCE = "http://de.uib.kz/post/audio.php?topic_id=";
 
@@ -73,6 +74,8 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
 
     @Override
     public void spreadListeningCollection(List<Listening> collection) {
+
+        Log.e(TAG, "spreadListeningCollection: "+collection.get(0).getListening());
         startTime = System.currentTimeMillis()/1000;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.listeningTaskContainer, ListeningTasksFragment.newInstance(collection, position));

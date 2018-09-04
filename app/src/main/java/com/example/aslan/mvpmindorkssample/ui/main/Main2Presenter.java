@@ -26,7 +26,8 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
         if (!isAttached()){
             return;
         }
-        getDataManager().deleteDeviceToken(new DataManager.GetVoidPostCallback() {
+        getDataManager().putUserId("");
+        getDataManager().sendDeviceToken(new DataManager.GetVoidPostCallback() {
             @Override
             public void onSuccess(Response<PostDataResponse> response) {
                 getDataManager().setLoggedMode(false);
@@ -115,5 +116,22 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
     @Override
     public void requestForHeaderView() {
         //SomeRequest
+    }
+
+    @Override
+    public void sendDeviceToken() {
+        getMvpView().showLoading();
+        getDataManager().sendDeviceToken(new DataManager.GetVoidPostCallback() {
+            @Override
+            public void onSuccess(Response<PostDataResponse> response) {
+                getMvpView().hideLoading();
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                getMvpView().showToastMessage(R.string.get_wrong);
+                getMvpView().hideLoading();
+            }
+        });
     }
 }

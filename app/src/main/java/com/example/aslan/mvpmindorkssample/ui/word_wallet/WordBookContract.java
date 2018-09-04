@@ -16,7 +16,7 @@ public interface WordBookContract {
 
     interface WordBookMvpPresenter<V extends WordBookContract.WordBookMvpView> extends MvpPresenter<V>{
 
-        void requestWordsCollection();
+        void requestWordsCollection(int ratingPos);
         void addWordAsKnown(String word_id);
     }
 

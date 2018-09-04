@@ -13,6 +13,7 @@ import com.example.aslan.mvpmindorkssample.data.local.AppDatabase;
 import com.example.aslan.mvpmindorkssample.data.local.PreferenceHelper;
 import com.example.aslan.mvpmindorkssample.data.local.SharedPrefsHelper;
 import com.example.aslan.mvpmindorkssample.data.models.PostDataResponse;
+import com.example.aslan.mvpmindorkssample.data.models.ResultStudentTasks;
 import com.example.aslan.mvpmindorkssample.data.models.WordCollection;
 import com.example.aslan.mvpmindorkssample.data.remote.ApiFactory;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Grammar;
@@ -20,6 +21,7 @@ import com.example.aslan.mvpmindorkssample.ui.main.content.Listening;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Reading;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -67,28 +69,6 @@ public class DataManager implements DataManagerContract {
                     }
                 });
     }
-
-    public void sendToken(String newToken, final GetVoidPostCallback callback){
-        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
-        ApiFactory.recreate();
-        ApiFactory
-                .getApiService()
-                .sendTokenToServer(getPrefUserid(), newToken)
-                .enqueue(new Callback<PostDataResponse>() {
-                    @Override
-                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
-                        if (response.isSuccessful())
-                            callback.onSuccess(response);
-                    }
-
-                    @Override
-                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
-                        callback.onError(t);
-                    }
-                });
-
-    }
-
 
     public void requestForEnglishInformation(String userId, final GetEnglishInformation callback) {
 
@@ -329,24 +309,50 @@ public class DataManager implements DataManagerContract {
                 });
     }
 
-    public void deleteDeviceToken(final GetVoidPostCallback callback){
+    public void sendDeviceToken(final GetVoidPostCallback callback){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String newToken = instanceIdResult.getToken();
+                Log.e("newToken",newToken);
+                ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+                ApiFactory.recreate();
+                ApiFactory.getApiService()
+                        .sendTokenToServer(getPrefUserid(), newToken)
+                        .enqueue(new Callback<PostDataResponse>() {
+                            @Override
+                            public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                                if (response.isSuccessful())
+                                    callback.onSuccess(response);
+                            }
+
+                            @Override
+                            public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                                callback.onError(t);
+                            }
+                        });
+
+            }
+        });
+    }
+
+    public void getUserResult(final GetUserResultCallback callback){
         ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
         ApiFactory.recreate();
         ApiFactory.getApiService()
-                .postToDeleteDeviceToken(getPrefUserid())
-                .enqueue(new Callback<PostDataResponse>() {
+                .getUserResult(getPrefUserid(), getCourseId())
+                .enqueue(new Callback<ResultStudentTasks>() {
                     @Override
-                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                    public void onResponse(Call<ResultStudentTasks> call, Response<ResultStudentTasks> response) {
                         if (response.isSuccessful())
-                            callback.onSuccess(response);
+                            callback.onSuccess(response.body());
                     }
 
                     @Override
-                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                    public void onFailure(Call<ResultStudentTasks> call, Throwable t) {
                         callback.onError(t);
                     }
                 });
-
     }
 
     public void saveTopics(Topic... topic) {
@@ -500,6 +506,10 @@ public class DataManager implements DataManagerContract {
 
     public interface GetGrammarListCallback{
         void onSuccess(List<Grammar> grammarList);
+        void onError(Throwable t);
+    }
+    public interface GetUserResultCallback{
+        void onSuccess(ResultStudentTasks resultStudentTasks);
         void onError(Throwable t);
     }
 }

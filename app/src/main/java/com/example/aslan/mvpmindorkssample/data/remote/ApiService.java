@@ -4,6 +4,7 @@ import com.example.aslan.mvpmindorkssample.data.content.EngInformationResponse;
 import com.example.aslan.mvpmindorkssample.data.content.LoginResponse;
 import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.example.aslan.mvpmindorkssample.data.models.PostDataResponse;
+import com.example.aslan.mvpmindorkssample.data.models.ResultStudentTasks;
 import com.example.aslan.mvpmindorkssample.data.models.WordCollection;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Grammar;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Listening;
@@ -39,7 +40,7 @@ public interface ApiService {
      * @return
      */
     @FormUrlEncoded
-    @POST("mobile_eng/data")
+    @POST("mobile_eng/data.php")
     Call<EngInformationResponse> getStudentSubjectInformation(@Field("user_id") String user_id);
 
     /***
@@ -94,9 +95,6 @@ public interface ApiService {
      * @param user_id
      * @return
      */
-    @FormUrlEncoded
-    @POST("mobile/tokens.php")
-    Call<PostDataResponse> postToDeleteDeviceToken(@Field("user_id") String user_id);
 
     //Get
     @FormUrlEncoded
@@ -115,7 +113,9 @@ public interface ApiService {
     @POST("post/get_grammatika.php")
     Call<List<Grammar>> getGrammarArray(@Field("topic_id") String topic_id);
 
-
+    @FormUrlEncoded
+    @POST("post/get_user_results.php")
+    Call<ResultStudentTasks> getUserResult(@Field("user_id") String user_id, @Field("course_id") String course_id);
 
 
 

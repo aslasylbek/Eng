@@ -31,6 +31,7 @@ import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
 import com.example.aslan.mvpmindorkssample.ui.main.syllabus.SyllabusFragment;
 import com.example.aslan.mvpmindorkssample.ui.splash.SplashActivity;
 import com.example.aslan.mvpmindorkssample.ui.word_wallet.WordBookFragment;
+import com.example.aslan.mvpmindorkssample.ui.word_wallet.WordBookMainFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +87,8 @@ public class Main2Activity extends BaseActivity
         presenter = new Main2Presenter(manager);
         presenter.attachView(this);
         presenter.requestForStudentDiscipline();
+
+        presenter.sendDeviceToken();
     }
 
     @Override
@@ -196,7 +199,7 @@ public class Main2Activity extends BaseActivity
                 break;
             case R.id.custom_word_book:
                 ft = getSupportFragmentManager().beginTransaction();
-                newFragment = new WordBookFragment();
+                newFragment = new WordBookMainFragment();
                 ft.replace(R.id.frameMainFragment, newFragment).commit();
                 break;
             case R.id.sign_out:
