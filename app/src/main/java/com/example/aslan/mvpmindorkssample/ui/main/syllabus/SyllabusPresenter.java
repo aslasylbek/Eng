@@ -1,7 +1,12 @@
 package com.example.aslan.mvpmindorkssample.ui.main.syllabus;
 
+import android.util.Log;
+
+import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.data.content.EngInformationResponse;
 import com.example.aslan.mvpmindorkssample.ui.base.BasePresenter;
+import com.example.aslan.mvpmindorkssample.ui.main.content.English;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
 
 import java.util.List;
@@ -16,8 +21,66 @@ public class SyllabusPresenter<V extends SyllabusMvpView> extends BasePresenter<
     @Override
     public void getTopicsInformation() {
         getMvpView().showLoading();
-        List<Topic> topicList = getDataManager().getAllTopics();
-        getMvpView().setTopicsData(topicList);
-        getMvpView().hideLoading();
+        getDataManager().requestForEnglishInformation(new DataManager.GetEnglishInformation() {
+            @Override
+            public void onSuccess(EngInformationResponse response) {
+                if (response.getSuccess()==1) {
+                    List<Topic> topicList = response.getEnglish().get(0).getTopics();
+                    getMvpView().setTopicsData(topicList);
+
+
+                    English english = response.getEnglish().get(0);
+                    if (!response.getEnglish().isEmpty()) {
+
+                        getDataManager().clearAllDatabase();
+                        for (int i = 0; i < english.getTopics().size(); i++) {
+                            Topic topic = english.getTopics().get(i);
+                            if (!topic.getWords().isEmpty()) {
+                                topic.setHaveWords(true);
+                                Log.d("AAA", "onSuccess: Have Words");
+                            }
+                            if (!topic.getGrammar().isEmpty()) {
+                                topic.setHaveGrammar(true);
+                                Log.d("AAA", "onSuccess: grammar");
+                            }
+                            if (!topic.getListening().isEmpty()) {
+                                topic.setHaveListening(true);
+                                Log.d("AAA", "onSuccess: listening");
+                            }
+                            if (!topic.getReading().isEmpty()) {
+                                topic.setHaveReading(true);
+                                Log.d("AAA", "onSuccess: reading");
+                            }
+                            getDataManager().saveTopics(topic);
+
+                            for (int j = 0; j < topic.getWords().size(); j++) {
+                                getDataManager().saveWords(topic.getWords().get(j), topic.getTopicId());
+                            }
+
+                            for (int j = 0; j < topic.getReading().size(); j++) {
+                                getDataManager().saveReading(topic.getReading().get(j), topic.getTopicId());
+                            }
+
+                            for (int j = 0; j < topic.getGrammar().size(); j++) {
+                                getDataManager().saveGrammar(topic.getGrammar().get(j), topic.getTopicId());
+                            }
+                        }
+                    }
+                    else {
+                        getMvpView().showToastMessage(R.string.no_english);
+                    }
+                    getMvpView().hideLoading();
+                }
+                getMvpView().hideLoading();
+            }
+
+            @Override
+            public void onError() {
+                getMvpView().hideLoading();
+                getMvpView().showToastMessage(R.string.get_wrong);
+            }
+        });
+        //List<Topic> topicList = getDataManager().getAllTopics();
+
     }
 }

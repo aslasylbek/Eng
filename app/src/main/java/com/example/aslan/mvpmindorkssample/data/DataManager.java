@@ -70,7 +70,7 @@ public class DataManager implements DataManagerContract {
                 });
     }
 
-    public void requestForEnglishInformation(String userId, final GetEnglishInformation callback) {
+    public void requestForEnglishInformation(final GetEnglishInformation callback) {
 
         /*FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
             @Override
@@ -85,7 +85,7 @@ public class DataManager implements DataManagerContract {
         ApiFactory.recreate();
         ApiFactory
                 .getApiService()
-                .getStudentSubjectInformation(userId)
+                .getStudentSubjectInformation(getPrefUserid())
                 .enqueue(new Callback<EngInformationResponse>() {
                     @Override
                     public void onResponse(Call<EngInformationResponse> call, Response<EngInformationResponse> response) {

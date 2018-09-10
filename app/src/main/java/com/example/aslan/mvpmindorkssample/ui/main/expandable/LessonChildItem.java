@@ -10,18 +10,28 @@ public class LessonChildItem implements Parcelable{
     private int mTopicPhoto;
     private String mTopicId;
     private String mLessonName;
+    private String mStartTime;
+    private String mEndTime;
+    private int mIconAccess;
 
-    public LessonChildItem(String mTopicName, int mTopicPhoto, String mTopicId, String mLessonName) {
+    public LessonChildItem(String mTopicName, int mTopicPhoto, String mTopicId, String mLessonName, String mStartTime, String mEndTime, int mIconAccess) {
         this.mTopicName = mTopicName;
         this.mTopicPhoto = mTopicPhoto;
         this.mTopicId = mTopicId;
         this.mLessonName = mLessonName;
+        this.mStartTime = mStartTime;
+        this.mEndTime = mEndTime;
+        this.mIconAccess = mIconAccess;
+
     }
     protected LessonChildItem(Parcel in){
         mTopicName = in.readString();
         mTopicPhoto = in.readInt();
         mTopicId = in.readString();
         mLessonName = in.readString();
+        mStartTime = in.readString();
+        mEndTime = in.readString();
+        mIconAccess = in.readInt();
     }
     public String getTopicName() {
         return mTopicName;
@@ -55,6 +65,30 @@ public class LessonChildItem implements Parcelable{
         this.mLessonName = mLessonName;
     }
 
+    public String getStartTime() {
+        return mStartTime;
+    }
+
+    public void setStartTime(String mStartTime) {
+        this.mStartTime = mStartTime;
+    }
+
+    public String getEndTime() {
+        return mEndTime;
+    }
+
+    public void setEndTime(String mEndTime) {
+        this.mEndTime = mEndTime;
+    }
+
+    public int getIconAccess() {
+        return mIconAccess;
+    }
+
+    public void setIconAccess(int mIconAccess) {
+        this.mIconAccess = mIconAccess;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -67,6 +101,9 @@ public class LessonChildItem implements Parcelable{
         dest.writeInt(mTopicPhoto);
         dest.writeString(mTopicId);
         dest.writeString(mLessonName);
+        dest.writeString(mStartTime);
+        dest.writeString(mEndTime);
+        dest.writeInt(mIconAccess);
 
     }
 

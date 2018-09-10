@@ -21,36 +21,15 @@ public class WordBookPresenter<V extends WordBookContract.WordBookMvpView> exten
     }
 
     @Override
-    public void requestWordsCollection(final int pagerPosition) {
+    public void requestWordsCollection() {
         getMvpView().showLoading();
         getDataManager().getStudentDictionary(new DataManager.GetWordCollectionCallback() {
             @Override
             public void onSuccess(List<WordCollection> wordCollectionList) {
-                List<WordCollection> unknownWordsList = new ArrayList<>();
-                if (pagerPosition == 0) {
-                    for (int i = 0; i < wordCollectionList.size(); i++) {
-                        if (wordCollectionList.get(i).getRating().equals("0")) {
-                            unknownWordsList.add(wordCollectionList.get(i));
-                        }
-                    }
-                }
-                else if (pagerPosition*2 == 4) {
-                    for (int i = 0; i < wordCollectionList.size(); i++) {
-                        if (wordCollectionList.get(i).getRating().equals("4")) {
-                            unknownWordsList.add(wordCollectionList.get(i));
-                        }
-                    }
-                }
-                else {
-                    for (int i = 0; i < wordCollectionList.size(); i++) {
-                        if (!wordCollectionList.get(i).getRating().equals("0") && !wordCollectionList.get(i).getRating().equals("4")) {
-                            unknownWordsList.add(wordCollectionList.get(i));
-                        }
-                    }
-                }
-                    getMvpView().setWordsCollection(unknownWordsList);
-                    getMvpView().hideLoading();
-                }
+                if (wordCollectionList.size()>0)
+                    getMvpView().setWordsCollection(wordCollectionList);
+                getMvpView().hideLoading();
+            }
 
                 @Override
                 public void onError (Throwable t){
@@ -66,7 +45,7 @@ public class WordBookPresenter<V extends WordBookContract.WordBookMvpView> exten
             getDataManager().postToChangeWordAsKnown(word_id, new DataManager.GetVoidPostCallback() {
                 @Override
                 public void onSuccess(Response<PostDataResponse> response) {
-
+                    getMvpView().showSnackbar();
                     getMvpView().hideLoading();
                 }
 

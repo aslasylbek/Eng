@@ -4,6 +4,7 @@ package com.example.aslan.mvpmindorkssample.ui.word_wallet;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -16,6 +17,7 @@ import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.models.WordCollection;
+import com.example.aslan.mvpmindorkssample.ui.AddWordListener;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseFragment;
 import com.example.aslan.mvpmindorkssample.ui.tasks.CustomViewPager;
 import com.example.aslan.mvpmindorkssample.ui.tasks.ViewPagerAdapter;
@@ -30,7 +32,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WordBookMainFragment extends Fragment implements TabLayout.OnTabSelectedListener {
+public class WordBookMainFragment extends BaseFragment implements WordBookContract.WordBookMvpView, TabLayout.OnTabSelectedListener, AddWordListener {
 
 
     private static final String TAG = "WordBookMainFragment";
@@ -46,23 +48,60 @@ public class WordBookMainFragment extends Fragment implements TabLayout.OnTabSel
     private WordBookPagerAdapter pagerAdapter;
     private List<Fragment> fragmentList = new ArrayList<>();
 
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_word_book_main, container, false);
-        ButterKnife.bind(this, rootView);
+    protected void init(@Nullable Bundle bundle) {
 
         getActivity().setTitle(R.string.custom_word_book);
         mTabLayout.addOnTabSelectedListener(this);
-        for (int i=0; i<3; i++)
-            fragmentList.add(WordBookFragment.newInstance(i));
         mViewPager.disableScroll(true);
-        pagerAdapter = new WordBookPagerAdapter(getFragmentManager(), fragmentList);
+        pagerAdapter = new WordBookPagerAdapter(getChildFragmentManager(), fragmentList);
+        Log.d(TAG, "init: "+fragmentList.size());
         mViewPager.setAdapter(pagerAdapter);
-        return rootView;
+        DataManager manager = ((MvpApp)getBaseActivity().getApplicationContext()).getDataManager();
+        presenter = new WordBookPresenter(manager);
+        presenter.attachView(this);
+        presenter.requestWordsCollection();
     }
 
+    @Override
+    protected int getContentResource() {
+        return R.layout.fragment_word_book_main;
+    }
+
+    @Override
+    public void setWordsCollection(List<WordCollection> wordsCollections) {
+
+        for (int j = 0; j < 3; j++) {
+            List<WordCollection> newWordCollection = new ArrayList<>();
+            for (int i = 0; i < wordsCollections.size(); i++) {
+                WordCollection wordCollection = wordsCollections.get(i);
+                if (j == 0 && wordCollection.getRating().equals("0")) {
+                    newWordCollection.add(wordCollection);
+                }
+                else if (j==2 &&wordCollection.getRating().equals("4")){
+                    newWordCollection.add(wordCollection);
+                }
+                else if (j==1 && !wordCollection.getRating().equals("0") && !wordCollection.getRating().equals("4")){
+                    newWordCollection.add(wordCollection);
+                }
+            }
+            fragmentList.add(WordBookFragment.newInstance(j, newWordCollection));
+        }
+        pagerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void sendToWordBook(String mWord) {
+        //Send Word As Known equal rating = 1; Refactor if AddWordLis changes
+        presenter.addWordAsKnown(mWord);
+
+    }
+
+    @Override
+    public void showSnackbar() {
+        Snackbar.make(getView(),  R.string.vocabulary_refactored, Snackbar.LENGTH_LONG)
+                .setAction("Action",null).show();
+    }
 
 
     @Override
@@ -80,6 +119,13 @@ public class WordBookMainFragment extends Fragment implements TabLayout.OnTabSel
         mViewPager.setCurrentItem(tab.getPosition());
     }
 
-
-
+    @Override
+    public void onDestroyView() {
+        pagerAdapter = null;
+        if (mViewPager!=null) {
+            mViewPager = null;
+        }
+        presenter.detachView();
+        super.onDestroyView();
+    }
 }

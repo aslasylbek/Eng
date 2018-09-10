@@ -48,6 +48,31 @@ public class Topic {
     @Expose
     private List<Grammar> grammar = null;
 
+    @SerializedName("start_voc")
+    @Expose
+    private String startVoc;
+    @SerializedName("end_voc")
+    @Expose
+    private String endVoc;
+    @SerializedName("start_read")
+    @Expose
+    private String startRead;
+    @SerializedName("end_read")
+    @Expose
+    private String endRead;
+    @SerializedName("start_listen")
+    @Expose
+    private String startListen;
+    @SerializedName("end_listen")
+    @Expose
+    private String endListen;
+    @SerializedName("start_gram")
+    @Expose
+    private String startGram;
+    @SerializedName("end_gram")
+    @Expose
+    private String endGram;
+
 
     public boolean isHaveWords() {
         return haveWords;
@@ -135,5 +160,69 @@ public class Topic {
 
     public void setGrammar(List<Grammar> grammar) {
         this.grammar = grammar;
+    }
+
+    public String getStartVoc() {
+        return startVoc;
+    }
+
+    public void setStartVoc(String startVoc) {
+        this.startVoc = startVoc;
+    }
+
+    public String getEndVoc() {
+        return endVoc;
+    }
+
+    public void setEndVoc(String endVoc) {
+        this.endVoc = endVoc;
+    }
+
+    public String getStartRead() {
+        return startRead;
+    }
+
+    public void setStartRead(String startRead) {
+        this.startRead = startRead;
+    }
+
+    public String getEndRead() {
+        return endRead;
+    }
+
+    public void setEndRead(String endRead) {
+        this.endRead = endRead;
+    }
+
+    public String getStartListen() {
+        return startListen;
+    }
+
+    public void setStartListen(String startListen) {
+        this.startListen = startListen;
+    }
+
+    public String getEndListen() {
+        return endListen;
+    }
+
+    public void setEndListen(String endListen) {
+        this.endListen = endListen;
+    }
+
+    public String getStartGram() {
+        return startGram;
+    }
+
+    public void setStartGram(String startGram) {
+        this.startGram = startGram;
+    }
+
+    public String getEndGram() {
+        return endGram;
+    }
+
+    public void setEndGram(String endGram) {
+        this.endGram = endGram;
     }
 }

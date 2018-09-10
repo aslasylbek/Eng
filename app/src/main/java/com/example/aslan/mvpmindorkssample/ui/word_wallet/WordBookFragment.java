@@ -3,6 +3,8 @@ package com.example.aslan.mvpmindorkssample.ui.word_wallet;
 import android.graphics.Canvas;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -25,6 +27,7 @@ import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.example.aslan.mvpmindorkssample.data.models.WordCollection;
+import com.example.aslan.mvpmindorkssample.ui.AddWordListener;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseFragment;
 import com.example.aslan.mvpmindorkssample.ui.listening.ArticleHolderFragment;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
@@ -34,16 +37,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Paranoid on 17/9/10.
  */
 
-public class WordBookFragment extends BaseFragment implements
-        WordBookAdapter.OnItemClickListener, WordBookContract.WordBookMvpView {
+public class WordBookFragment extends Fragment implements
+        WordBookAdapter.OnItemClickListener{
 
     private static final int WORD_BOOK_LOADER_ID = 64236;
-    private static final String POSITION = "position";
+    private static final String SECTION = "section";
+    private static final String WORD_COLLECTIONS = "wordCollection";
 
 
     @BindView(R.id.rv_word_book_list)
@@ -53,14 +58,14 @@ public class WordBookFragment extends BaseFragment implements
     private ItemTouchHelper mSwipeToDeleteHelper;
     private MediaPlayer mMediaPlayer;
     private String mCurrentAudioHref = "";
-    private WordBookPresenter bookPresenter;
-    private List<WordCollection> trashList;
+    private AddWordListener listener;
 
 
-    public static WordBookFragment newInstance(int rating) {
+    public static WordBookFragment newInstance(int section, List<WordCollection> wordCollection) {
         Bundle args = new Bundle();
         WordBookFragment fragment = new WordBookFragment();
-        args.putInt(POSITION, rating);
+        args.putParcelableArrayList(WORD_COLLECTIONS, new ArrayList<>(wordCollection));
+        args.putInt(SECTION, section);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,24 +86,8 @@ public class WordBookFragment extends BaseFragment implements
                 final String id = (String) viewHolder.itemView.getTag();
                 mAdapter.clearDeletedExpandedPosition(position);
                 viewHolder.itemView.setAlpha(1.0f);
-                bookPresenter.addWordAsKnown(id);
-                Snackbar.make(viewHolder.itemView, R.string.vocabulary_refactored, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                listener.sendToWordBook(id);
 
-                /*Snackbar.make(viewHolder.itemView, R.string.vocabulary_refactored, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(R.string.undo, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                for (int i=0; i<trashList.size(); i++){
-                                    if (id.equals(trashList.get(i).getId())){
-                                        mAdapter.undoLastDelete(position, trashList.get(i));
-                                        *//***
-                                         * Make request
-                                         *//*
-                                    }
-                                }
-
-                            }
-                        }).show();*/
             }
 
             @Override
@@ -116,51 +105,40 @@ public class WordBookFragment extends BaseFragment implements
     }
 
 
-
+    @Nullable
     @Override
-    protected void init(@Nullable Bundle bundle) {
-        getActivity().setTitle(R.string.custom_word_book);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragent_word_book_list, container, false);
+        ButterKnife.bind(this, view);
+        listener = (AddWordListener)getParentFragment();
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         WordItemAnimator animator = new WordItemAnimator();
-
-        int rating = getArguments().getInt(POSITION);
-
         recyclerView.setItemAnimator(animator);
         mAdapter = new WordBookAdapter(getContext(), recyclerView, this);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(manager);
-        if (rating==0)
-            mSwipeToDeleteHelper.attachToRecyclerView(recyclerView);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 manager.getOrientation());
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider));
 
         recyclerView.addItemDecoration(dividerItemDecoration);
-        DataManager dataManager = ((MvpApp)getActivity().getApplicationContext()).getDataManager();
-        bookPresenter = new WordBookPresenter(dataManager);
-        bookPresenter.attachView(this);
-        bookPresenter.requestWordsCollection(rating);
+
+        int section=0;
+        List<WordCollection> collection = new ArrayList<>();
+        if (getArguments()!=null) {
+            collection = getArguments().getParcelableArrayList(WORD_COLLECTIONS);
+            section = getArguments().getInt(SECTION);
+        }
+        mAdapter.setWalletWords(collection);
+
+        if (section==0)
+            mSwipeToDeleteHelper.attachToRecyclerView(recyclerView);
+
+
+        return view;
     }
 
-
-
-    @Override
-    protected int getContentResource() {
-        return R.layout.fragent_word_book_list;
-    }
-
-    @Override
-    public void setWordsCollection(List<WordCollection> collectionList) {
-        trashList = collectionList;
-        mAdapter.setWalletWords(collectionList);
-    }
-
-    @Override
-    public void showSnackbar() {
-        Snackbar.make(getView(),  R.string.vocabulary_refactored, Snackbar.LENGTH_LONG)
-                        .setAction("Action",null).show();
-    }
 
     @Override
     public void OnPronunciationClick(String audioHref) {
@@ -230,6 +208,11 @@ public class WordBookFragment extends BaseFragment implements
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     static class WordItemAnimator extends DefaultItemAnimator {

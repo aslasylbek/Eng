@@ -11,8 +11,7 @@ public class DateTimeUtils {
 
 
     public static String formatRelativeTime(long time){
-        return DateUtils.getRelativeTimeSpanString(time*1000,
-                System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
+        return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(new Date(time*1000));
     }
 
     public static String getDisplayTime(int milliseconds) {

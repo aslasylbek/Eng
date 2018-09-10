@@ -6,4 +6,6 @@ public interface TopicClickListener {
 
     void itemTopicClick(LessonChildItem lessonChildItem, View imageView);
 
+    void itemTopicNoAccess(View view, String deadlineTime);
+
 }

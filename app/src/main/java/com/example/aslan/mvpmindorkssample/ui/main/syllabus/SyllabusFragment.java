@@ -3,6 +3,7 @@ package com.example.aslan.mvpmindorkssample.ui.main.syllabus;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonParentItem;
 import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonChildItem;
 import com.example.aslan.mvpmindorkssample.ui.main.expandable.TopicClickListener;
 import com.example.aslan.mvpmindorkssample.ui.tasks.TaskChoiceActivity;
+import com.example.aslan.mvpmindorkssample.utils.DateTimeUtils;
 import com.example.aslan.mvpmindorkssample.widget.DividerItemDecoration;
 import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
 
@@ -40,6 +42,7 @@ import butterknife.BindView;
 public class SyllabusFragment extends BaseFragment implements TopicClickListener, SyllabusMvpView {
 
     private static final String TAG = "SyllabusFragment";
+    private static final String EMPTY = "";
 
     @BindView(R.id.mRecyclerView) RecyclerView mRView;
 
@@ -73,16 +76,22 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     @Override
     public void itemTopicClick(LessonChildItem lessonChildItem, View view) {
         ImageView imageView = view.findViewById(R.id.mTopicPhoto);
-        TaskChoiceActivity.navigate((Main2Activity)getActivity(), imageView, lessonChildItem);
+        TaskChoiceActivity.navigate(getBaseActivity(), imageView, lessonChildItem);
+    }
+
+    @Override
+    public void itemTopicNoAccess(View view, String deadline) {
+        Snackbar.make(view, "Available"+deadline, Snackbar.LENGTH_LONG).show();
     }
 
     public void changedData(List<LessonParentItem> lessonParentItems){
         int resId = R.anim.layout_animation_fall_down;
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mRView.getContext(), resId);
-        adapter.getGroups().clear();
-        adapter = new LessonAdapter(lessonParentItems, this);
+        //adapter.getGroups().clear();
+        adapter.addAll(lessonParentItems);
+        //adapter = new LessonAdapter(lessonParentItems, this);
         mRView.setLayoutAnimation(controller);
-        mRView.setAdapter(adapter);
+        //mRView.setAdapter(adapter);
         adapter.setOnGroupClickListener(new OnGroupClickListener() {
             @Override
             public boolean onGroupClick(int flatPos) {
@@ -95,20 +104,74 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     @Override
     public void setTopicsData(List<Topic> topicsData) {
         List<LessonParentItem> parent = new ArrayList<>();
+        long timeStamp = System.currentTimeMillis()/1000;
         for (int j = 0; j <topicsData.size(); j++){
             String mTitle = topicsData.get(j).getTitle();
+            Topic topic = topicsData.get(j);
             List<LessonChildItem> list = new ArrayList<>();
-            if (topicsData.get(j).isHaveGrammar())
-                list.add(new LessonChildItem(getString(R.string.item_grammar), R.drawable.grammar_background, topicsData.get(j).getTopicId(), mTitle));
-            if (topicsData.get(j).isHaveListening())
-                list.add(new LessonChildItem(getString(R.string.item_listening), R.drawable.listening_background, topicsData.get(j).getTopicId(), mTitle));
-            if (topicsData.get(j).isHaveReading())
-                list.add(new LessonChildItem(getString(R.string.item_reading), R.drawable.reading_background, topicsData.get(j).getTopicId(), mTitle));
-            if (topicsData.get(j).isHaveWords())
-                list.add(new LessonChildItem(getString(R.string.item_vocabulary), R.drawable.vocabulary_background, topicsData.get(j).getTopicId(), mTitle));
+
+            if (!topic.getGrammar().isEmpty()) {
+                LessonChildItem lessonChildItem = addToList(topic.getStartGram(), topic.getEndGram(), timeStamp, R.string.item_grammar, R.drawable.grammar_background, mTitle, topic.getTopicId());
+                list.add(lessonChildItem);
+            }
+
+            if (!topic.getListening().isEmpty()) {
+                LessonChildItem lessonChildItem = addToList(topic.getStartListen(), topic.getEndListen(), timeStamp, R.string.item_listening, R.drawable.listening_background, mTitle, topic.getTopicId());
+                list.add(lessonChildItem);
+            }
+
+            if (!topic.getReading().isEmpty()) {
+                LessonChildItem lessonChildItem = addToList(topic.getStartRead(), topic.getEndRead(), timeStamp, R.string.item_reading, R.drawable.reading_background, mTitle, topic.getTopicId());
+                list.add(lessonChildItem);
+            }
+
+            if (!topic.getWords().isEmpty()) {
+                LessonChildItem lessonChildItem = addToList(topic.getStartVoc(), topic.getEndVoc(), timeStamp, R.string.item_vocabulary, R.drawable.vocabulary_background, mTitle, topic.getTopicId());
+                list.add(lessonChildItem);
+            }
             parent.add(new LessonParentItem(mTitle, list));
         }
         changedData(parent);
+    }
+
+    public LessonChildItem addToList(String startChapterTime, String endChapterTime, long timeStamp, int childTitle, int childBackground, String title, String topicId){
+        int imageId = 0;
+        String startFormatDate = "";
+        String endFormatDate = "";
+        if (!startChapterTime.equals(EMPTY) && !endChapterTime.equals(EMPTY)) {
+            long startTime = Long.parseLong(startChapterTime);
+            long endTime = Long.parseLong(endChapterTime);
+            startFormatDate = " from "+DateTimeUtils.formatRelativeTime(startTime);
+            endFormatDate = " until "+DateTimeUtils.formatRelativeTime(endTime);
+            if (timeStamp > startTime && timeStamp < endTime)
+                imageId = R.drawable.ic_lock_open;
+            else imageId = R.drawable.ic_lock_outline;
+        }
+        else if (!startChapterTime.equals(EMPTY) && endChapterTime.equals(EMPTY)){
+            long startTime = Long.parseLong(startChapterTime);
+            startFormatDate = " from "+DateTimeUtils.formatRelativeTime(startTime);
+            if (timeStamp > startTime)
+                imageId = R.drawable.ic_lock_open;
+            else imageId = R.drawable.ic_lock_outline;
+        }
+        else if (startChapterTime.equals(EMPTY) && !endChapterTime.equals(EMPTY)){
+            long endTime = Long.parseLong(endChapterTime);
+            endFormatDate = " until "+DateTimeUtils.formatRelativeTime(endTime);
+            if (timeStamp < endTime)
+                imageId = R.drawable.ic_lock_open;
+            else imageId = R.drawable.ic_lock_outline;
+        }
+        else
+            imageId = R.drawable.ic_lock_open;
+
+        return new LessonChildItem(
+                getString(childTitle),
+                childBackground,
+                topicId,
+                title,
+                startFormatDate,
+                endFormatDate,
+                imageId);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package com.example.aslan.mvpmindorkssample.ui.main.expandable;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.aslan.mvpmindorkssample.R;
+import com.thoughtbot.expandablerecyclerview.ExpandableListUtils;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableListPosition;
@@ -24,6 +26,13 @@ public class LessonAdapter extends ExpandableRecyclerViewAdapter<LessonViewHolde
 
     }
 
+    public void addAll(List<LessonParentItem> groups) {
+        ((List<LessonParentItem>)getGroups()).addAll(groups);
+        ExpandableListUtils.notifyGroupDataChanged(this);
+        Log.e("AAA", "addAll: Notified" );
+        notifyDataSetChanged();
+    }
+
     @Override
     public LessonViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.lessons_item, parent, false);
@@ -39,7 +48,7 @@ public class LessonAdapter extends ExpandableRecyclerViewAdapter<LessonViewHolde
     @Override
     public void onBindChildViewHolder(LessonTopicViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
         final LessonChildItem lessonChildItem = ((LessonParentItem)group).getItems().get(childIndex);
-        holder.onBind(lessonChildItem);
+        holder.onBind(lessonChildItem, flatPosition);
     }
 
     @Override

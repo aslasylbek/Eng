@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "33098382a86371661faf3a72bf4f4524",
+    "identityHash": "7c6f263459307ba61e536c4c699953c0",
     "entities": [
       {
         "tableName": "topics",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`topicId` TEXT NOT NULL, `number` TEXT, `title` TEXT, `haveWords` INTEGER NOT NULL, `haveReading` INTEGER NOT NULL, `haveListening` INTEGER NOT NULL, `haveGrammar` INTEGER NOT NULL, PRIMARY KEY(`topicId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`topicId` TEXT NOT NULL, `number` TEXT, `title` TEXT, `haveWords` INTEGER NOT NULL, `haveReading` INTEGER NOT NULL, `haveListening` INTEGER NOT NULL, `haveGrammar` INTEGER NOT NULL, `startVoc` TEXT, `endVoc` TEXT, `startRead` TEXT, `endRead` TEXT, `startListen` TEXT, `endListen` TEXT, `startGram` TEXT, `endGram` TEXT, PRIMARY KEY(`topicId`))",
         "fields": [
           {
             "fieldPath": "topicId",
@@ -49,6 +49,54 @@
             "columnName": "haveGrammar",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "startVoc",
+            "columnName": "startVoc",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "endVoc",
+            "columnName": "endVoc",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startRead",
+            "columnName": "startRead",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "endRead",
+            "columnName": "endRead",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startListen",
+            "columnName": "startListen",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "endListen",
+            "columnName": "endListen",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startGram",
+            "columnName": "startGram",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "endGram",
+            "columnName": "endGram",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -213,7 +261,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"33098382a86371661faf3a72bf4f4524\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7c6f263459307ba61e536c4c699953c0\")"
     ]
   }
 }

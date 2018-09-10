@@ -1,9 +1,13 @@
 package com.example.aslan.mvpmindorkssample.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class WordCollection {
+public class WordCollection implements Parcelable{
 
     @SerializedName("id")
     @Expose
@@ -29,6 +33,36 @@ public class WordCollection {
     @SerializedName("rating")
     @Expose
     private String rating;
+    public final static Parcelable.Creator<WordCollection> CREATOR = new Creator<WordCollection>() {
+
+
+        @SuppressWarnings({
+                "unchecked"
+        })
+        public WordCollection createFromParcel(Parcel in) {
+            return new WordCollection(in);
+        }
+
+        public WordCollection[] newArray(int size) {
+            return (new WordCollection [size]);
+        }
+
+    }
+            ;
+
+    protected WordCollection(Parcel in) {
+        this.id = ((String) in.readValue((String.class.getClassLoader())));
+        this.word = ((String) in.readValue((String.class.getClassLoader())));
+        this.type = ((String) in.readValue((String.class.getClassLoader())));
+        this.picUrl = ((String) in.readValue((String.class.getClassLoader())));
+        this.transcription = ((String) in.readValue((String.class.getClassLoader())));
+        this.soundUrl = ((String) in.readValue((String.class.getClassLoader())));
+        this.translateWord = ((String) in.readValue((String.class.getClassLoader())));
+        this.rating = ((String) in.readValue((String.class.getClassLoader())));
+    }
+
+    public WordCollection() {
+    }
 
     public String getId() {
         return id;
@@ -94,4 +128,20 @@ public class WordCollection {
         this.rating = rating;
     }
 
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(id);
+        dest.writeValue(word);
+        dest.writeValue(type);
+        dest.writeValue(picUrl);
+        dest.writeValue(transcription);
+        dest.writeValue(soundUrl);
+        dest.writeValue(translateWord);
+        dest.writeValue(rating);
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
 }
+

@@ -49,7 +49,7 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
     public void requestForStudentDiscipline() {
         getMvpView().showLoading();
         getMvpView().setNavigationView();
-        getDataManager().requestForEnglishInformation(getDataManager().getPrefUserid(), new DataManager.GetEnglishInformation() {
+        getDataManager().requestForEnglishInformation(new DataManager.GetEnglishInformation() {
             @Override
             public void onSuccess(EngInformationResponse response) {
                 if (response.getSuccess()==1){
@@ -58,9 +58,9 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
                     //check if
                     if (!response.getEnglish().isEmpty()) {
 
-                        getMvpView().setHolderData(english.getTopics());
+                        //getMvpView().setHolderData(english.getTopics());
                         getDataManager().putCourseId(english.getCourseId());
-                        getDataManager().clearAllDatabase();
+                        /*getDataManager().clearAllDatabase();
 
                         for (int i = 0; i < english.getTopics().size(); i++) {
                             Topic topic = english.getTopics().get(i);
@@ -93,7 +93,7 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
                             for (int j = 0; j < topic.getGrammar().size(); j++) {
                                 getDataManager().saveGrammar(topic.getGrammar().get(j), topic.getTopicId());
                             }
-                        }
+                        }*/
                     }
                     else {
                         getMvpView().showToastMessage(R.string.no_english);
