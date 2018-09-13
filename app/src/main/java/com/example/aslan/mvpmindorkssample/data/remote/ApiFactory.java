@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.example.aslan.mvpmindorkssample.BuildConfig;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

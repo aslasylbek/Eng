@@ -27,6 +27,7 @@ public class LessonAdapter extends ExpandableRecyclerViewAdapter<LessonViewHolde
     }
 
     public void addAll(List<LessonParentItem> groups) {
+        ((List<LessonParentItem>)getGroups()).clear();
         ((List<LessonParentItem>)getGroups()).addAll(groups);
         ExpandableListUtils.notifyGroupDataChanged(this);
         Log.e("AAA", "addAll: Notified" );

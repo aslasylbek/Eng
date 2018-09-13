@@ -71,17 +71,21 @@ public class WordBookMainFragment extends BaseFragment implements WordBookContra
     @Override
     public void setWordsCollection(List<WordCollection> wordsCollections) {
 
-        for (int j = 0; j < 3; j++) {
+        /**
+         * @// TODO: 12.09.2018 refactor if there 3 category of wallet
+         */
+        for (int j = 0; j < 2; j++) {
             List<WordCollection> newWordCollection = new ArrayList<>();
             for (int i = 0; i < wordsCollections.size(); i++) {
                 WordCollection wordCollection = wordsCollections.get(i);
                 if (j == 0 && wordCollection.getRating().equals("0")) {
                     newWordCollection.add(wordCollection);
                 }
-                else if (j==2 &&wordCollection.getRating().equals("4")){
+                /*else if (j==2 &&wordCollection.getRating().equals("4")){
                     newWordCollection.add(wordCollection);
-                }
-                else if (j==1 && !wordCollection.getRating().equals("0") && !wordCollection.getRating().equals("4")){
+                }*/
+                //else if (j==1 && !wordCollection.getRating().equals("0") && !wordCollection.getRating().equals("4")){
+                else {
                     newWordCollection.add(wordCollection);
                 }
             }

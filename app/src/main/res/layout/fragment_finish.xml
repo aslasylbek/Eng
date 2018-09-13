@@ -63,7 +63,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/text.24"
                 android:layout_gravity="center"
-                android:text="@string/item_grammar" />
+                android:text="@string/oops_placeholder" />
 
         </LinearLayout>
 

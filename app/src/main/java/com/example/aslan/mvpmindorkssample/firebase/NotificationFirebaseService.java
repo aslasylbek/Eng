@@ -17,6 +17,7 @@ import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.data.models.PostDataResponse;
+import com.example.aslan.mvpmindorkssample.ui.main.Main2Activity;
 import com.example.aslan.mvpmindorkssample.ui.splash.SplashActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -42,6 +43,7 @@ public class NotificationFirebaseService extends FirebaseMessagingService {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
 
+
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
@@ -59,8 +61,15 @@ public class NotificationFirebaseService extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+
         }
+
+        /*Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+        String cappello = remoteMessage.getNotification().getBody();
+        Intent intent = new Intent();
+        intent.putExtra("extra", cappello);
+        intent.setAction("com.example.aslan.mvpmindorkssample.onMessageReceived");
+        sendBroadcast(intent);*/
 
         showNewContentNotification(remoteMessage);
 
@@ -76,7 +85,7 @@ public class NotificationFirebaseService extends FirebaseMessagingService {
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        Intent intent = new Intent(this, SplashActivity.class)
+        Intent intent = new Intent(this, Main2Activity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);

@@ -20,56 +20,52 @@ public class SyllabusPresenter<V extends SyllabusMvpView> extends BasePresenter<
 
     @Override
     public void getTopicsInformation() {
-        getMvpView().showLoading();
+        if (isAttached())
+            getMvpView().showLoading();
+
         getDataManager().requestForEnglishInformation(new DataManager.GetEnglishInformation() {
             @Override
             public void onSuccess(EngInformationResponse response) {
-                if (response.getSuccess()==1) {
-                    List<Topic> topicList = response.getEnglish().get(0).getTopics();
+                if (response.getSuccess() == 1 && !response.getEnglish().isEmpty()) {
+                    English english = response.getEnglish().get(0);
+                    List<Topic> topicList = english.getTopics();
                     getMvpView().setTopicsData(topicList);
 
+                    getDataManager().clearAllDatabase();
+                    for (int i = 0; i < english.getTopics().size(); i++) {
+                        Topic topic = english.getTopics().get(i);
+                        if (!topic.getWords().isEmpty()) {
+                            topic.setHaveWords(true);
+                            Log.d("AAA", "onSuccess: Have Words");
+                        }
+                        if (!topic.getGrammar().isEmpty()) {
+                            topic.setHaveGrammar(true);
+                            Log.d("AAA", "onSuccess: grammar");
+                        }
+                        if (!topic.getListening().isEmpty()) {
+                            topic.setHaveListening(true);
+                            Log.d("AAA", "onSuccess: listening");
+                        }
+                        if (!topic.getReading().isEmpty()) {
+                            topic.setHaveReading(true);
+                            Log.d("AAA", "onSuccess: reading");
+                        }
+                        getDataManager().saveTopics(topic);
 
-                    English english = response.getEnglish().get(0);
-                    if (!response.getEnglish().isEmpty()) {
+                        for (int j = 0; j < topic.getWords().size(); j++) {
+                            getDataManager().saveWords(topic.getWords().get(j), topic.getTopicId());
+                        }
 
-                        getDataManager().clearAllDatabase();
-                        for (int i = 0; i < english.getTopics().size(); i++) {
-                            Topic topic = english.getTopics().get(i);
-                            if (!topic.getWords().isEmpty()) {
-                                topic.setHaveWords(true);
-                                Log.d("AAA", "onSuccess: Have Words");
-                            }
-                            if (!topic.getGrammar().isEmpty()) {
-                                topic.setHaveGrammar(true);
-                                Log.d("AAA", "onSuccess: grammar");
-                            }
-                            if (!topic.getListening().isEmpty()) {
-                                topic.setHaveListening(true);
-                                Log.d("AAA", "onSuccess: listening");
-                            }
-                            if (!topic.getReading().isEmpty()) {
-                                topic.setHaveReading(true);
-                                Log.d("AAA", "onSuccess: reading");
-                            }
-                            getDataManager().saveTopics(topic);
+                        for (int j = 0; j < topic.getReading().size(); j++) {
+                            getDataManager().saveReading(topic.getReading().get(j), topic.getTopicId());
+                        }
 
-                            for (int j = 0; j < topic.getWords().size(); j++) {
-                                getDataManager().saveWords(topic.getWords().get(j), topic.getTopicId());
-                            }
-
-                            for (int j = 0; j < topic.getReading().size(); j++) {
-                                getDataManager().saveReading(topic.getReading().get(j), topic.getTopicId());
-                            }
-
-                            for (int j = 0; j < topic.getGrammar().size(); j++) {
-                                getDataManager().saveGrammar(topic.getGrammar().get(j), topic.getTopicId());
-                            }
+                        for (int j = 0; j < topic.getGrammar().size(); j++) {
+                            getDataManager().saveGrammar(topic.getGrammar().get(j), topic.getTopicId());
                         }
                     }
-                    else {
-                        getMvpView().showToastMessage(R.string.no_english);
-                    }
-                    getMvpView().hideLoading();
+                } else {
+                    getMvpView().showToastMessage(R.string.no_english);
                 }
                 getMvpView().hideLoading();
             }

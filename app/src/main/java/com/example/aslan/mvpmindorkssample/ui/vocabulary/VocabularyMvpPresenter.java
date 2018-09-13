@@ -3,11 +3,12 @@ package com.example.aslan.mvpmindorkssample.ui.vocabulary;
 import com.example.aslan.mvpmindorkssample.ui.base.MvpPresenter;
 import com.google.gson.JsonObject;
 
+import java.util.Map;
+
 public interface VocabularyMvpPresenter<V extends VocabularyMvpView> extends MvpPresenter<V>{
 
     void requestForWord(String topicId);
 
-    void requestSendResult(JsonObject jsonObject, int res);
+    void requestSendResult(Map<String, Integer> jsonObject, int res, String topic_id, String chapter, long startTime);
 
-    void addToJson(String wordId, int result);
 }

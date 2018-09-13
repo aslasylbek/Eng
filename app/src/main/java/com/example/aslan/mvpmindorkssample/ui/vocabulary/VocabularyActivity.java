@@ -2,6 +2,7 @@ package com.example.aslan.mvpmindorkssample.ui.vocabulary;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -26,7 +27,9 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 
@@ -52,8 +55,8 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     private int index;
     private int correctAns;
     private String topicId;
-    private JsonArray datas;
-    private JsonObject object;
+    private Map<String, Integer> eachResult;
+    private long startTime;
 
 
     public static Intent getVocabularyIntent(Context context){
@@ -76,8 +79,7 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
         index = getIntent().getIntExtra("position", 0);
         topicId = getIntent().getStringExtra("topicId");
 
-        datas = new JsonArray();
-
+        startTime = System.currentTimeMillis()/1000;
         DataManager manager = ((MvpApp) getApplicationContext()).getDataManager();
         presenter = new VocabularyTrainPresenter(manager);
         presenter.attachView(this);
@@ -116,7 +118,6 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
                 break;
 
         }
-        //fragmentList.add(new FinishFragment());
         adapter.notifyDataSetChanged();
     }
 
@@ -135,17 +136,9 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
                 fakeArr.remove(word.getTranslateWord());
                 fakeArr.add(0, word.getTranslateWord());
             }
-            /*bundle.putInt("trigger", index);
-            bundle.putParcelable("ed", response.get(i));
-            bundle.putStringArrayList("fk", new ArrayList<>(fakeArr.subList(0, 4)));
-
-            RememberFragment fragment = new RememberFragment();
-            BuildWordFragment fragmentEnglish = new BuildWordFragment();
-
-            fragmentEnglish.setArguments(bundle);
-            fragment.setArguments(bundle);*/
-
+            eachResult = new HashMap<>();
             fragmentList.add(BuildWordFragment.newInstance(index, word, fakeArr.subList(0,4)));
+
         }
         mProgressBar.setMax(sizeOfData);
     }
@@ -154,54 +147,24 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     public void sendData(int responses, String wordId) {
 
         if (responses!=2){
-            presenter.addToJson(wordId, responses);
+            eachResult.put("g_ans["+wordId+"]", responses);
             correctAns = correctAns+responses;
         }
 
         item++;
         mProgressBar.setProgress(item);
         if (item == sizeOfData) {
-            JsonObject res = new JsonObject();
+
             int result;
             if (sizeOfData==sizeOfResponse) {
                  result = correctAns * 100 / sizeOfData;
             }
             else result = correctAns *100 / (sizeOfData/2);
-            res.addProperty("topicId", topicId);
-            res.addProperty("chapter", "ch"+index);
-            presenter.requestSendResult(res, result);
+
+            presenter.requestSendResult(eachResult, result, topicId, "ch"+index, startTime);
+
         }
         viewPager.setCurrentItem(item);
-
-        /*if (responses==2&&item==0) {
-            sizeOfData = sizeOfData/2;
-            Log.d(TAG, "sendData: "+sizeOfData);
-        }
-        else if (responses!=2){
-            try {
-                Log.d(TAG, "sendData: "+responses);
-                object = new JsonObject();
-                object.addProperty("wordId", wordId);
-                object.addProperty("isCorrect", responses);
-                datas.add(object);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            correctAns = correctAns+responses;
-        }
-        item++;
-        mProgressBar.setProgress(item);
-        if (item == sizeOfData) {
-            JsonObject res = new JsonObject();
-            int result = correctAns*100/sizeOfData;
-            res.addProperty("topicId", topicId);
-            res.addProperty("chapter", "ch"+index);
-            res.addProperty("result", result);
-            res.addProperty("datas", new Gson().toJson(datas));
-            presenter.requestSendResult(res, result);
-        }
-        viewPager.setCurrentItem(item);*/
-
 
     }
 

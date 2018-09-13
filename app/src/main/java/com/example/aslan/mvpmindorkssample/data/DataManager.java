@@ -31,6 +31,8 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -95,6 +97,7 @@ public class DataManager implements DataManagerContract {
 
                     @Override
                     public void onFailure(Call<EngInformationResponse> call, Throwable t) {
+                        Log.e(TAG, "onFailure: "+t.getMessage()+" "+t.getStackTrace() );
                         callback.onError();
                     }
                 });
@@ -120,12 +123,11 @@ public class DataManager implements DataManagerContract {
     }
 
 
-    public void postChapterResult(JsonObject jsonObject, final GetVoidPostCallback callback) {
+    public void postChapterResult(Map<String, Integer> jsonObject, int result, String topic_id, String chapter, long start_time, final GetVoidPostCallback callback) {
         ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
         ApiFactory.recreate();
-        jsonObject.addProperty("user_id", getPrefUserid());
         ApiFactory.getApiService()
-                .postTaskResult(String.valueOf(jsonObject))
+                .postVocabularyResult(chapter, getPrefUserid(), topic_id, result, start_time,  jsonObject)
                 .enqueue(new Callback<PostDataResponse>() {
                     @Override
                     public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
@@ -137,7 +139,7 @@ public class DataManager implements DataManagerContract {
                     public void onFailure(Call<PostDataResponse> call, Throwable t) {
                         callback.onError(t);
                     }
-            });
+                });
     }
 
     public void postToChangeWordAsKnown(String word_id, final GetVoidPostCallback callback){

@@ -6,9 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.grammar.GrammarFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
-
     <TextView
         android:id="@+id/mGrammarTranslate"
         android:layout_width="0dp"

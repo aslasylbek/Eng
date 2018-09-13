@@ -46,8 +46,6 @@ public class ListeningTasksFragment extends Fragment implements ListeningTaskAda
     private ListeningTaskAdapter customAdapter;
 
 
-
-
     public static ListeningTasksFragment newInstance(List<Listening> list, int position) {
         Bundle args = new Bundle();
         ListeningTasksFragment fragment = new ListeningTasksFragment();

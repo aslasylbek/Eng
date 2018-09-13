@@ -25,8 +25,8 @@ import com.example.aslan.mvpmindorkssample.ui.tasks.TaskChoiceActivity;
 public class NotificationUtility {
 
     private static final String[] PROJECTION = {
-            "This is title",
-            "Description"
+            "Listening part",
+            "Listen and answer the question"
     };
 
     private static final int TITLE_INDEX = 0;

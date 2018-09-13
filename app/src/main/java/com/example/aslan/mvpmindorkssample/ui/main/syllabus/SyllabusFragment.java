@@ -1,11 +1,18 @@
 package com.example.aslan.mvpmindorkssample.ui.main.syllabus;
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,9 +25,7 @@ import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseFragment;
-import com.example.aslan.mvpmindorkssample.ui.main.Main2Activity;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
-import com.example.aslan.mvpmindorkssample.ui.main.content.Word;
 import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonAdapter;
 import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonParentItem;
 import com.example.aslan.mvpmindorkssample.ui.main.expandable.LessonChildItem;
@@ -39,26 +44,38 @@ import butterknife.BindView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SyllabusFragment extends BaseFragment implements TopicClickListener, SyllabusMvpView {
+public class SyllabusFragment extends BaseFragment implements TopicClickListener, SyllabusMvpView, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "SyllabusFragment";
     private static final String EMPTY = "";
 
     @BindView(R.id.mRecyclerView) RecyclerView mRView;
 
+    @BindView(R.id.srl_content_container)
+    SwipeRefreshLayout mSwipeContainer;
+
     private LessonAdapter adapter;
     private LinearLayoutManager linearLayoutManager;
     private SyllabusPresenter syllabusPresenter;
-    //private View view;
+    private AlarmManager am;
+    private BroadcastReceiver receiver;
+    private PendingIntent pendingIntent;
+    private long nearUpdateTime;
 
 
     @Override
     protected void init(@Nullable Bundle bundle) {
+        Log.e(TAG, "init: " );
+        mSwipeContainer.setOnRefreshListener(this);
+        mSwipeContainer.setColorSchemeColors(ContextCompat.getColor(getBaseActivity(), R.color.colorAccent));
         List<LessonParentItem> empty = new ArrayList<>();
         adapter = new LessonAdapter(empty, this);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         mRView.setLayoutManager(linearLayoutManager);
         mRView.setAdapter(adapter);
+        /***
+         * Check Item decor
+         */
         if (getActivity()!=null)
             mRView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mRView.setHasFixedSize(true);
@@ -66,6 +83,16 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         syllabusPresenter = new SyllabusPresenter(dataManager);
         syllabusPresenter.attachView(this);
         syllabusPresenter.getTopicsInformation();
+        startBroadcast();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.e(TAG, "onStart: "+nearUpdateTime);
+        if (nearUpdateTime>0){
+            syllabusPresenter.getTopicsInformation();
+        }
     }
 
     @Override
@@ -88,10 +115,14 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         int resId = R.anim.layout_animation_fall_down;
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mRView.getContext(), resId);
         //adapter.getGroups().clear();
-        adapter.addAll(lessonParentItems);
         //adapter = new LessonAdapter(lessonParentItems, this);
-        mRView.setLayoutAnimation(controller);
         //mRView.setAdapter(adapter);
+
+        adapter.addAll(lessonParentItems);
+        Log.e(TAG, "changedData: "+nearUpdateTime);
+        if (nearUpdateTime>0)
+            restartNotify(nearUpdateTime);
+        //mRView.setLayoutAnimation(controller);
         adapter.setOnGroupClickListener(new OnGroupClickListener() {
             @Override
             public boolean onGroupClick(int flatPos) {
@@ -103,8 +134,10 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
 
     @Override
     public void setTopicsData(List<Topic> topicsData) {
+        mSwipeContainer.setRefreshing(false);
         List<LessonParentItem> parent = new ArrayList<>();
         long timeStamp = System.currentTimeMillis()/1000;
+        nearUpdateTime = 0;
         for (int j = 0; j <topicsData.size(); j++){
             String mTitle = topicsData.get(j).getTitle();
             Topic topic = topicsData.get(j);
@@ -116,7 +149,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
             }
 
             if (!topic.getListening().isEmpty()) {
-                LessonChildItem lessonChildItem = addToList(topic.getStartListen(), topic.getEndListen(), timeStamp, R.string.item_listening, R.drawable.listening_background, mTitle, topic.getTopicId());
+                LessonChildItem lessonChildItem = addToList(topic.getStartListen(), topic.getEndListen(), timeStamp, R.string.item_listening, R.drawable.listening_background11, mTitle, topic.getTopicId());
                 list.add(lessonChildItem);
             }
 
@@ -135,7 +168,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     }
 
     public LessonChildItem addToList(String startChapterTime, String endChapterTime, long timeStamp, int childTitle, int childBackground, String title, String topicId){
-        int imageId = 0;
+        int imageId;
         String startFormatDate = "";
         String endFormatDate = "";
         if (!startChapterTime.equals(EMPTY) && !endChapterTime.equals(EMPTY)) {
@@ -143,22 +176,37 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
             long endTime = Long.parseLong(endChapterTime);
             startFormatDate = " from "+DateTimeUtils.formatRelativeTime(startTime);
             endFormatDate = " until "+DateTimeUtils.formatRelativeTime(endTime);
-            if (timeStamp > startTime && timeStamp < endTime)
+            if (timeStamp >= startTime && timeStamp <= endTime) {
                 imageId = R.drawable.ic_lock_open;
-            else imageId = R.drawable.ic_lock_outline;
+                if (nearUpdateTime<=endTime)
+                    nearUpdateTime = endTime;
+            }
+            else {
+                imageId = R.drawable.ic_lock_outline;
+                if (timeStamp<startTime && nearUpdateTime<startTime)
+                    nearUpdateTime = startTime;
+            }
         }
         else if (!startChapterTime.equals(EMPTY) && endChapterTime.equals(EMPTY)){
             long startTime = Long.parseLong(startChapterTime);
             startFormatDate = " from "+DateTimeUtils.formatRelativeTime(startTime);
-            if (timeStamp > startTime)
+            if (timeStamp >= startTime) {
                 imageId = R.drawable.ic_lock_open;
-            else imageId = R.drawable.ic_lock_outline;
+            }
+            else {
+                imageId = R.drawable.ic_lock_outline;
+                if (nearUpdateTime<startTime)
+                    nearUpdateTime = startTime;
+            }
         }
         else if (startChapterTime.equals(EMPTY) && !endChapterTime.equals(EMPTY)){
             long endTime = Long.parseLong(endChapterTime);
             endFormatDate = " until "+DateTimeUtils.formatRelativeTime(endTime);
-            if (timeStamp < endTime)
+            if (timeStamp <= endTime) {
                 imageId = R.drawable.ic_lock_open;
+                if (nearUpdateTime<=endTime)
+                    nearUpdateTime = endTime;
+            }
             else imageId = R.drawable.ic_lock_outline;
         }
         else
@@ -175,22 +223,67 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    public void startBroadcast(){
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context c, Intent i) {
+                Log.e(TAG, "onReceive: " );
+                syllabusPresenter.getTopicsInformation();
+                //am.cancel(pendingIntent);
+            }
+        };
+        getBaseActivity().registerReceiver(receiver, new IntentFilter("com.authorwjf.wakeywakey") );
+        pendingIntent = PendingIntent.getBroadcast( getBaseActivity(), 0, new Intent("com.authorwjf.wakeywakey"),
+                PendingIntent.FLAG_UPDATE_CURRENT );
+    }
+
+    private void restartNotify(long timeStamp) {
+        Log.e(TAG, "restartNotify: ");
+
+
+        am = (AlarmManager) getBaseActivity().getSystemService(Context.ALARM_SERVICE);
+        // На случай, если мы ранее запускали активити, а потом поменяли время,
+
+        // Устанавливаем разовое напоминание
+        am.set(AlarmManager.RTC_WAKEUP, timeStamp*1000, pendingIntent);
+    }
+
+    @Override
+    public void onRefresh() {
+        if (am!=null){
+            am.cancel(pendingIntent);
+        }
+        syllabusPresenter.getTopicsInformation();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.e(TAG, "onStop: ");
+        if (am!=null){
+            am.cancel(pendingIntent);
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         if (adapter!=null && mRView!=null){
             mRView.setAdapter(null);
             adapter = null;
         }
         syllabusPresenter.detachView();
+        if (am!=null&&pendingIntent!=null) {
+            am.cancel(pendingIntent);
+        }
+        if (receiver!=null)
+            getBaseActivity().unregisterReceiver(receiver);
+        Log.e(TAG, "onDestroyView: " );
         super.onDestroyView();
 
-    }
-
-    static class WordItemAnimator extends DefaultItemAnimator {
-
-        @Override
-        public boolean animateMove(
-                RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
-            return false;
-        }
     }
 }

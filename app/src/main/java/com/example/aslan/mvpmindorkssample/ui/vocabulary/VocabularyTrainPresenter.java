@@ -13,6 +13,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.util.Map;
+
 import retrofit2.Response;
 
 public class VocabularyTrainPresenter<V extends VocabularyMvpView> extends BasePresenter<V> implements VocabularyMvpPresenter<V> {
@@ -32,11 +34,10 @@ public class VocabularyTrainPresenter<V extends VocabularyMvpView> extends BaseP
         }
 
     @Override
-    public void requestSendResult(JsonObject object, int result) {
-        object.addProperty("result", result);
-        object.addProperty("datas", new Gson().toJson(datas));
+    public void requestSendResult(Map<String, Integer> object, int result, String topic_id, String chapter, long startTime) {
+
         getMvpView().showLoading();
-        getDataManager().postChapterResult(object, new DataManager.GetVoidPostCallback() {
+        getDataManager().postChapterResult(object, result, topic_id, chapter, startTime,  new DataManager.GetVoidPostCallback() {
             @Override
             public void onSuccess(Response<PostDataResponse> response) {
                 getMvpView().hideLoading();
@@ -50,17 +51,5 @@ public class VocabularyTrainPresenter<V extends VocabularyMvpView> extends BaseP
         });
         getMvpView().addFinishFragment(result);
 
-    }
-
-    @Override
-    public void addToJson(String wordId, int responses) {
-        try {
-            object = new JsonObject();
-            object.addProperty("wordId", wordId);
-            object.addProperty("isCorrect", responses);
-            datas.add(object);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

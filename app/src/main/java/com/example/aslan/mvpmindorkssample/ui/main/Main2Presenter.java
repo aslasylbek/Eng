@@ -53,10 +53,11 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
             @Override
             public void onSuccess(EngInformationResponse response) {
                 if (response.getSuccess()==1){
-                    English english = response.getEnglish().get(0);
                     getMvpView().setHeaderView(response.getInfo().get(0));
                     //check if
                     if (!response.getEnglish().isEmpty()) {
+                        English english = response.getEnglish().get(0);
+
 
                         //getMvpView().setHolderData(english.getTopics());
                         getDataManager().putCourseId(english.getCourseId());

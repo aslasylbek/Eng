@@ -35,7 +35,7 @@
 
 
     <string name="action_settings">Settings</string>
-    <string name="my_profile">Profile</string>
+    <string name="my_profile">Progress</string>
     <string name="category_dashboard">Exercises</string>
     <string name="category_dictionary">My dictionary</string>
     <string name="category_sign_out">Sign out</string>
@@ -47,6 +47,7 @@
     <!-- Errors handler -->
 
     <string name="not_single_word">Don not use for sentence :)</string>
+    <string name="oops_placeholder">Ooops, try to reopen</string>
     <string name="default_text">No internet connection</string>
     <string name="get_wrong">Sorry, something get wrong</string>
     <string name="error_message">Something wrong</string>

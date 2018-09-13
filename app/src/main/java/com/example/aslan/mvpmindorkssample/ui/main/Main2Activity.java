@@ -1,7 +1,11 @@
 package com.example.aslan.mvpmindorkssample.ui.main;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,11 +29,13 @@ import android.widget.TextView;
 import com.example.aslan.mvpmindorkssample.MvpApp;
 import com.example.aslan.mvpmindorkssample.R;
 import com.example.aslan.mvpmindorkssample.data.DataManager;
+import com.example.aslan.mvpmindorkssample.firebase.MyBroadcastReceiver;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Info;
 import com.example.aslan.mvpmindorkssample.ui.base.BaseActivity;
 import com.example.aslan.mvpmindorkssample.ui.main.content.Topic;
 import com.example.aslan.mvpmindorkssample.ui.main.syllabus.SyllabusFragment;
 import com.example.aslan.mvpmindorkssample.ui.splash.SplashActivity;
+import com.example.aslan.mvpmindorkssample.ui.user_result.UserResultFragment;
 import com.example.aslan.mvpmindorkssample.ui.word_wallet.WordBookFragment;
 import com.example.aslan.mvpmindorkssample.ui.word_wallet.WordBookMainFragment;
 
@@ -44,6 +50,8 @@ public class Main2Activity extends BaseActivity
 
 
     private static final String TAG = "Main2Activity";
+    public final static String BROADCAST_ACTION = "ru.startandroid.develop.p0961servicebackbroadcast";
+
     @BindView(R.id.fab)
     FloatingActionButton mFab;
     @BindView(R.id.drawer_layout)
@@ -59,6 +67,7 @@ public class Main2Activity extends BaseActivity
     private ActionBarDrawerToggle mToggle;
     private FragmentManager mFragmentManager;
     private List<Topic> topicList;
+    private AlarmManager am;
 
 
     public static Intent getStartIntent(Context context) {
@@ -89,7 +98,16 @@ public class Main2Activity extends BaseActivity
         presenter.requestForStudentDiscipline();
 
         presenter.sendDeviceToken();
+
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -173,6 +191,8 @@ public class Main2Activity extends BaseActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.my_profile:
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameMainFragment, UserResultFragment.newInstance()).commit();
+                setTitle(R.string.my_profile);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -228,4 +248,5 @@ public class Main2Activity extends BaseActivity
         presenter.detachView();
         super.onDestroy();
     }
+
 }

@@ -28,19 +28,17 @@
                 android:id="@+id/tvQuestion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="TextView:"/>
+                android:layout_marginTop="12dp"/>
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/editid"
                 android:layout_marginTop="10dp"
                 android:inputType="textNoSuggestions"
                 android:imeActionLabel="Submit"
                 android:singleLine="true"
-                android:hint="Answer"
-                />
+                android:hint="Answer" />
 
         </LinearLayout>
 

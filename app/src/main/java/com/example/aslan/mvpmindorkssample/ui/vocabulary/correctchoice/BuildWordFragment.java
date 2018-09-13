@@ -148,17 +148,17 @@ public class BuildWordFragment extends Fragment implements View.OnKeyListener{
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
-        Log.d(TAG, "onKey: "+keyCode+ "   "+event.getKeyCode()+"  "+editText.getImeOptions()+" "+editText.getImeActionId());
         if (keyCode == EditorInfo.IME_ACTION_DONE||event.getKeyCode()==KeyEvent.KEYCODE_ENTER||event.getKeyCode()==KeyEvent.ACTION_DOWN){
             closeKeyboard();
-            if (editText.getText().toString().matches(""))
-                return true;
-            else if (st.getWord().equals(editText.getText().toString())) {
+            String convertToLower = editText.getText().toString().toLowerCase();
+            String trimText = convertToLower.trim();
+
+            if (st.getWord().equals(trimText)) {
                 mButtonNext.setVisibility(View.VISIBLE);
                 editText.setFocusable(false);
                 isCorrect = 1;
             }
-            else {
+            else if (trimText.length()!=0){
                 editText.setError("Incorrect");
                 mButtonNext.setVisibility(View.VISIBLE);
                 editText.setFocusable(false);
