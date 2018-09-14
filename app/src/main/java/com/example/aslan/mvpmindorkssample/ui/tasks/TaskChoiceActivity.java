@@ -81,7 +81,7 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
         final LessonChildItem lessonChildItem = getIntent().getParcelableExtra(EXTRA);
         topicId = lessonChildItem.getTopicId();
         mViewPager.setMaxPages(MAX_PAGES);
-        mViewPager.setBackgroundAsset(lessonChildItem.getTopicPhoto());
+        mViewPager.setBackgroundAsset(lessonChildItem.getTopicPhotoS());
         mViewPager.setAdapter(adapter);
         String title = lessonChildItem.getLessonName();
         getSupportActionBar().setTitle(title);
@@ -95,7 +95,7 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
         presenter = new TaskChoicePresenter(manager);
         presenter.attachView(this);
         setViewPagerData(lessonChildItem);
-        //mViewPager.setPageTransformer(false, new FadePageTransformer());
+        //mViewPager.setPageTransformer(true, new FadePageTransformer());
     }
 
     protected int getContentResource() {
@@ -117,22 +117,24 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
     @Override
     public void setViewPagerData(LessonChildItem lessonChildItem) {
         List<ChoiceItemTest> choiceItemTests = new ArrayList<>();
-        if (lessonChildItem.getTopicName().equals("Vocabulary")){
-            for (int i = 1; i<=4; i++){
-                choiceItemTests.add(new ChoiceItemTest(i, "Exercise"+i, R.drawable.ic_menu_gallery, "Train your vocabulary using brainstorm", 1));
-            }
-        }
-        else if (lessonChildItem.getTopicName().equals("Reading")){
-            choiceItemTests.add(new ChoiceItemTest(1, "Reading "+1, R.drawable.ic_menu_gallery, "Read the text and try to understand", 2));
-        }
+        switch (lessonChildItem.getTopicName()) {
+            case "Vocabulary":
+                String[] items = getResources().getStringArray(R.array.vocabulary_task);
+                for (int i = 1; i <= 4; i++) {
+                    choiceItemTests.add(new ChoiceItemTest(i, "Task " + i, R.drawable.ic_university, items[i - 1], 1));
+                }
+                break;
+            case "Reading":
+                choiceItemTests.add(new ChoiceItemTest(1, "Reading", R.drawable.ic_word_book, "Read the text and put the missed word.", 2));
+                break;
+            case "Listening":
+                choiceItemTests.add(new ChoiceItemTest(1, "Listening", R.drawable.ic_headset, "Listen to the text and put the missed word.", 3));
 
-        else if (lessonChildItem.getTopicName().equals("Listening")){
-            choiceItemTests.add(new ChoiceItemTest(1, "Exercise"+1, R.drawable.ic_menu_gallery, "Listen and Answer the questions", 3));
+                break;
+            case "Grammar":
+                choiceItemTests.add(new ChoiceItemTest(1, "Grammar", R.drawable.ic_search, "Put the missing word and building a proposal.", 4));
 
-        }
-        else if (lessonChildItem.getTopicName().equals("Grammar")){
-            choiceItemTests.add(new ChoiceItemTest(1, "Exercise"+1, R.drawable.ic_menu_gallery, "Train your grammar to become an advanced", 4));
-
+                break;
         }
         mViewPager.setOffscreenPageLimit(choiceItemTests.size());
         adapter.setNewData(choiceItemTests);
@@ -205,13 +207,8 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        if (adapter!=null){
-            adapter = null;
-        }
-        if (mViewPager!=null)
-            mViewPager.setAdapter(null);
         presenter.detachView();
+        super.onDestroy();
     }
 
     @Override
@@ -219,6 +216,11 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                if (adapter!=null){
+                    adapter = null;
+                }
+                if (mViewPager!=null)
+                    mViewPager.setAdapter(null);
                 return true;
         }
         return super.onOptionsItemSelected(item);

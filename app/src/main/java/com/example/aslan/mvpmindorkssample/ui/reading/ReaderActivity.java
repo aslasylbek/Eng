@@ -103,11 +103,12 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
             result_ans+=isCorrect;
         }
 
-        if (item==fragmentList.size()){
+        if (item==fragmentList.size()&&fragmentList.size()>1){
             result_tf = result_tf*100/total_tf;
             result_ans = result_ans*100/total_ans;
             presenter.postResultToServer(topicId, result_tf, result_ans, startTime);
         }
+        else finish();
 
         mArticleViewPager.setCurrentItem(item);
 

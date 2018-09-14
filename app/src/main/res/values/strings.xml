@@ -70,6 +70,13 @@
         <item>Something</item>
     </string-array>
 
+    <string-array name="vocabulary_task">
+        <item>Listen to the phrase and find it on the list.</item>
+        <item>Listen to the phrase and find its translation.</item>
+        <item>Write the phrase at dictation.</item>
+        <item>Read the phrase and find its translation.</item>
+    </string-array>
+
 
     <!-- Play Icon -->
     <string name="play_icon_upper_path_data">M 44 32 L 44 64 L 100 64 L 100 64 Z</string>

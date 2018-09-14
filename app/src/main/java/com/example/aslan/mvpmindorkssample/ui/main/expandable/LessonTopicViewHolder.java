@@ -34,14 +34,6 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
         lessonChildItem = item;
         view.setTag(flatPos);
         if (item!=null) {
-            /*if (!item.getStartTime().equals("")) {
-                Log.e("AAA", "onBind: "+item.getStartTime());
-                long timeStamp = System.currentTimeMillis() / 1000;
-                long startTime = Long.parseLong(item.getStartTime());
-                long endTime = Long.parseLong(item.getEndTime());
-                //todo delete next line
-                mIconAccess.setVisibility(View.INVISIBLE);
-            }*/
             if (item.getIconAccess()!=0) {
                 mIconAccess.setImageResource(item.getIconAccess());
                 mIconAccess.setTag(item.getIconAccess());

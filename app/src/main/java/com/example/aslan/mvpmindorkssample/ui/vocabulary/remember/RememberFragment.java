@@ -3,6 +3,7 @@ package com.example.aslan.mvpmindorkssample.ui.vocabulary.remember;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RememberFragment extends Fragment{
+public class RememberFragment extends Fragment implements MediaPlayer.OnCompletionListener{
 
 
     private static final String TAG = "RememberFragment";
@@ -71,7 +72,7 @@ public class RememberFragment extends Fragment{
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_remember, container, false);
@@ -79,6 +80,7 @@ public class RememberFragment extends Fragment{
             listener = (FragmentsListener)getActivity();
         mediaPlayer = new MediaPlayer();
         ButterKnife.bind(this, view);
+        if (getArguments()!=null)
         response = getArguments().getParcelable(WORD_DATA);
 
         btnNext.setEnabled(false);
@@ -107,7 +109,7 @@ public class RememberFragment extends Fragment{
         mTextWord.setText(response.getWord());
         mTextTranscribe.setText(response.getTranscription());
         mTextTranslate.setText(response.getTranslateWord());
-        Glide.with(getActivity()).load(response.getPicUrl()).into(mWordPhoto);
+        Glide.with(this).load(response.getPicUrl()).into(mWordPhoto);
     }
 
     @Override
@@ -137,22 +139,29 @@ public class RememberFragment extends Fragment{
                     mediaPlayer.start();
                 }
             });
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    mBtnReplay.toggle();
-                    mBtnReplay.setClickable(true);
-                    btnNext.setEnabled(true);
-
-                }
-            });
+            mediaPlayer.setOnCompletionListener(this);
         } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mBtnReplay.toggle();
+        mBtnReplay.setClickable(true);
+        btnNext.setEnabled(true);
     }
 
     @Override
     public void onDetach() {
         Log.d(TAG, "onDetach: ");
+        if (mediaPlayer!=null){
+            mediaPlayer.release();
+        }
+
+        listener = null;
         super.onDetach();
     }
 }

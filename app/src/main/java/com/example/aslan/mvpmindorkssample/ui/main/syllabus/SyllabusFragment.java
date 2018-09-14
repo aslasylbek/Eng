@@ -86,14 +86,14 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         startBroadcast();
     }
 
-    @Override
+    /*@Override
     public void onStart() {
         super.onStart();
         Log.e(TAG, "onStart: "+nearUpdateTime);
         if (nearUpdateTime>0){
             syllabusPresenter.getTopicsInformation();
         }
-    }
+    }*/
 
     @Override
     protected int getContentResource() {
@@ -113,7 +113,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
 
     public void changedData(List<LessonParentItem> lessonParentItems){
         int resId = R.anim.layout_animation_fall_down;
-        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mRView.getContext(), resId);
+       // LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mRView.getContext(), resId);
         //adapter.getGroups().clear();
         //adapter = new LessonAdapter(lessonParentItems, this);
         //mRView.setAdapter(adapter);
@@ -144,22 +144,53 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
             List<LessonChildItem> list = new ArrayList<>();
 
             if (!topic.getGrammar().isEmpty()) {
-                LessonChildItem lessonChildItem = addToList(topic.getStartGram(), topic.getEndGram(), timeStamp, R.string.item_grammar, R.drawable.grammar_background, mTitle, topic.getTopicId());
+                LessonChildItem lessonChildItem = addToList(
+                        topic.getStartGram(),
+                        topic.getEndGram(),
+                        timeStamp, R.string.item_grammar,
+                        R.drawable.rsz_grammar_background,
+                        R.drawable.grammar_background,
+                        mTitle,
+                        topic.getTopicId());
                 list.add(lessonChildItem);
             }
 
             if (!topic.getListening().isEmpty()) {
-                LessonChildItem lessonChildItem = addToList(topic.getStartListen(), topic.getEndListen(), timeStamp, R.string.item_listening, R.drawable.listening_background11, mTitle, topic.getTopicId());
+                LessonChildItem lessonChildItem = addToList(
+                        topic.getStartListen(),
+                        topic.getEndListen(),
+                        timeStamp,
+                        R.string.item_listening,
+                        R.drawable.rsz_listening_background,
+                        R.drawable.listening_background11,
+                        mTitle,
+                        topic.getTopicId());
                 list.add(lessonChildItem);
             }
 
             if (!topic.getReading().isEmpty()) {
-                LessonChildItem lessonChildItem = addToList(topic.getStartRead(), topic.getEndRead(), timeStamp, R.string.item_reading, R.drawable.reading_background, mTitle, topic.getTopicId());
+                LessonChildItem lessonChildItem = addToList(
+                        topic.getStartRead(),
+                        topic.getEndRead(),
+                        timeStamp,
+                        R.string.item_reading,
+                        R.drawable.rsz_reading_background,
+                        R.drawable.reading_background,
+                        mTitle,
+                        topic.getTopicId());
                 list.add(lessonChildItem);
             }
 
             if (!topic.getWords().isEmpty()) {
-                LessonChildItem lessonChildItem = addToList(topic.getStartVoc(), topic.getEndVoc(), timeStamp, R.string.item_vocabulary, R.drawable.vocabulary_background, mTitle, topic.getTopicId());
+                LessonChildItem lessonChildItem = addToList(
+                        topic.getStartVoc(),
+                        topic.getEndVoc(),
+                        timeStamp,
+                        R.string.item_vocabulary,
+                        R.drawable.rsz_vocabulary_background,
+                        R.drawable.vocabulary_background,
+                        mTitle,
+                        topic.getTopicId());
                 list.add(lessonChildItem);
             }
             parent.add(new LessonParentItem(mTitle, list));
@@ -167,7 +198,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         changedData(parent);
     }
 
-    public LessonChildItem addToList(String startChapterTime, String endChapterTime, long timeStamp, int childTitle, int childBackground, String title, String topicId){
+    public LessonChildItem addToList(String startChapterTime, String endChapterTime, long timeStamp, int childTitle, int childBackground, int childBackS, String title, String topicId){
         int imageId;
         String startFormatDate = "";
         String endFormatDate = "";
@@ -215,6 +246,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         return new LessonChildItem(
                 getString(childTitle),
                 childBackground,
+                childBackS,
                 topicId,
                 title,
                 startFormatDate,
@@ -232,9 +264,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent i) {
-                Log.e(TAG, "onReceive: " );
                 syllabusPresenter.getTopicsInformation();
-                //am.cancel(pendingIntent);
             }
         };
         getBaseActivity().registerReceiver(receiver, new IntentFilter("com.authorwjf.wakeywakey") );
@@ -243,13 +273,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     }
 
     private void restartNotify(long timeStamp) {
-        Log.e(TAG, "restartNotify: ");
-
-
         am = (AlarmManager) getBaseActivity().getSystemService(Context.ALARM_SERVICE);
-        // На случай, если мы ранее запускали активити, а потом поменяли время,
-
-        // Устанавливаем разовое напоминание
         am.set(AlarmManager.RTC_WAKEUP, timeStamp*1000, pendingIntent);
     }
 
@@ -264,7 +288,6 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     @Override
     public void onStop() {
         super.onStop();
-        Log.e(TAG, "onStop: ");
         if (am!=null){
             am.cancel(pendingIntent);
         }
@@ -277,12 +300,12 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
             adapter = null;
         }
         syllabusPresenter.detachView();
+
         if (am!=null&&pendingIntent!=null) {
             am.cancel(pendingIntent);
         }
         if (receiver!=null)
             getBaseActivity().unregisterReceiver(receiver);
-        Log.e(TAG, "onDestroyView: " );
         super.onDestroyView();
 
     }

@@ -75,7 +75,6 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
     @Override
     public void spreadListeningCollection(List<Listening> collection) {
 
-        Log.e(TAG, "spreadListeningCollection: "+collection.get(0).getListening());
         startTime = System.currentTimeMillis()/1000;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.listeningTaskContainer, ListeningTasksFragment.newInstance(collection, position));

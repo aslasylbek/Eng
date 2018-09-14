@@ -22,6 +22,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +48,8 @@ public class GrammarFragment extends Fragment {
 
     private int correct = 0;
 
+    private Unbinder mUnbinder;
+
 
     public static GrammarFragment newInstance(String text, String translate) {
         Bundle args = new Bundle();
@@ -62,14 +65,17 @@ public class GrammarFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_grammar, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
 
         listener = (FragmentsListener)getActivity();
 
-        String translate = getArguments().getString(TRANSLATE);
+        String translate = "";
+        String text = "";
+        if (getArguments()!=null) {
+            translate = getArguments().getString(TRANSLATE);
+            text = getArguments().getString(TEXT);
+        }
         mGrammarTranslate.setText(translate);
-
-        String text = getArguments().getString(TEXT);
         String[] arr = text.split(" ");
         final List<ResultContent> testList = new ArrayList<>();
 
@@ -118,4 +124,13 @@ public class GrammarFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        if (mUnbinder!=null)
+            mUnbinder = null;
+        if (listener!=null){
+            listener = null;
+        }
+        super.onDestroyView();
+    }
 }

@@ -169,11 +169,6 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     }
 
 
-    @Override
-    public ResultContent sendExerciseData() {
-        int result = correctAns*100/sizeOfData;
-        return new ResultContent("ch"+index, topicId, result);
-    }
 
     @Override
     public void addFinishFragment(int result) {

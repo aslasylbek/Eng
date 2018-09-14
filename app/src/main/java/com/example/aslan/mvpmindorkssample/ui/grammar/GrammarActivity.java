@@ -85,11 +85,9 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
         item++;
         if (wordId.equals("cons")){
             res_cons+=isCorrect;
-            Log.d(TAG, "sendData: "+res_cons);
         }
         else if (wordId.equals("qa")){
             res_ans+=isCorrect;
-            Log.d(TAG, "sendData: "+res_ans);
         }
         if (item==sizeOfData*2){
             res_ans = res_ans*100/fragmentList.size();

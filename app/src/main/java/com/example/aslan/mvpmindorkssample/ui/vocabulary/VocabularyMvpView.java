@@ -10,7 +10,5 @@ public interface VocabularyMvpView extends MvpView{
 
     void setData(List<Word> response);
 
-    ResultContent sendExerciseData();
-
     void addFinishFragment(int result);
 }

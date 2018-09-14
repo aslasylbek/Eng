@@ -70,19 +70,39 @@ public class ListeningTasksFragment extends Fragment implements ListeningTaskAda
         editModelArrayList = listeningList.get(position-1).getQuestionanswer();
         customAdapter = new ListeningTaskAdapter(editModelArrayList, this);
         mTaskRView.setAdapter(customAdapter);
-        mTaskRView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+        mTaskRView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         return view;
 
     }
 
     @OnClick(R.id.btnSentResult)
     public void onSendClicked(){
-        int result = correct*100/editModelArrayList.size();
-        listener.sendData(result, "");
+        if (editModelArrayList.size()>0) {
+            int result = correct * 100 / editModelArrayList.size();
+            listener.sendData(result, "");
+        }
+        else getActivity().finish();
     }
 
     @Override
     public void onSendingResult() {
         correct++;
+    }
+
+    @Override
+    public void onStop() {
+        Log.e(TAG, "onStop: "+listeningList.get(0).getListening());
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (customAdapter!=null){
+            customAdapter = null;
+        }
+        if (listener!=null){
+            listener = null;
+        }
+        super.onDestroyView();
     }
 }

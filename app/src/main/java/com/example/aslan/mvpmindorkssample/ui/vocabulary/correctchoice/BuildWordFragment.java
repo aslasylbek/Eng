@@ -39,7 +39,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BuildWordFragment extends Fragment implements View.OnKeyListener{
+public class BuildWordFragment extends Fragment implements View.OnKeyListener, MediaPlayer.OnCompletionListener{
 
     private static final String TAG = "BuildWordFragment";
     private static final String TRIGGED = "trigged";
@@ -247,15 +247,15 @@ public class BuildWordFragment extends Fragment implements View.OnKeyListener{
                     mediaPlayer.start();
                 }
             });
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    mPlayAudio.toggle();
-                }
-            });
+            mediaPlayer.setOnCompletionListener(this);
         } catch (IOException e) {
-            Log.e("AA", "prepare() failed");
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mPlayAudio.toggle();
     }
 
     public void setButtonsData(){
@@ -270,5 +270,16 @@ public class BuildWordFragment extends Fragment implements View.OnKeyListener{
         for (int i=0; i<fakeList.size(); i++){
             buttons[i].setText(fakeList.get(i));
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (listener!=null){
+            listener = null;
+        }
+        if (mediaPlayer!=null){
+            mediaPlayer.release();
+        }
+        super.onDestroyView();
     }
 }

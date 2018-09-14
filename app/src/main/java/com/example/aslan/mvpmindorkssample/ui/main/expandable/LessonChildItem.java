@@ -8,16 +8,18 @@ public class LessonChildItem implements Parcelable{
 
     private String mTopicName;
     private int mTopicPhoto;
+    private int mTopicPhotoS;
     private String mTopicId;
     private String mLessonName;
     private String mStartTime;
     private String mEndTime;
     private int mIconAccess;
 
-    public LessonChildItem(String mTopicName, int mTopicPhoto, String mTopicId, String mLessonName, String mStartTime, String mEndTime, int mIconAccess) {
+    public LessonChildItem(String mTopicName, int mTopicPhoto, int mTopicPhotoS, String mTopicId, String mLessonName, String mStartTime, String mEndTime, int mIconAccess) {
         this.mTopicName = mTopicName;
         this.mTopicPhoto = mTopicPhoto;
         this.mTopicId = mTopicId;
+        this.mTopicPhotoS = mTopicPhotoS;
         this.mLessonName = mLessonName;
         this.mStartTime = mStartTime;
         this.mEndTime = mEndTime;
@@ -27,6 +29,7 @@ public class LessonChildItem implements Parcelable{
     protected LessonChildItem(Parcel in){
         mTopicName = in.readString();
         mTopicPhoto = in.readInt();
+        mTopicPhotoS = in.readInt();
         mTopicId = in.readString();
         mLessonName = in.readString();
         mStartTime = in.readString();
@@ -89,6 +92,14 @@ public class LessonChildItem implements Parcelable{
         this.mIconAccess = mIconAccess;
     }
 
+    public int getTopicPhotoS() {
+        return mTopicPhotoS;
+    }
+
+    public void setTopicPhotoS(int mTopicPhotoS) {
+        this.mTopicPhotoS = mTopicPhotoS;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -99,6 +110,7 @@ public class LessonChildItem implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mTopicName);
         dest.writeInt(mTopicPhoto);
+        dest.writeInt(mTopicPhotoS);
         dest.writeString(mTopicId);
         dest.writeString(mLessonName);
         dest.writeString(mStartTime);

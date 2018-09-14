@@ -34,7 +34,8 @@ public class GrammarPresenter<V extends GrammarContract.GrammarMvpView> extends 
         getDataManager().getGrammarArray(topic_id, new DataManager.GetGrammarListCallback() {
             @Override
             public void onSuccess(List<Grammar> grammarList) {
-                getMvpView().setNewDataFromRoom(grammarList);
+                if (grammarList.size()>0)
+                    getMvpView().setNewDataFromRoom(grammarList);
                 getMvpView().hideLoading();
             }
 

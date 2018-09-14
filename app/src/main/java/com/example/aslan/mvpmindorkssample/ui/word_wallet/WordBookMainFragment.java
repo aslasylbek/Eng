@@ -81,11 +81,7 @@ public class WordBookMainFragment extends BaseFragment implements WordBookContra
                 if (j == 0 && wordCollection.getRating().equals("0")) {
                     newWordCollection.add(wordCollection);
                 }
-                /*else if (j==2 &&wordCollection.getRating().equals("4")){
-                    newWordCollection.add(wordCollection);
-                }*/
-                //else if (j==1 && !wordCollection.getRating().equals("0") && !wordCollection.getRating().equals("4")){
-                else {
+                else if (j==1 && !wordCollection.getRating().equals("0")){
                     newWordCollection.add(wordCollection);
                 }
             }

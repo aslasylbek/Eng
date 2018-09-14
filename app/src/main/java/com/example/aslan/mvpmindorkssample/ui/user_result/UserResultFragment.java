@@ -29,7 +29,10 @@ import butterknife.BindView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserResultFragment extends BaseFragment implements UserResultContract.UserResultMvpView, ExpandableListView.OnGroupExpandListener, ExpandableListView.OnGroupCollapseListener, ExpandableListView.OnChildClickListener {
+public class UserResultFragment extends BaseFragment implements UserResultContract.UserResultMvpView,
+        ExpandableListView.OnGroupExpandListener,
+        ExpandableListView.OnGroupCollapseListener,
+        ExpandableListView.OnChildClickListener {
 
     private static final String TAG = "UserResultFragment";
     private UserResultPresenter resultPresenter;
@@ -39,8 +42,8 @@ public class UserResultFragment extends BaseFragment implements UserResultContra
 
     private CustomExpandableListAdapter adapter;
 
-    List<String> expandableListTitle;
-    HashMap<String, List<String>> expandableListDetail;
+    private List<String> expandableListTitle;
+    private HashMap<String, List<String>> expandableListDetail;
 
     public static UserResultFragment newInstance() {
         UserResultFragment fragment = new UserResultFragment();
@@ -60,7 +63,7 @@ public class UserResultFragment extends BaseFragment implements UserResultContra
 
         mExpandableListView.setOnChildClickListener(this);
 
-        DataManager manager = ((MvpApp)getActivity().getApplicationContext()).getDataManager();
+        DataManager manager = ((MvpApp)getBaseActivity().getApplicationContext()).getDataManager();
         resultPresenter = new UserResultPresenter(manager);
         resultPresenter.attachView(this);
         resultPresenter.requestToUserResult();
@@ -68,30 +71,19 @@ public class UserResultFragment extends BaseFragment implements UserResultContra
 
     @Override
     public void onGroupExpand(int groupPosition) {
-        Toast.makeText(getBaseActivity(),
-                expandableListTitle.get(groupPosition) + " List Expanded.",
-                Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void onGroupCollapse(int groupPosition) {
-        Toast.makeText(getBaseActivity(),
-                expandableListTitle.get(groupPosition) + " List Collapsed.",
-                Toast.LENGTH_SHORT).show();
+
 
     }
 
     @Override
     public boolean onChildClick(ExpandableListView parent, View v,
                                 int groupPosition, int childPosition, long id) {
-        Toast.makeText(
-                getBaseActivity(),
-                expandableListTitle.get(groupPosition)
-                        + " -> "
-                        + expandableListDetail.get(
-                        expandableListTitle.get(groupPosition)).get(
-                        childPosition), Toast.LENGTH_SHORT
-        ).show();
+
         return false;
     }
 
@@ -121,6 +113,9 @@ public class UserResultFragment extends BaseFragment implements UserResultContra
 
     @Override
     public void onDestroyView() {
+        if (adapter!=null){
+            adapter = null;
+        }
         resultPresenter.detachView();
         super.onDestroyView();
     }
