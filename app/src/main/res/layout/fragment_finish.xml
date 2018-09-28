@@ -38,14 +38,17 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center">
 
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
+                <com.timqi.sectorprogressview.ColorfulRingProgressView
+                    android:id="@+id/spv"
                     android:layout_height="match_parent"
-                    android:max="100"
-                    android:progress="0"
-                    android:progressDrawable="@drawable/circular_progress_rotate" />
+                    android:layout_width="match_parent"
+                    app:bgColor="@color/gray"
+                    app:fgColorStart="@color/colorRed"
+                    app:fgColorEnd="@color/colorAccent"
+                    app:percent="0"
+                    app:startAngle="0"
+                    app:strokeWidth="21dp"
+                    />
 
                 <TextView
                     android:id="@+id/tvProgressResult"

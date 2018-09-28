@@ -15,7 +15,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="0dp" />
 
-    <com.example.aslan.mvpmindorkssample.ui.tasks.CustomViewPager
+    <com.uibenglish.aslan.mvpmindorkssample.ui.tasks.CustomViewPager
         android:id="@+id/mChoiceViewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -29,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    </com.example.aslan.mvpmindorkssample.ui.tasks.CustomViewPager>
+    </com.uibenglish.aslan.mvpmindorkssample.ui.tasks.CustomViewPager>
 
 
     <include
@@ -41,6 +41,25 @@
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/mBulletLayout"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:layout_marginBottom="60dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp" />
+
+
 
 
 </android.support.constraint.ConstraintLayout>

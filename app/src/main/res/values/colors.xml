@@ -5,6 +5,7 @@
     <color name="colorPrimaryDarkToo">#013269</color>
     <color name="colorPrimaryLight">#63a4ff</color>
     <color name="colorAccent">#fdd835</color>
+    <color name="colorRed">#ff3f1e</color>
     <color name="colorYellow">#f2e9c0</color>
 
     <color name="colorAccentTrans">#7dff4081</color>

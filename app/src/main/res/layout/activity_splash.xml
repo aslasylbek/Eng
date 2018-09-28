@@ -6,6 +6,6 @@
     android:fitsSystemWindows="true"
     android:layout_height="match_parent"
     android:theme="@style/SplashScreenTheme"
-    tools:context="com.example.aslan.mvpmindorkssample.ui.splash.SplashActivity">
+    tools:context="com.uibenglish.aslan.mvpmindorkssample.ui.splash.SplashActivity">
 
 </android.support.constraint.ConstraintLayout>

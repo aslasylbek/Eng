@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.example.aslan.mvpmindorkssample.widget.CustomTextView
+            <com.uibenglish.aslan.mvpmindorkssample.widget.CustomTextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -42,7 +42,7 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.5" />
 
-        <com.example.aslan.mvpmindorkssample.playbutton.PlayPauseView
+        <com.uibenglish.aslan.mvpmindorkssample.playbutton.PlayPauseView
             android:id="@+id/btnReplay"
             android:layout_width="100dp"
             android:layout_height="100dp"
