@@ -26,6 +26,6 @@ public interface ReaderMvpContract {
 
         void addToDictionary(String word);
 
-        void postResultToServer(String topic_id, int result_tf, int result_ans, long startTime);
+        void postResultToServer(String topic_id, Integer result_tf, Integer result_ans, int total_tf, int total_ans, long startTime);
     }
 }

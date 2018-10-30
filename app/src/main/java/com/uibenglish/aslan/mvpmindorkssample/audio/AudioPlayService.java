@@ -124,9 +124,11 @@ public class AudioPlayService extends Service implements
         /***
          * send notification Title and description
          */
+
         Notification notification =
-                NotificationUtility.buildAudioServiceNotification(this, mUriWithTimeStamp, action);
+                    NotificationUtility.buildAudioServiceNotification(this, mUriWithTimeStamp, action);
         startForeground(AUDIO_SERVICE_NOTIFICATION_ID, notification);
+
     }
 
     @Override

@@ -104,10 +104,10 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
         if (getArguments()!=null){
             st = getArguments().getParcelable(WORD_DATA);
             int trigger = getArguments().getInt(TRIGGED);
-            if (trigger==3){
+            if (trigger==4){
                 rebuildView();
             }
-            else if (trigger==4){
+            else if (trigger==3){
                 rebuildViewForMultipleChoice();
                 fakeList.addAll(getArguments().getStringArrayList(FAKE_LIST));
                 setButtonsData();

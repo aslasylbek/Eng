@@ -1,6 +1,7 @@
 package com.uibenglish.aslan.mvpmindorkssample.firebase;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -82,6 +83,20 @@ public class NotificationFirebaseService extends FirebaseMessagingService {
         /***
          * ToSet ViewPager Position
          */
+        String CHANNEL_ONE_NAME = "Channel One";
+        String CHANNEL_ID = "uibenglish.kz";
+        NotificationChannel notificationChannel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationChannel = new NotificationChannel(CHANNEL_ID,
+                    CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_LOW);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setShowBadge(true);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            NotificationManager manager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(notificationChannel);
+        }
+
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
@@ -89,7 +104,7 @@ public class NotificationFirebaseService extends FirebaseMessagingService {
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-        Notification notification1 = new NotificationCompat.Builder(this, "1")
+        Notification notification1 = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_stat_logo)
                 .setContentTitle(notification.getTitle())

@@ -1,22 +1,31 @@
 package com.uibenglish.aslan.mvpmindorkssample.utils;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.app.NotificationCompat.MediaStyle;
+import android.util.Log;
 
 import com.uibenglish.aslan.mvpmindorkssample.R;
 import com.uibenglish.aslan.mvpmindorkssample.audio.AudioPlayService;
 import com.uibenglish.aslan.mvpmindorkssample.ui.listening.ListeningActivity;
 import com.uibenglish.aslan.mvpmindorkssample.ui.tasks.TaskChoiceActivity;
+
+import static android.app.NotificationManager.IMPORTANCE_HIGH;
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by MAO on 7/28/2017.
@@ -50,9 +59,21 @@ public class NotificationUtility {
         String title = queryCursor.getString(TITLE_INDEX);
         String description = queryCursor.getString(DESCRIPTION_INDEX);
         queryCursor.close();*/
-
         String title = PROJECTION[0];
         String description = PROJECTION[1];
+
+        String CHANNEL_ONE_NAME = "Channel One";
+        NotificationChannel notificationChannel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationChannel = new NotificationChannel(FOREGROUND_CHANNEL_ID,
+                    CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_LOW);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setShowBadge(true);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            NotificationManager manager = (NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(notificationChannel);
+        }
 
 
         Intent intentActivity = new Intent(context, ListeningActivity.class)
@@ -112,32 +133,6 @@ public class NotificationUtility {
         PendingIntent pendingIntentService = PendingIntent.getService(context, 0, intentService, 0);
         return new NotificationCompat.Action(
                 getDrawable(action), getActionName(context, action), pendingIntentService);
-    }
-
-    public static void showNewContentNotification(Context context, String category, String contentText) {
-        String contentTitle = context.getString(R.string.notification_new_content) + " "
-                + context.getString(R.string.app_name);
-        /***
-         * ToSet ViewPager Position
-         */
-        Intent intent = new Intent(context, ListeningActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .putExtra("A", category);
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_headset)
-                .setContentTitle(contentTitle)
-                .setContentText(contentText)
-                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .build();
-
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(12345, notification);
     }
 
 }

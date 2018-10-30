@@ -163,7 +163,7 @@ public class Main2Activity extends BaseActivity
 
     @OnClick(R.id.fab)
     public void onFabClicked(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+        Snackbar.make(view, "We are working on it", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
 
@@ -187,7 +187,10 @@ public class Main2Activity extends BaseActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.my_profile:
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameMainFragment, UserResultFragment.newInstance()).commit();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameMainFragment, UserResultFragment.newInstance())
+                        .commit();
                 setTitle(R.string.my_profile);
                 break;
         }
@@ -209,14 +212,16 @@ public class Main2Activity extends BaseActivity
             case R.id.category_dashboard:
                 fm = getSupportFragmentManager();
                 newFragment = new SyllabusFragment();
-                fm.beginTransaction().replace(R.id.frameMainFragment,
-                            newFragment)
-                            .commit();
+                fm.beginTransaction()
+                        .replace(R.id.frameMainFragment, newFragment)
+                        .commit();
                 break;
             case R.id.custom_word_book:
-                ft = getSupportFragmentManager().beginTransaction();
+                ft = getSupportFragmentManager()
+                        .beginTransaction();
                 newFragment = new WordBookMainFragment();
-                ft.replace(R.id.frameMainFragment, newFragment).commit();
+                ft.replace(R.id.frameMainFragment, newFragment)
+                        .commit();
                 break;
             case R.id.sign_out:
                 presenter.setUserLogOut();

@@ -66,19 +66,20 @@ public class ListeningTaskAdapter  extends RecyclerView.Adapter<ListeningTaskAda
         public void bind(Questionanswer item, final ListeningTaskListener listener){
             textView.setText(getAdapterPosition()+1+". "+item.getQuestion());
             editText.setTag(item.getAnswer());
-            editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    String convertToLower = editText.getText().toString().toLowerCase();
-                    String trimText = convertToLower.trim();
-                    if (editText.getTag().equals(trimText)) {
-                        editText.setFocusable(false);
-                        listener.onSendingResult();
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(!hasFocus){
+                        String convertToLower = editText.getText().toString().toLowerCase();
+                        String trimText = convertToLower.trim();
+                        if (editText.getTag().equals(trimText)) {
+                            editText.setFocusable(false);
+                            listener.onSendingResult();
+                        }
+                        else if (trimText.length()!=0){
+                            editText.setError("Incorrect");
+                        }
                     }
-                    else if (trimText.length()!=0){
-                        editText.setError("Incorrect");
-                    }
-                    return false;
                 }
             });
         }

@@ -75,14 +75,13 @@ public class ListeningTasksFragment extends Fragment implements ListeningTaskAda
         mTaskRView.setNestedScrollingEnabled(false);
         mTaskRView.setAdapter(customAdapter);
         customAdapter.setEditModelArrayList(editModelArrayList);
-
-
         return view;
 
     }
 
     @OnClick(R.id.btnSentResult)
     public void onSendClicked(){
+        mTaskRView.clearFocus();
         if (editModelArrayList.size()>0) {
             int result = correct * 100 / editModelArrayList.size();
             listener.sendData(result, "");

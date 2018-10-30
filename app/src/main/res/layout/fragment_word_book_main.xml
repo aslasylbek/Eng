@@ -37,7 +37,6 @@
         android:layout_gravity="bottom">
     </FrameLayout>
 
-    <!-- TODO: Update blank fragment layout -->
 
 
 </LinearLayout>

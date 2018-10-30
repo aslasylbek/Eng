@@ -94,8 +94,8 @@ public interface ApiService {
     Call<PostDataResponse> postReadingResult(
             @Field("user_id") String user_id,
             @Field("topic_id") String topic_id,
-            @Field("result_ans") int result_ans,
-            @Field("result_tf") int result_tf,
+            @Field("result_ans") Integer result_ans,
+            @Field("result_tf") Integer result_tf,
             @Field("start_time") long start_time);
 
     @FormUrlEncoded

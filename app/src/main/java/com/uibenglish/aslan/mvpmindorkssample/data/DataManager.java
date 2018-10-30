@@ -217,7 +217,7 @@ public class DataManager implements DataManagerContract {
                 });
     }
 
-    public void postReadingResult(String topic_id, int result_tf, int result_ans, long startTime,  final GetVoidPostCallback callback){
+    public void postReadingResult(String topic_id, Integer result_tf, Integer result_ans, long startTime,  final GetVoidPostCallback callback){
         ApiFactory.getApiService()
                 .postReadingResult(getPrefUserid(), topic_id, result_ans, result_tf, startTime)
                 .enqueue(new Callback<PostDataResponse>() {

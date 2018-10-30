@@ -73,8 +73,8 @@
     <string-array name="vocabulary_task">
         <item>Listen to the phrase and find it on the list.</item>
         <item>Listen to the phrase and find its translation.</item>
-        <item>Write the phrase at dictation.</item>
         <item>Read the phrase and find its translation.</item>
+        <item>Write the phrase at dictation.</item>
     </string-array>
 
 

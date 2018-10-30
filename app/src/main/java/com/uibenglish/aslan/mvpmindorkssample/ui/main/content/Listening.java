@@ -23,12 +23,24 @@ public class Listening implements Parcelable {
     @Expose
     private List<Questionanswer> questionanswer = null;
 
+    @SerializedName("sound_url")
+    @Expose
+    private String sound_url;
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSound_url() {
+        return sound_url;
+    }
+
+    public void setSound_url(String sound_url) {
+        this.sound_url = sound_url;
     }
 
     public String getListening() {
@@ -55,11 +67,12 @@ public class Listening implements Parcelable {
         this.questionanswer = questionanswer;
     }
 
-    public Listening(String id, String listening, String translate, List<Questionanswer> questionanswer) {
+    public Listening(String id, String listening, String translate, List<Questionanswer> questionanswer, String sound_url) {
         this.id = id;
         this.listening = listening;
         this.translate = translate;
         this.questionanswer = questionanswer;
+        this.sound_url = sound_url;
     }
 
     public Listening(Parcel in) {
@@ -67,6 +80,7 @@ public class Listening implements Parcelable {
         listening = in.readString();
         translate = in.readString();
         in.readList(this.questionanswer, Questionanswer.class.getClassLoader());
+        sound_url = in.readString();
     }
 
     @Override
@@ -80,6 +94,7 @@ public class Listening implements Parcelable {
         dest.writeString(listening);
         dest.writeString(translate);
         dest.writeList(questionanswer);
+        dest.writeString(sound_url);
 
     }
 

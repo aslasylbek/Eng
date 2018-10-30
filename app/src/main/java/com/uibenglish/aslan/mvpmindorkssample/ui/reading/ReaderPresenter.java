@@ -46,8 +46,28 @@ public class ReaderPresenter<V extends ReaderMvpContract.ReaderMvpView> extends 
     }
 
     @Override
-    public void postResultToServer(String topic_id, int result_tf, int result_ans, long startTime) {
-        final int totalResult = (result_ans+result_tf)/2;
+    public void postResultToServer(String topic_id, Integer result_tf, Integer result_ans, int total_tf, int total_ans, long startTime) {
+        int total_res;
+
+        if (total_tf>0 && total_ans>0){
+            result_tf = result_tf*100/total_tf;
+            result_ans = result_ans*100/total_ans;
+            total_res = (result_ans+result_tf)/2;
+
+        }
+        else if(total_tf>0){
+            result_tf = result_tf*100/total_tf;
+            total_res = result_tf;
+            result_ans = null;
+        }
+        else {
+            result_ans = result_ans*100/total_ans;
+            total_res = result_ans;
+            result_tf = null;
+        }
+
+        final int totalResult = total_res;
+
         getMvpView().showLoading();
         getDataManager()
                 .postReadingResult(topic_id, result_tf, result_ans, startTime, new DataManager.GetVoidPostCallback() {

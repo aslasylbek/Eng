@@ -113,9 +113,11 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
                 prepareFragmentList(fakeTranslateArr, response, 2);
                 break;
             case 3:
+                index = 5;
                 prepareFragmentList(fakeTranslateArr, response, 3);
                 break;
             case 4:
+                index = 6;
                 prepareFragmentList(fakeTranslateArr, response, 4);
                 break;
 
