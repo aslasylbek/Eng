@@ -4,6 +4,7 @@ package com.uibenglish.aslan.mvpmindorkssample.ui.grammar;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 
 import com.uibenglish.aslan.mvpmindorkssample.R;
 import com.uibenglish.aslan.mvpmindorkssample.ui.FragmentsListener;
-import com.uibenglish.aslan.mvpmindorkssample.ui.reading.TrueFalseFragment;
 import com.uibenglish.aslan.mvpmindorkssample.ui.vocabulary.ResultContent;
 
 import java.util.ArrayList;
@@ -22,12 +22,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GrammarFragment extends Fragment {
+public class GrammarFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "GrammarFragment";
     private static final String TEXT = "text";
@@ -35,20 +36,30 @@ public class GrammarFragment extends Fragment {
 
     @BindView(R.id.textView3)
     TextView mBuilder;
-
     @BindView(R.id.mGrammarTranslate)
     TextView mGrammarTranslate;
 
     @BindView(R.id.llParts)
     LinearLayout linearLayout;
 
+    @BindView(R.id.btnNext)
+    Button mNextButton;
+
+    private ArrayList buildedData = new ArrayList();
+
     private FragmentsListener listener;
 
     private int checker = 0;
 
     private int correct = 0;
+    private final List<ResultContent> shuffledList = new ArrayList<>();
+
+    private String translate;
+    private String text;
 
     private Unbinder mUnbinder;
+    private Button[] buttons;
+    private int buttonCount = 0;
 
 
     public static GrammarFragment newInstance(String text, String translate) {
@@ -63,65 +74,60 @@ public class GrammarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_grammar, container, false);
-        mUnbinder = ButterKnife.bind(this, view);
 
+        mUnbinder = ButterKnife.bind(this, view);
         listener = (FragmentsListener)getActivity();
 
-        String translate = "";
-        String text = "";
+        translate = "";
+        text = "";
         if (getArguments()!=null) {
             translate = getArguments().getString(TRANSLATE);
             text = getArguments().getString(TEXT);
         }
-        mGrammarTranslate.setText(translate);
-        String[] arr = text.split(" ");
-        final List<ResultContent> testList = new ArrayList<>();
 
-        for (int i=0; i<arr.length; i++){
-            testList.add(new ResultContent(arr[i], i));
-        }
-        Collections.shuffle(testList);
-
-        for (int i=0; i<testList.size(); i++){
-            final Button button = new Button(getActivity());
-            button.setId(testList.get(i).getResult());
-            button.setText(testList.get(i).getChapter());
-            button.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            linearLayout.addView(button);
-
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (button.getId()==checker)
-                        checker++;
-                    linearLayout.removeView(button);
-                    mBuilder.append(" "+button.getText());
-
-                    if (linearLayout.getChildCount()==0){
-                        if (checker==testList.size()){
-                            mBuilder.setTextColor(Color.GREEN);
-                            correct = 1;
-                        }
-                        else mBuilder.setTextColor(Color.RED);
-                        Button button1 = new Button(getActivity());
-                        button1.setText("Next");
-                        button1.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-                        linearLayout.addView(button1);
-                        button1.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                listener.sendData(correct, "cons");
-                            }
-                        });
-                    }
-                }
-            });
-        }
+        updateUI();
 
         return view;
+    }
+
+    public void updateUI(){
+        mNextButton.setVisibility(View.GONE);
+        mGrammarTranslate.setText(translate);
+        String[] correctArray = text.split(" ");
+        for (int i=0; i<correctArray.length; i++){
+            shuffledList.add(new ResultContent(correctArray[i], i));
+        }
+
+        Collections.shuffle(shuffledList);
+        buttons = new Button[shuffledList.size()];
+
+        for (int i=0; i<shuffledList.size(); i++){
+            buttons[i] = new Button(getActivity());
+            buttons[i].setId(shuffledList.get(i).getResult());
+            buttons[i].setText(shuffledList.get(i).getChapter());
+            buttons[i].setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            linearLayout.addView(buttons[i]);
+            buttons[i].setOnClickListener(this);
+        }
+    }
+
+    @OnClick(R.id.textView3)
+    public void undoLastWord(){
+        mBuilder.setText("");
+        buildedData.clear();
+        checker = 0;
+        buttonCount = 0;
+        for (int i = 0; i<shuffledList.size(); i++){
+            buttons[i].setVisibility(View.VISIBLE);
+        }
+
+
+    }
+
+    @OnClick(R.id.btnNext)
+    public void gotoNextQuestion(){
+        listener.sendData(correct, "cons");
     }
 
     @Override
@@ -132,5 +138,32 @@ public class GrammarFragment extends Fragment {
             listener = null;
         }
         super.onDestroyView();
+    }
+
+    @Override
+    public void onClick(View v) {
+        Button b = linearLayout.findViewById(v.getId());
+        if (v.getId()==checker)
+            checker++;
+        b.setVisibility(View.GONE);
+        buttonCount++;
+        mBuilder.setText("");
+        buildedData.add(b.getText());
+        for (int i=0; i< buildedData.size(); i++){
+            mBuilder.append(" "+buildedData.get(i));
+        }
+
+        if (linearLayout.getChildCount()==buttonCount+1){
+            if (checker==shuffledList.size()){
+                mBuilder.setTextColor(Color.GREEN);
+                correct = 1;
+            }
+            else {
+                mBuilder.setTextColor(Color.RED);
+                mGrammarTranslate.setTextColor(Color.GREEN);
+                mGrammarTranslate.setText(text);
+            }
+            mNextButton.setVisibility(View.VISIBLE);
+        }
     }
 }

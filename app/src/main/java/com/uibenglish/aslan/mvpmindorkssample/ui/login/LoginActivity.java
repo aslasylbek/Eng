@@ -2,12 +2,16 @@ package com.uibenglish.aslan.mvpmindorkssample.ui.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uibenglish.aslan.mvpmindorkssample.general.LoadingDialog;
@@ -44,6 +48,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
         loginPresenter.attachView(LoginActivity.this);
         loginPresenter.setPrefsIfExist();
     }
+
 
     @Override
     public void setLoginPassword(String barcode, String password) {

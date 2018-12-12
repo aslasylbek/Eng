@@ -91,7 +91,6 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
         }
         setView(answer);
         setTextFromDb(text);
-
         return view;
     }
 

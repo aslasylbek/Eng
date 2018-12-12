@@ -43,6 +43,14 @@
             android:gravity="center"
             android:orientation="vertical">
 
+            <Button
+                android:id="@+id/btnNext"
+                android:background="@drawable/btn_check"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Next"
+                tools:layout_editor_absoluteX="148dp"
+                tools:layout_editor_absoluteY="308dp" />
         </LinearLayout>
     </ScrollView>
 

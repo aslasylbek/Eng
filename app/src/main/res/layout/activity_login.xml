@@ -9,8 +9,15 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/background_design"
+    android:background="@drawable/de_background"
     tools:context="com.uibenglish.aslan.mvpmindorkssample.ui.login.LoginActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="144dp"
+        android:layout_height="153dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/de_logo" />
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -18,8 +25,8 @@
         android:layout_marginBottom="@dimen/margin_border"
         android:layout_marginLeft="@dimen/margin_side"
         android:layout_marginRight="@dimen/margin_side"
-        android:layout_marginTop="@dimen/margin_border"
-        app:cardCornerRadius="7dp"
+        android:layout_marginTop="0dp"
+        app:cardCornerRadius="25dp"
         app:cardElevation="22dp">
 
 
@@ -82,11 +89,12 @@
 
             <Button
                 android:id="@+id/email_sign_in_button"
-                android:background="@drawable/btn_check"
+                android:background="@drawable/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
+                android:textColor="@color/whiteText"
                 android:textStyle="bold" />
 
         </LinearLayout>

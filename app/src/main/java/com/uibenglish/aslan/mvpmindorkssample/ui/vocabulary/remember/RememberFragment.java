@@ -3,6 +3,7 @@ package com.uibenglish.aslan.mvpmindorkssample.ui.vocabulary.remember;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,13 +15,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.uibenglish.aslan.mvpmindorkssample.R;
+import com.uibenglish.aslan.mvpmindorkssample.audio.AudioSyntethis;
+import com.uibenglish.aslan.mvpmindorkssample.audio.OnAudioTTSCompleteListener;
 import com.uibenglish.aslan.mvpmindorkssample.playbutton.PlayPauseView;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Word;
 import com.uibenglish.aslan.mvpmindorkssample.ui.FragmentsListener;
 import com.uibenglish.aslan.mvpmindorkssample.ui.reading.ReaderFragment;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +34,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RememberFragment extends Fragment implements MediaPlayer.OnCompletionListener{
+public class RememberFragment extends Fragment implements OnAudioTTSCompleteListener {
 
 
     private static final String TAG = "RememberFragment";
@@ -53,13 +58,10 @@ public class RememberFragment extends Fragment implements MediaPlayer.OnCompleti
     @BindView(R.id.ivWordPhoto)
     ImageView mWordPhoto;
 
-    private boolean isViewShown = false;
-    private boolean isViewToUser = false;
 
     private FragmentsListener listener;
 
-    private MediaPlayer mediaPlayer;
-
+    private AudioSyntethis audioSyntethis;
     private Word response;
 
     public static RememberFragment newInstance(Word word) {
@@ -70,6 +72,39 @@ public class RememberFragment extends Fragment implements MediaPlayer.OnCompleti
         return fragment;
     }
 
+    @Override
+    public void onAudioStart() {
+
+    }
+
+    @Override
+    public void onAudioDone() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    getActivity().runOnUiThread(runn1);
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
+
+    Runnable runn1 = new Runnable() {
+        @Override
+        public void run() {
+            mBtnReplay.toggle();
+            mBtnReplay.setClickable(true);
+            btnNext.setEnabled(true);
+        }
+    };
+
+    @Override
+    public void onAudioError() {
+
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -78,29 +113,34 @@ public class RememberFragment extends Fragment implements MediaPlayer.OnCompleti
         View view = inflater.inflate(R.layout.fragment_remember, container, false);
         if (getActivity()!=null)
             listener = (FragmentsListener)getActivity();
-        mediaPlayer = new MediaPlayer();
+        /*call = new Callable() {
+            @Override
+            public Object call() throws Exception {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e(TAG, "onAudioDone: KAKAKAKA" );
+                        mBtnReplay.toggle();
+                        mBtnReplay.setClickable(true);
+                        btnNext.setEnabled(true);
+                    }
+                });
+                return null;
+            }
+        };*/
+        audioSyntethis = new AudioSyntethis(getActivity(),this);
         ButterKnife.bind(this, view);
         if (getArguments()!=null)
         response = getArguments().getParcelable(WORD_DATA);
-
-        btnNext.setEnabled(false);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnNext.setEnabled(false);
-                mediaPlayer.release();
-                mediaPlayer = null;
+                audioSyntethis.stopAudioPlayer();
                 listener.sendData(2, response.getId());
             }
         });
-        isViewShown = true;
-
-        if (isViewToUser){
-            playAudio();
-        }
 
         setWordData();
-
         return view;
     }
 
@@ -112,15 +152,6 @@ public class RememberFragment extends Fragment implements MediaPlayer.OnCompleti
         Glide.with(this).load(response.getPicUrl()).into(mWordPhoto);
     }
 
-    @Override
-    public void setMenuVisibility(boolean menuVisible) {
-        super.setMenuVisibility(menuVisible);
-        isViewToUser = menuVisible;
-        if (isViewToUser && isViewShown){
-            playAudio();
-        }
-    }
-
     @OnClick(R.id.btnReplay)
     public void onReplay(){
         playAudio();
@@ -129,38 +160,16 @@ public class RememberFragment extends Fragment implements MediaPlayer.OnCompleti
     public void playAudio(){
         mBtnReplay.toggle();
         mBtnReplay.setClickable(false);
-        mediaPlayer.reset();
-        try {
-            mediaPlayer.setDataSource(response.getSoundUrl());
-            mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mediaPlayer.start();
-                }
-            });
-            mediaPlayer.setOnCompletionListener(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        mBtnReplay.toggle();
-        mBtnReplay.setClickable(true);
-        btnNext.setEnabled(true);
+        audioSyntethis.setText(response.getWord());
+        audioSyntethis.playSyntethMedia();
     }
 
     @Override
     public void onDetach() {
-        Log.d(TAG, "onDetach: ");
-        if (mediaPlayer!=null){
-            mediaPlayer.release();
+        if (audioSyntethis!=null) {
+            Log.e(TAG, "onDetach: 1" );
+            audioSyntethis.stopAudioPlayer();
         }
-
         listener = null;
         super.onDetach();
     }

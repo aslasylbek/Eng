@@ -261,7 +261,6 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
 
     public void setButtonsData(){
         Collections.shuffle(fakeList);
-
         if (fakeList.contains(st.getWord())){
             indexCorrect = fakeList.indexOf(st.getWord());
         }
