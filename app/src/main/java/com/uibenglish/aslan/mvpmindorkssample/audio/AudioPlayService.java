@@ -124,7 +124,6 @@ public class AudioPlayService extends Service implements
         /***
          * send notification Title and description
          */
-
         Notification notification =
                     NotificationUtility.buildAudioServiceNotification(this, mUriWithTimeStamp, action);
         startForeground(AUDIO_SERVICE_NOTIFICATION_ID, notification);
@@ -323,7 +322,7 @@ public class AudioPlayService extends Service implements
              * todo caching not work proxyUrl
              *
              */
-            mMediaPlayer.setDataSource(mAudioHref);
+            mMediaPlayer.setDataSource(proxyUrl);
         } catch (IOException e) {
             e.printStackTrace();
             stopSelf();

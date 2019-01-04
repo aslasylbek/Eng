@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.uibenglish.aslan.mvpmindorkssample.MvpApp;
 import com.uibenglish.aslan.mvpmindorkssample.R;
+import com.uibenglish.aslan.mvpmindorkssample.audio.AudioSyntethis;
+import com.uibenglish.aslan.mvpmindorkssample.audio.OnAudioTTSCompleteListener;
 import com.uibenglish.aslan.mvpmindorkssample.data.DataManager;
 import com.uibenglish.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.uibenglish.aslan.mvpmindorkssample.general.LoadingDialog;
@@ -27,7 +29,7 @@ import java.io.IOException;
  */
 
 public class DefinitionFragment extends BottomSheetDialogFragment
-        implements View.OnClickListener, DefinitionContract.DefinitionMvpView {
+        implements View.OnClickListener, DefinitionContract.DefinitionMvpView, OnAudioTTSCompleteListener {
 
     private static final String TAG = DefinitionFragment.class.getSimpleName();
     private static final String WORD_KEY = "word";
@@ -41,8 +43,8 @@ public class DefinitionFragment extends BottomSheetDialogFragment
     private String mPronUrl;
     private LoadingView mLoadingView;
     private DefinitionPresenter definitionPresenter;
+    private AudioSyntethis audioSyntethis;
 
-    private MediaPlayer mMediaPlayer;
 
     public static DefinitionFragment newInstance(String word) {
         Bundle args = new Bundle();
@@ -111,10 +113,11 @@ public class DefinitionFragment extends BottomSheetDialogFragment
         mAddView.setVisibility(View.VISIBLE);
         mAddView.setOnClickListener(DefinitionFragment.this);
         mPronUrl = response.getSoundUrl();
-        if (!TextUtils.isEmpty(mPronUrl)) {
+        if (!TextUtils.isEmpty(mWord)) {
             mPronunciationView.setVisibility(View.VISIBLE);
             mPronunciationView.setOnClickListener(DefinitionFragment.this);
-            prepareMedia();
+            audioSyntethis = new AudioSyntethis(getActivity(), this);
+            audioSyntethis.setText(mWord);
         } else {
             mPronunciationView.setVisibility(View.GONE);
         }
@@ -130,8 +133,8 @@ public class DefinitionFragment extends BottomSheetDialogFragment
                 }
                 break;
             case R.id.iv_pronunciation:
-                if (mMediaPlayer != null) {
-                    mMediaPlayer.start();
+                if (audioSyntethis != null) {
+                    audioSyntethis.playSyntethMedia();
                 }
                 break;
             default:
@@ -140,7 +143,7 @@ public class DefinitionFragment extends BottomSheetDialogFragment
     }
 
     private void prepareMedia() {
-        if (mMediaPlayer == null) {
+        /*if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
             try {
                 mMediaPlayer.setDataSource(mPronUrl);
@@ -149,16 +152,31 @@ public class DefinitionFragment extends BottomSheetDialogFragment
                 mMediaPlayer.release();
                 mMediaPlayer = null;
             }
-        }
+        }*/
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+        if (audioSyntethis != null) {
+            audioSyntethis.destroyAudioPlayer();
+            audioSyntethis = null;
         }
+    }
+
+    @Override
+    public void onAudioStart() {
+
+    }
+
+    @Override
+    public void onAudioDone() {
+
+    }
+
+    @Override
+    public void onAudioError() {
+
     }
 
     @Override

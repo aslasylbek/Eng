@@ -35,6 +35,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -44,6 +46,7 @@
                 android:id="@+id/frameAudioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_20"
                 android:layout_gravity="center">
 
                 <com.uibenglish.aslan.mvpmindorkssample.playbutton.PlayPauseView
@@ -72,25 +75,25 @@
 
                     <Button
                         android:id="@+id/btn1"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Button" />
 
                     <Button
                         android:id="@+id/btn2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Button" />
 
                     <Button
                         android:id="@+id/btn3"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Button" />
 
                     <Button
                         android:id="@+id/btn4"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Button" />
 

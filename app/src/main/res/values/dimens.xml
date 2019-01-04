@@ -51,8 +51,12 @@
     <dimen name="pause_bar_distance">14dp</dimen>
     <dimen name="pause_bar_height">70dp</dimen>
 
-    <dimen name="audio_player_height">72dp</dimen>
+    <dimen name="audio_player_height">52dp</dimen>
     <dimen name="control_play_button1_height">36dp</dimen>
     <dimen name="control_play_button2_height">32dp</dimen>
+
+
+    <dimen name="list_item_img_height">88dp</dimen>
+    <dimen name="list_item_img_width">120dp</dimen>
 
 </resources>

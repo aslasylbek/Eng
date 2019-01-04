@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.uibenglish.aslan.mvpmindorkssample.MvpApp;
 import com.uibenglish.aslan.mvpmindorkssample.R;
 import com.uibenglish.aslan.mvpmindorkssample.data.DataManager;
+import com.uibenglish.aslan.mvpmindorkssample.ui.bbcenglish.BBCFragment;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Info;
 import com.uibenglish.aslan.mvpmindorkssample.ui.base.BaseActivity;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Topic;
@@ -223,6 +224,12 @@ public class Main2Activity extends BaseActivity
                 ft.replace(R.id.frameMainFragment, newFragment)
                         .commit();
                 break;
+            case R.id.bbc_english:
+                ft = getSupportFragmentManager().beginTransaction();
+                newFragment = new BBCFragment();
+                ft.replace(R.id.frameMainFragment, newFragment).commit();
+                break;
+
             case R.id.sign_out:
                 presenter.setUserLogOut();
                 break;

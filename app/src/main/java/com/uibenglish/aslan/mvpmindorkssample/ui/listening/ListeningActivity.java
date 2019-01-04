@@ -57,7 +57,7 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
         if (getSupportFragmentManager().findFragmentByTag(AUDIO_PLAYER_FRAGMENT_TAG) == null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.audio_player_container,
-                    new AudioPlayerFragment(), AUDIO_PLAYER_FRAGMENT_TAG).commit();
+                    new AudioPlayerTTSFragment(), AUDIO_PLAYER_FRAGMENT_TAG).commit();
         }
         DataManager manager = ((MvpApp)getApplicationContext()).getDataManager();
         listeningPresenter = new ListeningPresenter(manager);
@@ -83,9 +83,9 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
          */
         Uri mUriWithTimeStamp = Uri.parse("content://com.uibenglish.aslan.mvpmindorkssample/bbc/1534356000000/category/6Minute"+topicId);
 
-        AudioPlayerFragment audioPlayerFragment = (AudioPlayerFragment)getSupportFragmentManager().findFragmentByTag(AUDIO_PLAYER_FRAGMENT_TAG);
-        //audioPlayerFragment.prepareAudioService(AUDIO_FILE_SOURCE+topicId+".mp3", mUriWithTimeStamp);
-        audioPlayerFragment.prepareAudioService(collection.get(0).getSound_url(), mUriWithTimeStamp);
+        AudioPlayerTTSFragment audioPlayerFragment = (AudioPlayerTTSFragment) getSupportFragmentManager().findFragmentByTag(AUDIO_PLAYER_FRAGMENT_TAG);
+        audioPlayerFragment.prepareAudioService(collection.get(0).getListening(), mUriWithTimeStamp);
+
     }
 
     @Override

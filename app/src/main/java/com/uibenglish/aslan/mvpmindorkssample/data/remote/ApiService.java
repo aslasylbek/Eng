@@ -3,26 +3,25 @@ package com.uibenglish.aslan.mvpmindorkssample.data.remote;
 import com.uibenglish.aslan.mvpmindorkssample.data.content.EngInformationResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.content.LoginResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.content.TranslationResponse;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCEnglish;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLesson;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLessonsList;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.PostDataResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.ResultStudentTasks;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.WordCollection;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Grammar;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Listening;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Reading;
-import com.mindorks.placeholderview.annotations.Position;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Url;
 
 public interface ApiService {
@@ -121,6 +120,15 @@ public interface ApiService {
             @Field("user_id") String user_id,
             @Field("device_token") String device_token);
 
+
+    @FormUrlEncoded
+    @POST("post/bbc_questions.php")
+    Call<BBCLesson> postBBCLesson(
+            @Field("user_id") String user_id,
+            @Field("lesson_id") int lesson_id,
+            @FieldMap Map<String, String> vocabulary,
+            @FieldMap Map<String, String> transcript);
+
     /***
      *
      * @param user_id
@@ -154,6 +162,25 @@ public interface ApiService {
     Call<ResultStudentTasks> getUserResult(
             @Field("user_id") String user_id,
             @Field("course_id") String course_id);
+
+    @FormUrlEncoded
+    @POST("post/get_bbc.php")
+    Call<BBCEnglish> getBBCCategories(@Field("all") int all);
+
+    @FormUrlEncoded
+    @POST("post/get_bbc.php")
+    Call<BBCLessonsList> getBBCLessonsList(@Field("category_id") int category_id);
+
+    @FormUrlEncoded
+    @POST("post/get_bbc.php")
+    Call<BBCLesson> getBBCLesson(@Field("lesson_id") String lesson_id);
+
+
+
+
+
+
+
 
 
 }

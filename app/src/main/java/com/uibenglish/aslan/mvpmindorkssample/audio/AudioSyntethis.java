@@ -22,6 +22,8 @@ public class AudioSyntethis extends UtteranceProgressListener implements TextToS
     private OnAudioTTSCompleteListener callback;
     private TextToSpeech tts;
 
+    private boolean mIsLoop = false;
+
 
     public AudioSyntethis(Context context, OnAudioTTSCompleteListener callback) {
         tts = new TextToSpeech(context, this);
@@ -55,10 +57,17 @@ public class AudioSyntethis extends UtteranceProgressListener implements TextToS
         callback.onAudioStart();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onDone(String utteranceId) {
-        Log.e(TAG, "onDone: "+utteranceId );
+        if (mIsLoop){
+            ConvertTextToSpeech();
+        }
+        else{
+            stop();
+        }
         callback.onAudioDone();
+
 
     }
 
@@ -67,15 +76,31 @@ public class AudioSyntethis extends UtteranceProgressListener implements TextToS
         callback.onAudioError();
     }
 
-    public void stopAudioPlayer(){
+    public void destroyAudioPlayer(){
         if(tts != null){
             tts.stop();
             tts.shutdown();
         }
     }
 
+    public boolean isPlaying(){
+        return tts.isSpeaking();
+    }
+
+    public int stop(){
+        return tts.stop();
+    }
+
+    public boolean getIsLoop() {
+        return mIsLoop;
+    }
+
+    public void setIsLoop(boolean isLoop) {
+        this.mIsLoop = isLoop;
+    }
 
     public void playSyntethMedia(){
+        Log.e(TAG, "playSyntethMedia: "+text);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ConvertTextToSpeech();
         }

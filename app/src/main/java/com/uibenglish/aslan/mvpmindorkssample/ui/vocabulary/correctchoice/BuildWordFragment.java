@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uibenglish.aslan.mvpmindorkssample.R;
+import com.uibenglish.aslan.mvpmindorkssample.audio.AudioSyntethis;
+import com.uibenglish.aslan.mvpmindorkssample.audio.OnAudioTTSCompleteListener;
 import com.uibenglish.aslan.mvpmindorkssample.playbutton.PlayPauseView;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Listening;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Word;
@@ -41,7 +44,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BuildWordFragment extends Fragment implements  MediaPlayer.OnCompletionListener{
+public class BuildWordFragment extends Fragment implements  OnAudioTTSCompleteListener {
 
     private static final String TAG = "BuildWordFragment";
     private static final String TRIGGED = "trigged";
@@ -50,7 +53,8 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
 
     private boolean isViewShown = false;
     private boolean isViewToUser = false;
-    private MediaPlayer mediaPlayer;
+
+    private AudioSyntethis audioSyntethis;
 
     @BindView(R.id.btnNext)
     Button mButtonNext;
@@ -94,7 +98,8 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
         listener = (FragmentsListener)getActivity();
         ButterKnife.bind(this, view);
 
-        mediaPlayer = new MediaPlayer();
+
+
         buttons[0] = view.findViewById(R.id.btn1);
         buttons[1] = view.findViewById(R.id.btn2);
         buttons[2] = view.findViewById(R.id.btn3);
@@ -117,32 +122,52 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
                 setButtonsData();
             }
         }
+
+        audioSyntethis = new AudioSyntethis(getActivity(), this);
+        audioSyntethis.setText(st.getWord());
+
         mButtonNext.setVisibility(View.INVISIBLE);
         mButtonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.release();
-                mediaPlayer = null;
+                audioSyntethis.destroyAudioPlayer();
                 listener.sendData(isCorrect, st.getId());
             }
         });
 
-        isViewShown = true;
 
-        if (isViewToUser){
-            playAudio();
-        }
         return view;
     }
+
+ /*   @Override
+    public void onResume() {
+        super.onResume();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        isViewShown = true;
+
+                        if (isViewToUser){
+                            playAudio();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }*/
 
     public void rebuildView(){
         for (int i=0; i<4; i++){
             buttons[i].setVisibility(View.GONE);
         }
         editText = new EditText(getActivity());
-        editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         editText.setHint("Word");
         editText.setMaxLines(1);
+        editText.setGravity(Gravity.CENTER_HORIZONTAL);
         editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         editText.setImeActionLabel("Check", KeyEvent.KEYCODE_ENTER);
         editText.setImeActionLabel("Check", EditorInfo.IME_ACTION_DONE);
@@ -153,21 +178,21 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
                 /***
                  * Make changes
                  */
-
                     String convertToLower = editText.getText().toString().toLowerCase();
                     String trimText = convertToLower.trim();
 
                     if (st.getWord().equals(trimText)) {
                         mButtonNext.setVisibility(View.VISIBLE);
                         editText.setFocusable(false);
+                        editText.setBackgroundColor(getResources().getColor(R.color.colorCorrect));
                         isCorrect = 1;
                     }
                     else if (trimText.length()!=0){
                         editText.setError("Incorrect");
                         mButtonNext.setVisibility(View.VISIBLE);
+                        editText.setBackgroundColor(getResources().getColor(R.color.colorIncorrect));
                         editText.setFocusable(false);
                     }
-
 
                 return false;
             }
@@ -226,7 +251,7 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
         }
     }
 
-
+/*
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
@@ -234,29 +259,46 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
         if (isViewToUser && isViewShown){
             playAudio();
         }
-    }
+    }*/
 
     public void playAudio(){
         mPlayAudio.toggle();
-        mediaPlayer.reset();
-        try {
-            mediaPlayer.setDataSource(st.getSoundUrl());
-            mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mediaPlayer.start();
-                }
-            });
-            mediaPlayer.setOnCompletionListener(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        audioSyntethis.playSyntethMedia();
+
+
     }
 
     @Override
-    public void onCompletion(MediaPlayer mp) {
-        mPlayAudio.toggle();
+    public void onAudioStart() {
+
+    }
+
+    @Override
+    public void onAudioDone() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    getActivity().runOnUiThread(runn1);
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
+
+    Runnable runn1 = new Runnable() {
+        @Override
+        public void run() {
+            mPlayAudio.toggle();
+        }
+    };
+
+
+    @Override
+    public void onAudioError() {
+
     }
 
     public void setButtonsData(){
@@ -277,8 +319,8 @@ public class BuildWordFragment extends Fragment implements  MediaPlayer.OnComple
         if (listener!=null){
             listener = null;
         }
-        if (mediaPlayer!=null){
-            mediaPlayer.release();
+        if (audioSyntethis!=null){
+            audioSyntethis.destroyAudioPlayer();
         }
         super.onDestroyView();
     }

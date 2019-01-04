@@ -28,5 +28,8 @@
     <color name="colorNewPrimaryDarkToo">#013269</color>
     <color name="colorNewPrimaryLight">#4c98b2</color>
 
+    <color name="colorCorrect">#36d95a</color>
+    <color name="colorIncorrect">#ff4829</color>
+
 
 </resources>

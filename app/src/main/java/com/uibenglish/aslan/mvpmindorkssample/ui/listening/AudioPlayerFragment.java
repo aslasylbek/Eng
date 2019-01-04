@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +30,15 @@ public class AudioPlayerFragment extends Fragment implements
         SeekBar.OnSeekBarChangeListener,
         View.OnClickListener{
 
+    private static final String TAG = "AudioPlayerFragment";
+
     private final static int REFRESH_TIME_INTERVAL = 500;
     private static final String SERVICE_STATE_KEY = "service_state";
     private static final String AUDIO_HREF = "audioFileMp3";
 
 
     private AudioPlayService mAudioService;
+
     private ImageView mPlayButton;
     private SeekBar mAudioSeekBar;
     private ProgressBar mAudioLoading;
@@ -44,7 +48,6 @@ public class AudioPlayerFragment extends Fragment implements
     private ImageView mReplayButton;
     private ImageView mLoopButton;
     private boolean mBond = false;
-
     private Handler mPlayerHandler = new Handler();
     private final Runnable mRunnable = new Runnable() {
         @Override
@@ -98,10 +101,10 @@ public class AudioPlayerFragment extends Fragment implements
                     .putExtra(AUDIO_HREF, audioHref);
             getActivity().startService(playerIntent);
             getActivity().bindService(playerIntent, mConnection, BIND_AUTO_CREATE);
-
-
         }
     }
+
+
 
     private void updateSeekBarUI() {
         if (mBond && mAudioService.isPrepared()) {

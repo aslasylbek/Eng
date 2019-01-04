@@ -12,6 +12,10 @@ import com.uibenglish.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.local.AppDatabase;
 import com.uibenglish.aslan.mvpmindorkssample.data.local.PreferenceHelper;
 import com.uibenglish.aslan.mvpmindorkssample.data.local.SharedPrefsHelper;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCCategories;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCEnglish;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLesson;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLessonsList;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.PostDataResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.ResultStudentTasks;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.WordCollection;
@@ -54,6 +58,113 @@ public class DataManager implements DataManagerContract {
         this.prefsHelper = prefsHelper;
         this.appDatabase = appDatabase;
     }
+
+    // TODO: BBCEnglish routing
+
+
+    public void getBBCCategories(final GetBBCCategories callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory.
+                getApiService().
+                getBBCCategories(1).
+                enqueue(new Callback<BBCEnglish>() {
+            @Override
+            public void onResponse(Call<BBCEnglish> call, Response<BBCEnglish> response) {
+                if(response.isSuccessful()){
+                    if (response.body().getStatus() == 1 &&
+                            response.body().getCategories().size()!=0){
+                        callback.onSuccess(response.body().getCategories());
+                    }
+                    else callback.onError(new Throwable());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BBCEnglish> call, Throwable t) {
+                callback.onError(t);
+            }
+        });
+    }
+
+    public void getBBCLessonList(int category, final GetBBCLessonList callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory.
+                getApiService().
+                getBBCLessonsList(category).
+                enqueue(new Callback<BBCLessonsList>() {
+            @Override
+            public void onResponse(Call<BBCLessonsList> call, Response<BBCLessonsList> response) {
+                if (response.isSuccessful()
+                        && response.body().getStatus() == 1
+                        && response.body().getLessons().size()!=0){
+                    callback.onSuccess(response.body().getLessons());
+                }
+                else callback.onError(new Throwable());
+            }
+
+            @Override
+            public void onFailure(Call<BBCLessonsList> call, Throwable t) {
+                callback.onError(t);
+            }
+        });
+    }
+
+    public void getBBCLesson(String lesson_id, final GetBBCLesson callback){
+        ApiFactory.
+                getApiService().
+                getBBCLesson(lesson_id).
+                enqueue(new Callback<BBCLesson>() {
+            @Override
+            public void onResponse(Call<BBCLesson> call, Response<BBCLesson> response) {
+                if (response.isSuccessful() &&
+                        response.body().getStatus()==1){
+                    callback.onSuccess(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BBCLesson> call, Throwable t) {
+                callback.onError(t);
+            }
+        });
+    }
+
+
+
+    //TODO: Token push notification
+
+    public void sendDeviceToken(final GetVoidPostCallback callback){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String newToken = instanceIdResult.getToken();
+                Log.e("newToken",newToken);
+                ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+                ApiFactory.recreate();
+                ApiFactory.getApiService()
+                        .sendTokenToServer(getPrefUserid(), newToken)
+                        .enqueue(new Callback<PostDataResponse>() {
+                            @Override
+                            public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                                if (response.isSuccessful())
+                                    callback.onSuccess(response);
+                            }
+
+                            @Override
+                            public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                                callback.onError(t);
+                            }
+                        });
+
+            }
+        });
+    }
+
+
+    //TODO: English information
+
 
     public void sendForToken(String username, String password, final GetTokenCallbacks callback) {
         ApiFactory
@@ -311,32 +422,7 @@ public class DataManager implements DataManagerContract {
                 });
     }
 
-    public void sendDeviceToken(final GetVoidPostCallback callback){
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(InstanceIdResult instanceIdResult) {
-                String newToken = instanceIdResult.getToken();
-                Log.e("newToken",newToken);
-                ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
-                ApiFactory.recreate();
-                ApiFactory.getApiService()
-                        .sendTokenToServer(getPrefUserid(), newToken)
-                        .enqueue(new Callback<PostDataResponse>() {
-                            @Override
-                            public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
-                                if (response.isSuccessful())
-                                    callback.onSuccess(response);
-                            }
 
-                            @Override
-                            public void onFailure(Call<PostDataResponse> call, Throwable t) {
-                                callback.onError(t);
-                            }
-                        });
-
-            }
-        });
-    }
 
     public void getUserResult(final GetUserResultCallback callback){
         ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
@@ -356,6 +442,8 @@ public class DataManager implements DataManagerContract {
                     }
                 });
     }
+
+    //TODO: Realm for vocabulary
 
     public void saveTopics(Topic... topic) {
         appDatabase.topicDao().insertAll(topic);
@@ -403,6 +491,9 @@ public class DataManager implements DataManagerContract {
     public List<Reading> getTextByTopicId(String topicId) {
         return appDatabase.topicDao().findTextById(topicId);
     }
+
+
+    //TODO: Shared Preference
 
     @Override
     public void clear() {
@@ -469,9 +560,11 @@ public class DataManager implements DataManagerContract {
         return prefsHelper.getCourseId();
     }
 
+
+    //TODO: Server callbacks
+
     public interface GetTokenCallbacks {
         void onSuccess(LoginResponse response);
-
         void onError(Throwable t);
     }
 
@@ -512,6 +605,20 @@ public class DataManager implements DataManagerContract {
     }
     public interface GetUserResultCallback{
         void onSuccess(ResultStudentTasks resultStudentTasks);
+        void onError(Throwable t);
+    }
+
+    public interface GetBBCCategories{
+        void onSuccess(List<BBCCategories> bbcCategories);
+        void onError(Throwable t);
+    }
+    public interface GetBBCLessonList{
+        void onSuccess(List<BBCLessonsList.Lesson> bbcLessonsLists);
+        void onError(Throwable t);
+    }
+
+    public interface GetBBCLesson{
+        void onSuccess(BBCLesson bbcLessons);
         void onError(Throwable t);
     }
 }

@@ -19,8 +19,6 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, T> extends
     @Nullable
     private OnItemClickListener<T> mOnItemClickListener;
 
-
-
     @Nullable
     private EmptyRecyclerView mRecyclerView;
 

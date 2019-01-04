@@ -135,7 +135,7 @@ public class RememberFragment extends Fragment implements OnAudioTTSCompleteList
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                audioSyntethis.stopAudioPlayer();
+                audioSyntethis.destroyAudioPlayer();
                 listener.sendData(2, response.getId());
             }
         });
@@ -149,6 +149,7 @@ public class RememberFragment extends Fragment implements OnAudioTTSCompleteList
         mTextWord.setText(response.getWord());
         mTextTranscribe.setText(response.getTranscription());
         mTextTranslate.setText(response.getTranslateWord());
+        audioSyntethis.setText(response.getWord());
         Glide.with(this).load(response.getPicUrl()).into(mWordPhoto);
     }
 
@@ -160,15 +161,13 @@ public class RememberFragment extends Fragment implements OnAudioTTSCompleteList
     public void playAudio(){
         mBtnReplay.toggle();
         mBtnReplay.setClickable(false);
-        audioSyntethis.setText(response.getWord());
         audioSyntethis.playSyntethMedia();
     }
 
     @Override
     public void onDetach() {
         if (audioSyntethis!=null) {
-            Log.e(TAG, "onDetach: 1" );
-            audioSyntethis.stopAudioPlayer();
+            audioSyntethis.destroyAudioPlayer();
         }
         listener = null;
         super.onDetach();

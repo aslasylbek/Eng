@@ -95,7 +95,7 @@ public class WordBookAdapter extends RecyclerView.Adapter<WordBookAdapter.Vocabu
         holder.mVocabularyTextView.setText(list.get(position).getWord());
         holder.mSymbolTextView.setText(list.get(position).getTranscription());
         holder.mDefinitionTextView.setText(list.get(position).getTranslateWord());
-        holder.mAudioHref = list.get(position).getSoundUrl();
+        holder.mAudioHref = list.get(position).getWord();
 
         // set visibility
         holder.itemView.setActivated(isExpanded);

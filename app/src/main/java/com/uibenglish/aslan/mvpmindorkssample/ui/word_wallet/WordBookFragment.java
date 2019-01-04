@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uibenglish.aslan.mvpmindorkssample.R;
+import com.uibenglish.aslan.mvpmindorkssample.audio.AudioSyntethis;
+import com.uibenglish.aslan.mvpmindorkssample.audio.OnAudioTTSCompleteListener;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.WordCollection;
 import com.uibenglish.aslan.mvpmindorkssample.ui.AddWordListener;
 
@@ -35,7 +37,7 @@ import butterknife.ButterKnife;
  */
 
 public class WordBookFragment extends Fragment implements
-        WordBookAdapter.OnItemClickListener{
+        WordBookAdapter.OnItemClickListener, OnAudioTTSCompleteListener {
 
     private static final int WORD_BOOK_LOADER_ID = 64236;
     private static final String SECTION = "section";
@@ -47,7 +49,7 @@ public class WordBookFragment extends Fragment implements
 
     private WordBookAdapter mAdapter;
     private ItemTouchHelper mSwipeToDeleteHelper;
-    private MediaPlayer mMediaPlayer;
+    private AudioSyntethis audioSyntethis;
     private String mCurrentAudioHref = "";
     private AddWordListener listener;
 
@@ -109,6 +111,8 @@ public class WordBookFragment extends Fragment implements
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(manager);
 
+        audioSyntethis = new AudioSyntethis(getActivity(), this);
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 manager.getOrientation());
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider));
@@ -133,14 +137,31 @@ public class WordBookFragment extends Fragment implements
 
     @Override
     public void OnPronunciationClick(String audioHref) {
-        if (TextUtils.isEmpty(audioHref)) {
+        audioSyntethis.setText(audioHref);
+        audioSyntethis.playSyntethMedia();
+        /*if (TextUtils.isEmpty(audioHref)) {
             Toast.makeText(getContext(), R.string.no_audio, Toast.LENGTH_SHORT).show();
         } else if (mCurrentAudioHref.equals(audioHref) && mMediaPlayer != null) {
             mMediaPlayer.start();
         } else {
             prepareMedia(audioHref);
             mCurrentAudioHref = audioHref;
-        }
+        }*/
+    }
+
+    @Override
+    public void onAudioStart() {
+
+    }
+
+    @Override
+    public void onAudioDone() {
+
+    }
+
+    @Override
+    public void onAudioError() {
+
     }
 
     @Override
@@ -172,7 +193,7 @@ public class WordBookFragment extends Fragment implements
         });*/
     }
 
-    private void prepareMedia(String audioHref) {
+    /*private void prepareMedia(String audioHref) {
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
         }
@@ -191,18 +212,22 @@ public class WordBookFragment extends Fragment implements
             mMediaPlayer = null;
         }
     }
-
+*/
     @Override
     public void onPause() {
         super.onPause();
-        if (mMediaPlayer != null) {
+        /*if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
-        }
+        }*/
     }
 
     @Override
     public void onDestroyView() {
+        if (audioSyntethis!=null){
+            audioSyntethis.destroyAudioPlayer();
+            audioSyntethis = null;
+        }
         super.onDestroyView();
     }
 

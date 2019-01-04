@@ -9,15 +9,20 @@
             android:icon="@drawable/ic_world"
             android:title="@string/category_dashboard"/>
 
+        <item
+            android:id="@+id/custom_word_book"
+            android:icon="@drawable/ic_word_book"
+            android:title="@string/custom_word_book"/>
+
     </group>
 
     <group
         android:id="@+id/group_custom"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/custom_word_book"
-            android:icon="@drawable/ic_word_book"
-            android:title="@string/custom_word_book"/>
+            android:id="@+id/bbc_english"
+            android:icon="@drawable/bbc"
+            android:title="BBC English"/>
     </group>
 
     <group

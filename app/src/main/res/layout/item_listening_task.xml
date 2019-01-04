@@ -1,16 +1,11 @@
-<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_10"
-    card_view:cardElevation="7dp"
-    card_view:cardCornerRadius="4dp">
+    android:layout_margin="@dimen/margin_10">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvQuestion"
@@ -28,7 +23,4 @@
                 android:singleLine="true"
                 android:hint="Answer" />
 
-        </LinearLayout>
-
-
-    </android.support.v7.widget.CardView>
+    </LinearLayout>

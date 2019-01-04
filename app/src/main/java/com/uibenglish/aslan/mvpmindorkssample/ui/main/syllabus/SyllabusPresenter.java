@@ -29,8 +29,9 @@ public class SyllabusPresenter<V extends SyllabusMvpView> extends BasePresenter<
                 if (response.getSuccess() == 1 && !response.getEnglish().isEmpty()) {
                     English english = response.getEnglish().get(0);
                     List<Topic> topicList = english.getTopics();
-                    getMvpView().setTopicsData(topicList);
-
+                    if (isAttached()) {
+                        getMvpView().setTopicsData(topicList);
+                    }
                     getDataManager().clearAllDatabase();
                     for (int i = 0; i < english.getTopics().size(); i++) {
                         Topic topic = english.getTopics().get(i);

@@ -125,14 +125,15 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
         closeKeyboard();
         String convertToLower = mEditAnswer.getText().toString().toLowerCase();
         String trimText = convertToLower.trim();
-
         if (answer.equals(trimText)) {
             mBtnNext.setVisibility(View.VISIBLE);
             mEditAnswer.setFocusable(false);
+            mEditAnswer.setBackgroundColor(getResources().getColor(R.color.colorCorrect));
             isCorrect = 1;
         }
         else if(trimText.length()!=0){
             mEditAnswer.setError("Incorrect");
+            mEditAnswer.setBackgroundColor(getResources().getColor(R.color.colorIncorrect));
             mBtnNext.setVisibility(View.VISIBLE);
             mEditAnswer.setFocusable(false);
         }
@@ -188,7 +189,7 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
 
     public void setTextFromDb(String textFromDb) {
         Typeface typeface = Typeface.createFromAsset(getResources().getAssets(), "fonts/GoogleSans-Medium.ttf");
-        mQuestionText.setTypeface(typeface);
+        //mQuestionText.setTypeface(typeface);
         mQuestionText.setText(textFromDb);
         mQuestionText.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
             @Override
