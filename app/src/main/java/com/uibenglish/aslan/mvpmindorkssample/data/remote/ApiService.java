@@ -121,13 +121,6 @@ public interface ApiService {
             @Field("device_token") String device_token);
 
 
-    @FormUrlEncoded
-    @POST("post/bbc_questions.php")
-    Call<BBCLesson> postBBCLesson(
-            @Field("user_id") String user_id,
-            @Field("lesson_id") int lesson_id,
-            @FieldMap Map<String, String> vocabulary,
-            @FieldMap Map<String, String> transcript);
 
     /***
      *
@@ -163,23 +156,29 @@ public interface ApiService {
             @Field("user_id") String user_id,
             @Field("course_id") String course_id);
 
-    @FormUrlEncoded
-    @POST("post/get_bbc.php")
-    Call<BBCEnglish> getBBCCategories(@Field("all") int all);
 
     @FormUrlEncoded
     @POST("post/get_bbc.php")
-    Call<BBCLessonsList> getBBCLessonsList(@Field("category_id") int category_id);
+    Call<BBCEnglish> getBBCCategories(
+            @Field("all") int all);
 
     @FormUrlEncoded
     @POST("post/get_bbc.php")
-    Call<BBCLesson> getBBCLesson(@Field("lesson_id") String lesson_id);
+    Call<BBCLessonsList> getBBCLessonsList(
+            @Field("category_id") int category_id);
 
+    @FormUrlEncoded
+    @POST("post/get_bbc.php")
+    Call<BBCLesson> getBBCLesson(
+            @Field("lesson_id") String lesson_id);
 
-
-
-
-
+    @FormUrlEncoded
+    @POST("post/bbc_questions.php")
+    Call<PostDataResponse> postBBCQuestions(
+            @Field("user_id") String user_id,
+            @Field("lesson_id") String lesson_id,
+            @Field("task_id") int task_id,
+            @FieldMap Map<String, String> answers);
 
 
 

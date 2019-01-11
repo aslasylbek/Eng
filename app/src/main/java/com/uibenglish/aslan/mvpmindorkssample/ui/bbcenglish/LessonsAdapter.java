@@ -84,10 +84,6 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.BBCConte
         notifyDataSetChanged();
     }
 
-
-
-
-
     public class BBCContentAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 

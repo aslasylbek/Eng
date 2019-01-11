@@ -51,8 +51,6 @@ public class BuildWordFragment extends Fragment implements  OnAudioTTSCompleteLi
     private static final String FAKE_LIST = "fakeList";
     private static final String WORD_DATA = "wordData";
 
-    private boolean isViewShown = false;
-    private boolean isViewToUser = false;
 
     private AudioSyntethis audioSyntethis;
 
@@ -138,26 +136,6 @@ public class BuildWordFragment extends Fragment implements  OnAudioTTSCompleteLi
 
         return view;
     }
-
- /*   @Override
-    public void onResume() {
-        super.onResume();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        isViewShown = true;
-
-                        if (isViewToUser){
-                            playAudio();
-                        }
-                    }
-                });
-            }
-        }).start();
-    }*/
 
     public void rebuildView(){
         for (int i=0; i<4; i++){
@@ -251,21 +229,9 @@ public class BuildWordFragment extends Fragment implements  OnAudioTTSCompleteLi
         }
     }
 
-/*
-    @Override
-    public void setMenuVisibility(boolean menuVisible) {
-        super.setMenuVisibility(menuVisible);
-        isViewToUser = menuVisible;
-        if (isViewToUser && isViewShown){
-            playAudio();
-        }
-    }*/
-
     public void playAudio(){
         mPlayAudio.toggle();
         audioSyntethis.playSyntethMedia();
-
-
     }
 
     @Override

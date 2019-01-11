@@ -9,6 +9,7 @@
     <color name="colorPrimaryDarkToo">#013269</color>
     <color name="colorPrimaryLight">#4c98b2</color>
     <color name="colorAccent">#d32f2f</color>
+    <color name="colorAccentDark">#5e0a0a</color>
     <color name="colorRed">#ff3f1e</color>
     <color name="colorYellow">#f2e9c0</color>
 

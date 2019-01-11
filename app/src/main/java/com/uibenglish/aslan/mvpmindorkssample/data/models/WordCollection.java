@@ -33,6 +33,7 @@ public class WordCollection implements Parcelable{
     @SerializedName("rating")
     @Expose
     private String rating;
+
     public final static Parcelable.Creator<WordCollection> CREATOR = new Creator<WordCollection>() {
 
 

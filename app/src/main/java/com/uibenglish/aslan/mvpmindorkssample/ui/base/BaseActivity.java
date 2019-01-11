@@ -76,7 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView,
     }
 
     @Override
-    public void onFragmentAttached() {
+    public void onFragmentAttached(){
 
     }
 

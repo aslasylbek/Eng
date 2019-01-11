@@ -1,7 +1,12 @@
 package com.uibenglish.aslan.mvpmindorkssample.ui.bbcenglish.lesson;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +15,7 @@ import android.widget.TextView;
 
 import com.uibenglish.aslan.mvpmindorkssample.R;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLesson;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCTaskArray;
 import com.uibenglish.aslan.mvpmindorkssample.widget.BaseAdapter;
 
 import java.util.List;
@@ -17,7 +23,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BBCTaskAdapter extends BaseAdapter<BBCTaskAdapter.TaskViewHolder, BBCLesson.BBCTranscript> {
+import static io.fabric.sdk.android.Fabric.TAG;
+
+public class BBCTaskAdapter extends BaseAdapter<BBCTaskAdapter.TaskViewHolder, BBCTaskArray> {
 
     public BBCTaskAdapter(@NonNull List items) {
         super(items);
@@ -33,7 +41,7 @@ public class BBCTaskAdapter extends BaseAdapter<BBCTaskAdapter.TaskViewHolder, B
     @Override
     public void onBindViewHolder(TaskViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        BBCLesson.BBCTranscript transcript = getItem(position);
+        BBCTaskArray transcript = getItem(position);
         holder.bind(transcript);
     }
 
@@ -54,29 +62,28 @@ public class BBCTaskAdapter extends BaseAdapter<BBCTaskAdapter.TaskViewHolder, B
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(@NonNull final BBCLesson.BBCTranscript repository) {
+
+        public void bind(@NonNull final BBCTaskArray repository) {
             if (repository.getSentence()==null){
                 mQuestion.setText(repository.getOrDefinition());
+                if (repository.getEditTextColor()!=null) {
+                    mAnswer.setBackgroundColor(Color.parseColor(repository.getEditTextColor()));
+                    mAnswer.setEnabled(false);
+                }
             }
             else{
                 mQuestion.setText(repository.getSentence());
+                if (repository.getEditTextColor()!=null) {
+                    mAnswer.setBackgroundColor(Color.parseColor(repository.getEditTextColor()));
+                    mAnswer.setEnabled(false);
+                }
             }
             mAnswer.setTag(repository.getWord());
             mAnswer.setText(repository.getUserAnswer());
-
             mAnswer.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if(!hasFocus){
-                        /*String convertToLower = mAnswer.getText().toString().toLowerCase();
-                        String trimText = convertToLower.trim();
-                        if (mAnswer.getTag().equals(trimText)) {
-                            mAnswer.setFocusable(false);
-                            //listener.onSendingResult();
-                        }
-                        else if (trimText.length()!=0){
-                            mAnswer.setError("Incorrect");
-                        }*/
                         repository.setUserAnswer(mAnswer.getText().toString());
                     }
                 }

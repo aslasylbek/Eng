@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,12 +20,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.uibenglish.aslan.mvpmindorkssample.MvpApp;
 import com.uibenglish.aslan.mvpmindorkssample.R;
 import com.uibenglish.aslan.mvpmindorkssample.data.DataManager;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLesson;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCTaskArray;
 import com.uibenglish.aslan.mvpmindorkssample.ui.base.BaseActivity;
 import com.uibenglish.aslan.mvpmindorkssample.ui.bbcenglish.BBCPresenter;
 import com.uibenglish.aslan.mvpmindorkssample.ui.listening.AudioPlayerFragment;
@@ -36,29 +39,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 import static com.uibenglish.aslan.mvpmindorkssample.ui.tasks.TaskChoiceActivity.IMAGE;
 
-public class BBCLessonActivity extends BaseActivity implements BBCLessonContract.BBCLessonMvpView, BaseAdapter.OnItemClickListener, TabLayout.OnTabSelectedListener {
+public class BBCLessonActivity extends BaseActivity implements BBCLessonContract.BBCLessonMvpView, TabLayout.OnTabSelectedListener {
 
 
     @BindView(R.id.avPlayerFrame)
     FrameLayout mAudioFrame;
 
-    @BindView(R.id.sampleRV)
-    EmptyRecyclerView mRecyclerView;
 
     @BindView(R.id.tabLayoutBBCTask)
     TabLayout mTabBBCTasks;
 
     private BBCLesson bbcLessonData;
-
     private static final String TAG = "BBCLessonActivity";
     private static final String AUDIO_FRAGMENT_TAG = "audioFragment";
     private static final String EXTRA = "Category";
     private static final String TITLE = "TITLE";
     private BBCLessonPresenter presenter;
-    private BBCTaskAdapter adapter;
+    private String lessonId;
+
 
     public static void navigate(@NonNull AppCompatActivity activity, @NonNull String title, @NonNull String category_id) {
         Intent intent = new Intent(activity, BBCLessonActivity.class);
@@ -81,34 +83,29 @@ public class BBCLessonActivity extends BaseActivity implements BBCLessonContract
         }
 
         mTabBBCTasks.addOnTabSelectedListener(this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
+
         //mRecyclerView.setEmptyView(mEmptyView);
 
-        adapter = new BBCTaskAdapter(new ArrayList());
-        adapter.attachToRecyclerView(mRecyclerView);
-        adapter.setOnItemClickListener(this);
+
 
         DataManager manager = ((MvpApp)getApplicationContext()).getDataManager();
         presenter = new BBCLessonPresenter(manager);
         presenter.attachView(this);
-        String lessonId = getIntent().getStringExtra(EXTRA);
+        lessonId = getIntent().getStringExtra(EXTRA);
         presenter.requestBBCLessonDataById(lessonId);
     }
 
-    @Override
-    public void onItemClick(@NonNull Object item) {
-
-    }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (tab.getPosition() == 0 && bbcLessonData.getVocabulary().size()!=0){
-            adapter.changeDataSet(bbcLessonData.getVocabulary());
+            fragmentTransaction.replace(R.id.bbcTaskFrame, BBCTaskFragment.newInstance(tab.getPosition(), lessonId, new ArrayList<>(bbcLessonData.getVocabulary())));
         }
         else if (tab.getPosition() == 1 && bbcLessonData.getTranscript().size()!=0){
-            adapter.changeDataSet(bbcLessonData.getTranscript());
+            fragmentTransaction.replace(R.id.bbcTaskFrame, BBCTaskFragment.newInstance(tab.getPosition(), lessonId, new ArrayList<>(bbcLessonData.getTranscript())));
         }
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -133,7 +130,8 @@ public class BBCLessonActivity extends BaseActivity implements BBCLessonContract
         fragment.prepareAudioService(bbcLesson.getAudioUrl(), mUriWithTimeStamp);
         bbcLessonData = bbcLesson;
         if (bbcLesson.getVocabulary().size()!=0){
-            adapter.changeDataSet(bbcLesson.getVocabulary());
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.bbcTaskFrame, BBCTaskFragment.newInstance(0, lessonId, new ArrayList<>(bbcLesson.getVocabulary()))).commit();
         }
     }
 
@@ -146,6 +144,8 @@ public class BBCLessonActivity extends BaseActivity implements BBCLessonContract
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     protected void onDestroy() {

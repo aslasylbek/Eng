@@ -131,6 +131,23 @@ public class DataManager implements DataManagerContract {
         });
     }
 
+    public void postBBCQuestions(String lesson_id, int taskId, Map<String, String> answers,  final GetVoidPostCallback callback){
+        ApiFactory
+                .getApiService()
+                .postBBCQuestions(getPrefUserid(), lesson_id, taskId, answers)
+                .enqueue(new Callback<PostDataResponse>() {
+                    @Override
+                    public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
 
 
     //TODO: Token push notification

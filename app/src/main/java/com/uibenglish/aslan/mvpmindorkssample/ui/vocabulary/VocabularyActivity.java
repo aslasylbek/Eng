@@ -142,7 +142,6 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
             }
             eachResult = new HashMap<>();
             fragmentList.add(BuildWordFragment.newInstance(index, word, fakeArr.subList(0,4)));
-
         }
         mProgressBar.setMax(sizeOfData);
     }
