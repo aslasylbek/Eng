@@ -67,11 +67,20 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
     public void setNewDataFromRoom(List<Grammar> grammarList){
         startTime = System.currentTimeMillis()/1000;
         sizeOfData = grammarList.size();
-        for (int i=0; i<grammarList.size(); i++) {
-            Grammar grammar = grammarList.get(i);
-            fragmentList.add(GrammarFragment.newInstance(grammar.getSentence(), grammar.getTranslate()));
-            fragmentList.add(0, TrueFalseFragment.newInstance(grammar.getQuestion(), grammar.getAnswer()));
+        Grammar grammar = grammarList.get(0);
+
+        if (!grammar.getConstructor().isEmpty()){
+            for (int i=0; i<grammar.getConstructor().size(); i++) {
+                fragmentList.add(GrammarFragment.newInstance(grammar.getConstructor().get(i).getSentence(), grammar.getConstructor().get(i).getTranslate()));
+            }
         }
+
+        if (!grammar.getMissword().isEmpty()){
+            for (int i=0; i<grammar.getMissword().size(); i++){
+                fragmentList.add(0, TrueFalseFragment.newInstance(grammar.getMissword().get(i).getQuestion(), grammar.getMissword().get(i).getAnswer(), true));
+            }
+        }
+
         adapter.notifyDataSetChanged();
     }
 
@@ -89,7 +98,7 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
         else if (wordId.equals("qa")){
             res_ans+=isCorrect;
         }
-        if (item==sizeOfData*2){
+        if (item==fragmentList.size()){
             res_ans = res_ans*100/fragmentList.size();
             res_cons = res_cons*100/fragmentList.size();
             presenter.sendGrammarResult( topicId, res_ans, res_cons, startTime);

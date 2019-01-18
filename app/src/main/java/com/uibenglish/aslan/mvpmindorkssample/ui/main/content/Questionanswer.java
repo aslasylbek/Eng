@@ -17,6 +17,10 @@ public class Questionanswer implements Parcelable {
     @Expose
     private String answer;
 
+    private String userAnswer;
+
+    private String editTextColor;
+
     public String getId() {
         return id;
     }
@@ -39,6 +43,22 @@ public class Questionanswer implements Parcelable {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public String getUserAnswer() {
+        return userAnswer;
+    }
+
+    public void setUserAnswer(String userAnswer) {
+        this.userAnswer = userAnswer;
+    }
+
+    public String getEditTextColor() {
+        return editTextColor;
+    }
+
+    public void setEditTextColor(String editTextColor) {
+        this.editTextColor = editTextColor;
     }
 
     public Questionanswer(Parcel in) {

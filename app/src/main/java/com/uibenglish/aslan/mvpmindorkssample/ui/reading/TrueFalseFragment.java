@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.view.ActionMode;
@@ -33,12 +34,13 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TrueFalseFragment extends Fragment implements View.OnClickListener, TextView.OnEditorActionListener {
+public class TrueFalseFragment extends Fragment implements TextView.OnEditorActionListener {
 
 
     private static final String TAG = "TrueFalseFragment";
     private static final String ARTICLE = "article";
     private static final String ANSWER = "answer";
+    private static final String UI = "boolean";
 
     private FragmentsListener listener;
     private Unbinder mUnbinder;
@@ -55,21 +57,23 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
     @BindView(R.id.btnFalse)
     Button mBtnFalse;
 
+    @BindView(R.id.btnNot)
+    Button mBtnNot;
+
     @BindView(R.id.btnNext)
     Button mBtnNext;
 
     private EditText mEditAnswer;
-
-    String answer = "";
-
+    private Button[] mButtonsAns;
     private int isCorrect = 0;
     private String questionType = "tf";
 
-    public static TrueFalseFragment newInstance(String str, String ans) {
+    public static TrueFalseFragment newInstance(String str, String ans, boolean rebuildUI) {
         Bundle args = new Bundle();
         TrueFalseFragment fragment = new TrueFalseFragment();
         args.putString(ARTICLE, str);
         args.putString(ANSWER, ans);
+        args.putBoolean(UI, rebuildUI);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,36 +83,35 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_true_false, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-
         listener = (FragmentsListener) getActivity();
-        mBtnFalse.setOnClickListener(this);
-        mBtnTrue.setOnClickListener(this);
         mBtnNext.setVisibility(View.INVISIBLE);
+        mBtnNot.setTag(0);
+        mBtnFalse.setTag(0);
+        mBtnTrue.setTag(0);
         String text = "";
+        String answer = "";
+        boolean changeUI = false;
         if (getArguments()!=null) {
              text = getArguments().getString(ARTICLE);
              answer = getArguments().getString(ANSWER);
+             changeUI = getArguments().getBoolean(UI);
         }
-        setView(answer);
+        mButtonsAns = new Button[]{mBtnTrue, mBtnFalse, mBtnNot};
+        setView(changeUI, answer);
         setTextFromDb(text);
         return view;
     }
 
-
-    public void setView(String answer){
-        if (answer.equals("0")){
-            mBtnFalse.setTag(answer);
-        }
-        else if(answer.equals("1")){
-            mBtnFalse.setTag(answer);
-        }
-        else {
+    public void setView(boolean changeUI, String answer){
+        if (changeUI){
             questionType = "qa";
             mBtnFalse.setVisibility(View.GONE);
             mBtnTrue.setVisibility(View.GONE);
+            mBtnNot.setVisibility(View.GONE);
             mEditAnswer = new EditText(getActivity());
             mEditAnswer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             mEditAnswer.setHint("Answer");
+            mEditAnswer.setTag(answer);
             mEditAnswer.setMaxLines(1);
             mEditAnswer.setSingleLine(true);
             mEditAnswer.setGravity(1);
@@ -118,6 +121,15 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
             mEditAnswer.setOnEditorActionListener(this);
             mLinearTrueFalse.addView(mEditAnswer);
         }
+        else if(answer.equals("0")){
+            mBtnFalse.setTag(1);
+        }
+        else if(answer.equals("1")){
+            mBtnTrue.setTag(1);
+        }
+        else if(answer.equals("2")){
+            mBtnNot.setTag(1);
+        }
     }
 
     @Override
@@ -125,7 +137,7 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
         closeKeyboard();
         String convertToLower = mEditAnswer.getText().toString().toLowerCase();
         String trimText = convertToLower.trim();
-        if (answer.equals(trimText)) {
+        if (mEditAnswer.getTag().toString().equals(trimText)) {
             mBtnNext.setVisibility(View.VISIBLE);
             mEditAnswer.setFocusable(false);
             mEditAnswer.setBackgroundColor(getResources().getColor(R.color.colorCorrect));
@@ -150,10 +162,22 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
         }
     }
 
+    @OnClick({R.id.btnNot, R.id.btnFalse, R.id.btnTrue})
+    public void onChooseAnswer(Button button){
+        if (Integer.parseInt(button.getTag().toString())!=0){
+            button.setBackgroundColor(Color.GREEN);
+            isCorrect = 1;
+        }
+        else{
+            button.setBackgroundColor(Color.RED);
+            mLinearTrueFalse.findViewWithTag(1).setBackgroundColor(Color.GREEN);
+        }
+        mBtnNext.setVisibility(View.VISIBLE);
+        mBtnTrue.setClickable(false);
+        mBtnFalse.setClickable(false);
+        mBtnNot.setClickable(false);
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
+        /*switch (button.getId()){
             case R.id.btnFalse:
                 String tagFalse = (String)mBtnFalse.getTag();
                 if (tagFalse!=null) {
@@ -177,9 +201,7 @@ public class TrueFalseFragment extends Fragment implements View.OnClickListener,
                 }
                 break;
         }
-        mBtnNext.setVisibility(View.VISIBLE);
-        mBtnTrue.setClickable(false);
-        mBtnFalse.setClickable(false);
+        */
     }
 
     @OnClick(R.id.btnNext)

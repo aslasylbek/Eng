@@ -75,6 +75,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="False" />
+
+        <Button
+            android:id="@+id/btnNot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Not given" />
     </LinearLayout>
 
     <android.support.constraint.Guideline

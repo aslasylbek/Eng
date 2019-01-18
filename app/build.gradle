@@ -88,7 +88,7 @@ dependencies {
     androidTestImplementation 'android.arch.persistence.room:testing:' + rootProject.archRoomVersion
     implementation 'com.android.support:gridlayout-v7:27.1.1'
     implementation 'com.github.timrijckaert:FloatingMusicActionButton:v2.0.4'
-    implementation 'com.danikula:videocache:2.7.0'
+    implementation 'com.danikula:videocache:2.7.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

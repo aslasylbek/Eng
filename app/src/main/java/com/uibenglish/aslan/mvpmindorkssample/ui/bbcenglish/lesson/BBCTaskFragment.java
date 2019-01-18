@@ -1,6 +1,7 @@
 package com.uibenglish.aslan.mvpmindorkssample.ui.bbcenglish.lesson;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,7 +38,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BBCTaskFragment extends BaseFragment implements BBCTaskContract.BBCTaskMvpView, BaseAdapter.OnItemClickListener {
+public class BBCTaskFragment extends BaseFragment implements BBCTaskContract.BBCTaskMvpView, BaseAdapter.OnItemClickListener, DialogInterface.OnClickListener {
 
     private static final String POSITION = "position";
     private static final String LIST = "list";
@@ -54,9 +55,9 @@ public class BBCTaskFragment extends BaseFragment implements BBCTaskContract.BBC
     private int position;
     private List<BBCTaskArray> bbcTaskArrays;
     private String lessonId;
-    private int score = 0;
     private BBCTaskPresenter presenter;
     private Map<String, String> answers;
+    private long startTime = 0;
 
     public static BBCTaskFragment newInstance(int position, String lessonId, ArrayList<BBCTaskArray> list) {
         Bundle args = new Bundle();
@@ -78,7 +79,6 @@ public class BBCTaskFragment extends BaseFragment implements BBCTaskContract.BBC
         answers = new HashMap<>();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getBaseActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getBaseActivity()));
-
         adapter = new BBCTaskAdapter(new ArrayList());
         adapter.attachToRecyclerView(mRecyclerView);
         adapter.setOnItemClickListener(this);
@@ -89,6 +89,42 @@ public class BBCTaskFragment extends BaseFragment implements BBCTaskContract.BBC
         DataManager manager = ((MvpApp)getBaseActivity().getApplicationContext()).getDataManager();
         presenter = new BBCTaskPresenter(manager);
         presenter.attachView(this);
+        //todo  start time loading every time again
+        startTime = System.currentTimeMillis()/1000;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (which==-2){
+            dialog.cancel();
+            return;
+        }
+        for (int i = 0; i < bbcTaskArrays.size(); i++) {
+            BBCTaskArray questionObject =  bbcTaskArrays.get(i);
+            int mEditTextColor = R.color.colorIncorrect;
+            if (questionObject.getUserAnswer() != null) {
+                String convertToLower = questionObject.getUserAnswer().toLowerCase();
+                String trimText = convertToLower.trim();
+                if (questionObject.getWord().equals(trimText)) {
+                    mEditTextColor = R.color.colorCorrect;
+                }
+            }
+            if(questionObject.getUserAnswer() == null){
+                answers.put("answer["+questionObject.getId()+"]", "");
+            }
+            else{
+                answers.put("answer["+questionObject.getId()+"]", questionObject.getUserAnswer());
+            }
+            bbcTaskArrays.get(i).setUserAnswer(questionObject.getWord());
+            questionObject.setEditTextColor("#" + Integer.toHexString(ContextCompat.getColor(getBaseActivity(), mEditTextColor)));
+        }
+        presenter.sendBBCQuestions(lessonId, position, startTime, answers);
     }
 
     @Override
@@ -107,23 +143,15 @@ public class BBCTaskFragment extends BaseFragment implements BBCTaskContract.BBC
         mRecyclerView.clearFocus();
         if(mBtnCheckOrEnd.getText().equals("CHECK")) {
 
-            for (int i = 0; i < bbcTaskArrays.size(); i++) {
-                BBCTaskArray questionObject =  bbcTaskArrays.get(i);
-                int mEditTextColor = R.color.colorIncorrect;
-                if (questionObject.getUserAnswer() != null) {
-                    String convertToLower = questionObject.getUserAnswer().toLowerCase();
-                    String trimText = convertToLower.trim();
-                    if (questionObject.getWord().equals(trimText)) {
-                        mEditTextColor = R.color.colorCorrect;
-                    }
-                }
-                answers.put("answer["+questionObject.getId()+"]", questionObject.getUserAnswer());
-                bbcTaskArrays.get(i).setUserAnswer(questionObject.getWord());
-                questionObject.setEditTextColor("#" + Integer.toHexString(ContextCompat.getColor(getBaseActivity(), mEditTextColor)));
-            }
-            presenter.sendBBCQuestions(lessonId, position, answers);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getBaseActivity());
+            builder.setTitle("Send result and check answer?")
+                    .setCancelable(true)
+                    .setNegativeButton("Cancel", this)
+                    .setPositiveButton("OK", this);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
-        else{ getBaseActivity().finish(); }
+        else { getBaseActivity().finish(); }
     }
 
     @Override

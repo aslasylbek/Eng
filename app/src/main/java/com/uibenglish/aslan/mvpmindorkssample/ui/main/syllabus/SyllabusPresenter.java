@@ -39,7 +39,7 @@ public class SyllabusPresenter<V extends SyllabusMvpView> extends BasePresenter<
                             topic.setHaveWords(true);
                             Log.d("AAA", "onSuccess: Have Words");
                         }
-                        if (!topic.getGrammar().isEmpty()) {
+                        if (!topic.getGrammar().get(0).getConstructor().isEmpty()||!topic.getGrammar().get(0).getMissword().isEmpty()) {
                             topic.setHaveGrammar(true);
                             Log.d("AAA", "onSuccess: grammar");
                         }
@@ -61,11 +61,12 @@ public class SyllabusPresenter<V extends SyllabusMvpView> extends BasePresenter<
                             getDataManager().saveReading(topic.getReading().get(j), topic.getTopicId());
                         }
 
-                        for (int j = 0; j < topic.getGrammar().size(); j++) {
+                        /*for (int j = 0; j < topic.getGrammar().size(); j++) {
                             getDataManager().saveGrammar(topic.getGrammar().get(j), topic.getTopicId());
-                        }
+                        }*/
                     }
                 } else {
+                    getMvpView().setOnErrorMessage();
                     getMvpView().showToastMessage(R.string.no_english);
                 }
                 getMvpView().hideLoading();

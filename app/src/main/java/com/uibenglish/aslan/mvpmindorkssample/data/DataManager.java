@@ -131,10 +131,10 @@ public class DataManager implements DataManagerContract {
         });
     }
 
-    public void postBBCQuestions(String lesson_id, int taskId, Map<String, String> answers,  final GetVoidPostCallback callback){
+    public void postBBCQuestions(String lesson_id, int taskId, long start_time, Map<String, String> answers,  final GetVoidPostCallback callback){
         ApiFactory
                 .getApiService()
-                .postBBCQuestions(getPrefUserid(), lesson_id, taskId, answers)
+                .postBBCQuestions(getPrefUserid(), lesson_id, taskId, start_time, answers)
                 .enqueue(new Callback<PostDataResponse>() {
                     @Override
                     public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
@@ -490,12 +490,12 @@ public class DataManager implements DataManagerContract {
 
     public void saveGrammar(Grammar grammar, String topic_id) {
         grammar.setTopic_id(topic_id);
-        appDatabase.topicDao().insertGrammar(grammar);
+        //appDatabase.topicDao().insertGrammar(grammar);
     }
 
-    public List<Grammar> getGrammarByTopicId(String topicId) {
+/*    public List<Grammar> getGrammarByTopicId(String topicId) {
         return appDatabase.topicDao().findGrammarById(topicId);
-    }
+    }*/
 
     public List<Word> getAllWords() {
         return appDatabase.topicDao().getAllWords();

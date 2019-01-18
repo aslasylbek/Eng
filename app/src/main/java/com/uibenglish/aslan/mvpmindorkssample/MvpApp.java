@@ -30,6 +30,7 @@ public class MvpApp extends Application {
         MvpApp app = (MvpApp) context.getApplicationContext();
         return app.mProxy == null ? (app.mProxy = app.newProxy(context)) : app.mProxy;
     }
+
     @NonNull
     private HttpProxyCacheServer newProxy(Context context) {
         return new HttpProxyCacheServer.Builder(context)

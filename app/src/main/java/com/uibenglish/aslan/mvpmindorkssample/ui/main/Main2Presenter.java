@@ -58,43 +58,7 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
                     if (!response.getEnglish().isEmpty()) {
                         English english = response.getEnglish().get(0);
 
-
-                        //getMvpView().setHolderData(english.getTopics());
                         getDataManager().putCourseId(english.getCourseId());
-                        /*getDataManager().clearAllDatabase();
-
-                        for (int i = 0; i < english.getTopics().size(); i++) {
-                            Topic topic = english.getTopics().get(i);
-                            if (!topic.getWords().isEmpty()) {
-                                topic.setHaveWords(true);
-                                Log.d("AAA", "onSuccess: Have Words");
-                            }
-                            if (!topic.getGrammar().isEmpty()) {
-                                topic.setHaveGrammar(true);
-                                Log.d("AAA", "onSuccess: grammar");
-                            }
-                            if (!topic.getListening().isEmpty()) {
-                                topic.setHaveListening(true);
-                                Log.d("AAA", "onSuccess: listening");
-                            }
-                            if (!topic.getReading().isEmpty()) {
-                                topic.setHaveReading(true);
-                                Log.d("AAA", "onSuccess: reading");
-                            }
-                            getDataManager().saveTopics(topic);
-
-                            for (int j = 0; j < topic.getWords().size(); j++) {
-                                getDataManager().saveWords(topic.getWords().get(j), topic.getTopicId());
-                            }
-
-                            for (int j = 0; j < topic.getReading().size(); j++) {
-                                getDataManager().saveReading(topic.getReading().get(j), topic.getTopicId());
-                            }
-
-                            for (int j = 0; j < topic.getGrammar().size(); j++) {
-                                getDataManager().saveGrammar(topic.getGrammar().get(j), topic.getTopicId());
-                            }
-                        }*/
                     }
                 }
                 else {

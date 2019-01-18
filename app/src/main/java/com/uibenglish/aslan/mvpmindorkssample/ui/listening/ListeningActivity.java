@@ -40,7 +40,6 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
     private ListeningPresenter listeningPresenter;
     private String topicId;
     private int position;
-    private long startTime;
 
     public static Intent getListeningIntent(Context context){
         return new Intent(context, ListeningActivity.class);
@@ -72,32 +71,28 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
 
     @Override
     public void spreadListeningCollection(List<Listening> collection) {
-
-        startTime = System.currentTimeMillis()/1000;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.listeningTaskContainer, ListeningTasksFragment.newInstance(collection, position));
+        ft.replace(R.id.listeningTaskContainer, ListeningTasksFragment.newInstance(collection, topicId));
         ft.commit();
-
         /***
          * Refactor Uri
          */
         Uri mUriWithTimeStamp = Uri.parse("content://com.uibenglish.aslan.mvpmindorkssample/bbc/1534356000000/category/6Minute"+topicId);
-
         AudioPlayerTTSFragment audioPlayerFragment = (AudioPlayerTTSFragment) getSupportFragmentManager().findFragmentByTag(AUDIO_PLAYER_FRAGMENT_TAG);
         audioPlayerFragment.prepareAudioService(collection.get(0).getListening(), mUriWithTimeStamp);
-
     }
 
     @Override
     public void sendData(int isCorrect, String wordId) {
-        listeningPresenter.setListeningResult(topicId, isCorrect, startTime);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.listeningTaskContainer, FinishFragment.newInstance(isCorrect));
+        ft.commit();
+        //listeningPresenter.setListeningResult(topicId, isCorrect, startTime);
     }
 
     @Override
     public void addFinishFragment(int result) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.listeningTaskContainer, FinishFragment.newInstance(result));
-        ft.commit();
+
     }
 
     @Override
@@ -112,7 +107,8 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
 
     @Override
     protected void onDestroy() {
-        listeningPresenter.detachView();
+        if (listeningPresenter.isAttached())
+            listeningPresenter.detachView();
         super.onDestroy();
     }
 }

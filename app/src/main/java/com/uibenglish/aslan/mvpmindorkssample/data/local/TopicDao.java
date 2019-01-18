@@ -53,10 +53,10 @@ public interface TopicDao {
 
     //Grammar table
 
-    @Insert
+  /*  @Insert
     void insertGrammar(Grammar grammar);
 
     @Query("Select * from grammar where topic_id = :topic_id")
-    List<Grammar> findGrammarById(String topic_id);
+    List<Grammar> findGrammarById(String topic_id);*/
 
 }

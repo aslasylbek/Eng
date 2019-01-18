@@ -12,7 +12,7 @@ public interface BBCTaskContract {
     }
 
     interface BBCTaskMvpPresenter<V extends BBCTaskMvpView> extends MvpPresenter<V>{
-        void sendBBCQuestions(String lesson_id, int taskId, Map<String, String> answers);
+        void sendBBCQuestions(String lesson_id, int taskId, long startTime, Map<String, String> answers);
     }
 
 }

@@ -18,10 +18,10 @@ public class BBCTaskPresenter<V extends BBCTaskContract.BBCTaskMvpView> extends 
     }
 
     @Override
-    public void sendBBCQuestions(String lesson_id, int taskId , Map<String, String> transcript) {
+    public void sendBBCQuestions(String lesson_id, int taskId, long startTime, Map<String, String> transcript) {
         if(isAttached()){
             getMvpView().showLoading();
-            getDataManager().postBBCQuestions(lesson_id, taskId, transcript, new DataManager.GetVoidPostCallback() {
+            getDataManager().postBBCQuestions(lesson_id, taskId, startTime, transcript, new DataManager.GetVoidPostCallback() {
                 @Override
                 public void onSuccess(Response<PostDataResponse> response) {
                     if (response.isSuccessful()){

@@ -146,7 +146,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
             Topic topic = topicsData.get(j);
             List<LessonChildItem> list = new ArrayList<>();
 
-            if (!topic.getGrammar().isEmpty()) {
+            if (!topic.getGrammar().get(0).getMissword().isEmpty()||!topic.getGrammar().get(0).getConstructor().isEmpty()) {
                 LessonChildItem lessonChildItem = addToList(
                         topic.getStartGram(),
                         topic.getEndGram(),

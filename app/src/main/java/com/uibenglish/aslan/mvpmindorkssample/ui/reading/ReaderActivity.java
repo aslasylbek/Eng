@@ -81,13 +81,13 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
         fragmentList.add(ReaderFragment.newInstance(reading.getReading()));
         for (int i=0; i<reading.getQuestionanswer().size(); i++) {
             fragmentList.add(TrueFalseFragment.newInstance(reading.getQuestionanswer().get(i).getQuestion(),
-                    reading.getQuestionanswer().get(i).getAnswer()));
+                    reading.getQuestionanswer().get(i).getAnswer(), true));
             total_ans++;
         }
 
         for (int i=0; i<reading.getTruefalse().size(); i++){
             fragmentList.add(TrueFalseFragment.newInstance(reading.getTruefalse().get(i).getQuestion(),
-                    reading.getTruefalse().get(i).getTruefalse()));
+                    reading.getTruefalse().get(i).getTruefalse(), false));
             total_tf++;
         }
         mArticleAdapter.notifyDataSetChanged();

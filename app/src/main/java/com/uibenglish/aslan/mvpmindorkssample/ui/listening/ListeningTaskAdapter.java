@@ -1,6 +1,7 @@
 package com.uibenglish.aslan.mvpmindorkssample.ui.listening;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -24,10 +25,8 @@ import java.util.List;
 public class ListeningTaskAdapter  extends RecyclerView.Adapter<ListeningTaskAdapter.MyViewHolder> {
 
     private List<Questionanswer> editModelArrayList = new ArrayList<>();
-    private ListeningTaskListener listener;
 
-    public ListeningTaskAdapter(ListeningTaskListener taskListener){
-        listener = taskListener;
+    public ListeningTaskAdapter(){
     }
 
     public void setEditModelArrayList(List<Questionanswer> newList){
@@ -43,7 +42,7 @@ public class ListeningTaskAdapter  extends RecyclerView.Adapter<ListeningTaskAda
 
     @Override
     public void onBindViewHolder(@NonNull ListeningTaskAdapter.MyViewHolder holder, final int position) {
-        holder.bind(editModelArrayList.get(position), listener);
+        holder.bind(editModelArrayList.get(position));
     }
 
     @Override
@@ -56,29 +55,25 @@ public class ListeningTaskAdapter  extends RecyclerView.Adapter<ListeningTaskAda
         private EditText editText;
         private TextView textView;
 
-
         public MyViewHolder(View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.tvQuestion);
             editText = itemView.findViewById(R.id.editid);
         }
 
-        public void bind(Questionanswer item, final ListeningTaskListener listener){
+        public void bind(final Questionanswer item){
+            if (item.getEditTextColor()!=null){
+                editText.setBackgroundColor(Color.parseColor(item.getEditTextColor()));
+                editText.setEnabled(false);
+            }
             textView.setText(getAdapterPosition()+1+". "+item.getQuestion());
             editText.setTag(item.getAnswer());
+            editText.setText(item.getUserAnswer());
             editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if(!hasFocus){
-                        String convertToLower = editText.getText().toString().toLowerCase();
-                        String trimText = convertToLower.trim();
-                        if (editText.getTag().equals(trimText)) {
-                            editText.setFocusable(false);
-                            listener.onSendingResult();
-                        }
-                        else if (trimText.length()!=0){
-                            editText.setError("Incorrect");
-                        }
+                        item.setUserAnswer(editText.getText().toString());
                     }
                 }
             });
@@ -87,7 +82,4 @@ public class ListeningTaskAdapter  extends RecyclerView.Adapter<ListeningTaskAda
 
     }
 
-    public interface ListeningTaskListener{
-        void onSendingResult();
-    }
 }

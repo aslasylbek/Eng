@@ -34,7 +34,6 @@ public class GrammarPagerAdapter extends PagerAdapter {
     LinearLayout mPartsLayout;
 
     private List<Grammar> grammarList = new ArrayList<>();
-
     private ViewPager mViewPager;
 
 
@@ -55,9 +54,10 @@ public class GrammarPagerAdapter extends PagerAdapter {
 
         ButterKnife.bind(this, view);
         mTBuilder.setTag(position);
+        Log.e("AAA", "instantiateItem:  ITS CALLED" );
 
         Grammar grammar = grammarList.get(position);
-        mGrammarTranslate.setText(grammar.getTranslate());
+        /*mGrammarTranslate.setText(grammar);
         String[] arr = grammar.getSentence().split(" ");
         for (int i=0; i<arr.length; i++) {
             final Button button = new Button(container.getContext());
@@ -76,7 +76,7 @@ public class GrammarPagerAdapter extends PagerAdapter {
                 }
             });
 
-        }
+        }*/
 
         mViewPager = (ViewPager)container;
         mViewPager.addView(view);
