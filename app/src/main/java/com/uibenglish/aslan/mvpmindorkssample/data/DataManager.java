@@ -577,6 +577,35 @@ public class DataManager implements DataManagerContract {
         return prefsHelper.getCourseId();
     }
 
+    @Override
+    public void putName(String name) {
+        prefsHelper.putName(name);
+    }
+
+    @Override
+    public String getName() {
+        return prefsHelper.getName();
+    }
+
+    @Override
+    public void putGroup(String group) {
+        prefsHelper.putGroup(group);
+    }
+
+    @Override
+    public String getGroup() {
+        return prefsHelper.getGroup();
+    }
+
+    @Override
+    public void putProgram(String program) {
+        prefsHelper.putProgram(program);
+    }
+
+    @Override
+    public String getProgram() {
+        return prefsHelper.getProgram();
+    }
 
     //TODO: Server callbacks
 

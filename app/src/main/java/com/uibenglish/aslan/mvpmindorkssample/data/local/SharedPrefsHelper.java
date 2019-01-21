@@ -80,4 +80,34 @@ public class SharedPrefsHelper implements PreferenceHelper{
     public String getCourseId() {
         return mSharedPreferences.getString(COURSE_ID, null);
     }
+
+    @Override
+    public void putName(String name) {
+        mSharedPreferences.edit().putString(NAME, name).apply();
+    }
+
+    @Override
+    public String getName() {
+        return mSharedPreferences.getString(NAME, null);
+    }
+
+    @Override
+    public void putGroup(String group) {
+        mSharedPreferences.edit().putString(GROUP, group).apply();
+    }
+
+    @Override
+    public String getGroup() {
+        return mSharedPreferences.getString(GROUP, null);
+    }
+
+    @Override
+    public void putProgram(String program) {
+        mSharedPreferences.edit().putString(PROGRAM, program).apply();
+    }
+
+    @Override
+    public String getProgram() {
+        return mSharedPreferences.getString(PROGRAM, null);
+    }
 }

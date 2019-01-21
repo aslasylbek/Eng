@@ -29,7 +29,7 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
     private static final String TAG = "GrammarActivity";
    private int item = 0;
    private int correctAns = 0;
-   private int sizeOfData;
+   private int sizeOfMissword, sizeOfConstructor;
    private List<Fragment> fragmentList;
    private VocabularyAdapter adapter;
    private GrammarPresenter presenter;
@@ -66,9 +66,9 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
     @Override
     public void setNewDataFromRoom(List<Grammar> grammarList){
         startTime = System.currentTimeMillis()/1000;
-        sizeOfData = grammarList.size();
         Grammar grammar = grammarList.get(0);
-
+        sizeOfConstructor = grammar.getConstructor().size();
+        sizeOfMissword = grammar.getMissword().size();
         if (!grammar.getConstructor().isEmpty()){
             for (int i=0; i<grammar.getConstructor().size(); i++) {
                 fragmentList.add(GrammarFragment.newInstance(grammar.getConstructor().get(i).getSentence(), grammar.getConstructor().get(i).getTranslate()));
@@ -99,11 +99,15 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
             res_ans+=isCorrect;
         }
         if (item==fragmentList.size()){
-            res_ans = res_ans*100/fragmentList.size();
-            res_cons = res_cons*100/fragmentList.size();
+            if (sizeOfMissword>0)
+                res_ans = res_ans*100/sizeOfMissword;
+            else
+                res_ans = -1;
+            if (sizeOfConstructor>0)
+                res_cons = res_cons*100/sizeOfConstructor;
+            else res_cons = -1;
             presenter.sendGrammarResult( topicId, res_ans, res_cons, startTime);
         }
-
         mGrammarViewPager.setCurrentItem(item);
     }
 

@@ -96,10 +96,7 @@ public class Main2Activity extends BaseActivity
         presenter = new Main2Presenter(manager);
         presenter.attachView(this);
         presenter.requestForStudentDiscipline();
-
         presenter.sendDeviceToken();
-
-
     }
 
     @Override
@@ -116,23 +113,19 @@ public class Main2Activity extends BaseActivity
     }
 
     @Override
-    public void setHeaderView(Info information) {
-        Log.d(TAG, "setHeaderView: ");
-        //Set Information from local db
+    public void setHeaderView(String name, String group, String program) {
         View mHeaderLayout = mNavView.getHeaderView(0);
         TextView mHeaderName = mHeaderLayout.findViewById(R.id.tv_header_fio);
         TextView mHeaderGroup = mHeaderLayout.findViewById(R.id.tv_group);
         TextView mHeaderLevel = mHeaderLayout.findViewById(R.id.tv_sub_header);
-        //SetProfile Information
-        mHeaderName.setText(information.getFio());
-        mHeaderLevel.setText(information.getProgram());
-        mHeaderGroup.setText(information.getGroup());
+        mHeaderName.setText(name);
+        mHeaderLevel.setText(group);
+        mHeaderGroup.setText(program);
 
         mNavView.setCheckedItem(R.id.category_dashboard);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.frameMainFragment, new SyllabusFragment()).commit();
         setTitle(R.string.category_dashboard);
-
     }
 
     @Override
@@ -152,7 +145,6 @@ public class Main2Activity extends BaseActivity
 
         SubMenu subMenu = menum.addSubMenu("Settings");
         subMenu.add(2, 10, 0, "Sign out").setIcon(R.drawable.ic_error_outline);
-
         mNavView.setCheckedItem(1);*/
     }
 

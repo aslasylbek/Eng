@@ -22,15 +22,18 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
 
     @Override
     public void setUserLogOut() {
-        getMvpView().showLoading();
         if (!isAttached()){
             return;
         }
+        getMvpView().showLoading();
         getDataManager().putUserId("");
         getDataManager().sendDeviceToken(new DataManager.GetVoidPostCallback() {
             @Override
             public void onSuccess(Response<PostDataResponse> response) {
                 getDataManager().setLoggedMode(false);
+                getDataManager().putProgram(null);
+                getDataManager().putName(null);
+                getDataManager().putGroup(null);
                 getMvpView().openSlashActivity();
                 getMvpView().hideLoading();
             }
@@ -38,6 +41,9 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
             @Override
             public void onError(Throwable t) {
                 getDataManager().setLoggedMode(false);
+                getDataManager().putProgram(null);
+                getDataManager().putName(null);
+                getDataManager().putGroup(null);
                 getMvpView().openSlashActivity();
                 getMvpView().hideLoading();
             }
@@ -53,16 +59,22 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
             @Override
             public void onSuccess(EngInformationResponse response) {
                 if (response.getSuccess()==1){
-                    getMvpView().setHeaderView(response.getInfo().get(0));
+                    //getMvpView().setHeaderView(response.getInfo().get(0));
+                    if (!response.getInfo().isEmpty()){
+                        getDataManager().putGroup(response.getInfo().get(0).getGroup());
+                        getDataManager().putName(response.getInfo().get(0).getFio());
+                        getDataManager().putProgram(response.getInfo().get(0).getProgram());
+                        getMvpView().setHeaderView(getDataManager().getName(), getDataManager().getGroup(), getDataManager().getProgram());
+                    }
                     //check if
                     if (!response.getEnglish().isEmpty()) {
                         English english = response.getEnglish().get(0);
-
                         getDataManager().putCourseId(english.getCourseId());
                     }
                 }
                 else {
                     getMvpView().showToastMessage(R.string.get_wrong);
+                    getMvpView().setHeaderView(getDataManager().getName(), getDataManager().getGroup(), getDataManager().getProgram());
                 }
                 getMvpView().hideLoading();
             }
@@ -70,6 +82,7 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
             @Override
             public void onError() {
                 getMvpView().showToastMessage(R.string.get_wrong);
+                getMvpView().setHeaderView(getDataManager().getName(), getDataManager().getGroup(), getDataManager().getProgram());
                 getMvpView().hideLoading();
             }
         });

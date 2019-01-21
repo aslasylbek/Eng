@@ -9,7 +9,7 @@ import java.util.List;
 public interface MainMvpView extends MvpView{
 
     //Set some content
-    void setHeaderView(Info info);
+    void setHeaderView(String name, String group, String program);
 
     //Set menu from model
     void setNavigationView();

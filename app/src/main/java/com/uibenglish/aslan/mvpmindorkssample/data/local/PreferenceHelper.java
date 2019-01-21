@@ -8,8 +8,20 @@ public interface PreferenceHelper {
     String TOKEN = "TOKEN";
     String USER_ID = "USER_ID";
     String COURSE_ID = "COURSE_ID";
+    String NAME = "FIO";
+    String GROUP = "GROUP";
+    String PROGRAM = "PROGRAM";
 
     void clear();
+
+    void putName(String name);
+    String getName();
+
+    void putGroup(String group);
+    String getGroup();
+
+    void putProgram(String program);
+    String getProgram();
 
     void putPassword(String password);
     String getPrefPassword();
