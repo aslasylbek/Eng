@@ -5,5 +5,5 @@ import com.uibenglish.aslan.mvpmindorkssample.ui.base.MvpPresenter;
 public interface TaskChoiceMvpPresenter<V extends TaskChoiceMvpView> extends MvpPresenter<V> {
 
 
-    void testRequest();
+    void getGrammar(String topic_id);
 }

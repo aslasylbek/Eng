@@ -3,8 +3,12 @@ package com.uibenglish.aslan.mvpmindorkssample.ui.reading;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.uibenglish.aslan.mvpmindorkssample.MvpApp;
@@ -23,18 +27,24 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class ReaderActivity extends BaseActivity implements ReaderMvpContract.ReaderMvpView, FragmentsListener, AddWordListener {
+public class ReaderActivity extends BaseActivity implements ReaderMvpContract.ReaderMvpView, FragmentsListener, AddWordListener, TabLayout.OnTabSelectedListener {
 
     private static final String TAG = "ReaderActivity";
 
     @BindView(R.id.viewPagerReader)
     VocabularyViewPager mArticleViewPager;
 
+    @BindView(R.id.toolbarReading)
+    Toolbar mReadingToolbar;
+
+    @BindView(R.id.tabsReader)
+    TabLayout mReadingTabLayout;
+
     private ReaderPresenter presenter;
     private VocabularyAdapter mArticleAdapter;
     private String topicId;
     private List<Fragment> fragmentList;
-    private int item = 0;
+    private int item = 1;
 
     private int result_ans = 0;
     private int total_ans = 0;
@@ -49,12 +59,14 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
 
     @Override
     protected void init(@Nullable Bundle state) {
-        setTitle(getString(R.string.item_reading));
+        mReadingToolbar.setTitle(getString(R.string.item_reading));
+        setSupportActionBar(mReadingToolbar);
         if (getSupportActionBar()!=null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        mReadingTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        mReadingTabLayout.addOnTabSelectedListener(this);
         topicId = getIntent().getStringExtra("topicId");
-
         mArticleViewPager.disableScroll(true);
         mArticleViewPager.setCurrentItem(item);
         fragmentList = new ArrayList<>();
@@ -64,6 +76,37 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
         presenter = new ReaderPresenter(dataManager);
         presenter.attachView(this);
         presenter.requestForLocalReadingText(topicId);
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        if(tab.getPosition()==0){
+            mArticleViewPager.setCurrentItem(0);
+            setScrollFlags(true);
+        }
+        else if (tab.getPosition()==1){
+            setScrollFlags(false);
+            mArticleViewPager.setCurrentItem(item);
+        }
+    }
+
+    private void setScrollFlags(boolean isActive){
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)mReadingToolbar.getLayoutParams();
+        if(isActive) {
+            Log.e(TAG, "setScrollFlags: " );
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+        }
+        else params.setScrollFlags(0);
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+        //nothing
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+        //nothing
     }
 
     @Override
@@ -77,7 +120,14 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
         /**
          * get Also position
          */
+
+
         Reading reading = readingList.get(0);
+
+        if(!reading.getReading().isEmpty())
+            mReadingTabLayout.addTab(mReadingTabLayout.newTab().setText("Text"));
+        if(reading.getQuestionanswer().size()>0||reading.getTruefalse().size()>0)
+            mReadingTabLayout.addTab(mReadingTabLayout.newTab().setText("Exercise"));
         fragmentList.add(ReaderFragment.newInstance(reading.getReading()));
         for (int i=0; i<reading.getQuestionanswer().size(); i++) {
             fragmentList.add(TrueFalseFragment.newInstance(reading.getQuestionanswer().get(i).getQuestion(),

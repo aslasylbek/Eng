@@ -6,17 +6,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.reading.ReaderFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,14 +23,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <com.uibenglish.aslan.mvpmindorkssample.widget.CustomTextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                tools:text="Book content"
                 android:textSize="20sp"
                 android:breakStrategy="balanced"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -44,9 +43,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_56"
                 android:background="@drawable/btn_check"
-                android:text="Finish" />
+                tools:text="Finish" />
 
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 </android.support.constraint.ConstraintLayout>

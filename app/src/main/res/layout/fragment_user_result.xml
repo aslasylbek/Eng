@@ -6,6 +6,11 @@
     android:orientation="vertical"
     tools:context=".ui.user_result.UserResultFragment">
 
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabUserResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.design.widget.TabLayout>
 
         <ExpandableListView
             android:id="@+id/expandableListView"

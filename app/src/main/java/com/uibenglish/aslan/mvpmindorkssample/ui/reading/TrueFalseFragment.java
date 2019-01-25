@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -144,7 +145,6 @@ public class TrueFalseFragment extends Fragment implements TextView.OnEditorActi
             isCorrect = 1;
         }
         else if(trimText.length()!=0){
-            mEditAnswer.setError("Incorrect");
             mEditAnswer.setBackgroundColor(getResources().getColor(R.color.colorIncorrect));
             mBtnNext.setVisibility(View.VISIBLE);
             mEditAnswer.setFocusable(false);
@@ -177,31 +177,6 @@ public class TrueFalseFragment extends Fragment implements TextView.OnEditorActi
         mBtnFalse.setClickable(false);
         mBtnNot.setClickable(false);
 
-        /*switch (button.getId()){
-            case R.id.btnFalse:
-                String tagFalse = (String)mBtnFalse.getTag();
-                if (tagFalse!=null) {
-                    mBtnFalse.setBackgroundColor(Color.GREEN);
-                    isCorrect = 1;
-                }
-                else{
-                    mBtnFalse.setBackgroundColor(Color.RED);
-                    mBtnTrue.setBackgroundColor(Color.GREEN);
-                }
-                break;
-            case R.id.btnTrue:
-                String tagTrue = (String)mBtnTrue.getTag();
-                if (tagTrue!=null) {
-                    mBtnTrue.setBackgroundColor(Color.GREEN);
-                    isCorrect = 1;
-                }
-                else{
-                    mBtnFalse.setBackgroundColor(Color.GREEN);
-                    mBtnTrue.setBackgroundColor(Color.RED);
-                }
-                break;
-        }
-        */
     }
 
     @OnClick(R.id.btnNext)

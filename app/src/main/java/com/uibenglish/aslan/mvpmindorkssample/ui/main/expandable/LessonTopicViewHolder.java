@@ -38,6 +38,11 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
             if (item.getIconAccess()!=0) {
                 mIconAccess.setImageResource(item.getIconAccess());
                 mIconAccess.setTag(item.getIconAccess());
+                mIconAccess.setVisibility(View.VISIBLE);
+            }
+            else if(item.getIconAccess()==0){
+                mIconAccess.setVisibility(View.INVISIBLE);
+                mIconAccess.setTag(item.getIconAccess());
             }
             mTopicTitle.setText(item.getTopicName());
             mTopicPhoto.setImageResource(item.getTopicPhoto());

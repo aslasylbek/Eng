@@ -8,8 +8,7 @@ public interface MainMvpPresenter<V extends MvpView> extends MvpPresenter<V> {
 
     void setUserLogOut();
     void requestForStudentDiscipline();
-    void requestForHeaderView();
-
+    void sendUserMessage(String message);
     void sendDeviceToken();
 
 

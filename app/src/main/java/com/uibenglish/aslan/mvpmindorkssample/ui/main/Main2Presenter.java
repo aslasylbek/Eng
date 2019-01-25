@@ -89,8 +89,29 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
     }
 
     @Override
-    public void requestForHeaderView() {
-        //SomeRequest
+    public void sendUserMessage(String message) {
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getDataManager().postUserFeedback(message, new DataManager.GetVoidPostCallback() {
+                @Override
+                public void onSuccess(Response<PostDataResponse> response) {
+                    if (response.isSuccessful())
+                        if (response.body() != null) {
+                            getMvpView().showSnackbar(response.body().getMessage());
+                        }
+                    getMvpView().hideLoading();
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    //getMvpView().showSnackbar(t.getLocalizedMessage());
+                    getMvpView().hideLoading();
+                }
+            });
+        }
+        else {
+            getMvpView().showSnackbar("Check internet connection");
+        }
     }
 
     @Override

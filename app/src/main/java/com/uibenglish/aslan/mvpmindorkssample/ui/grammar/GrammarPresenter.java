@@ -62,7 +62,8 @@ public class GrammarPresenter<V extends GrammarContract.GrammarMvpView> extends 
                 getMvpView().showToastMessage(R.string.get_wrong);
             }
         });
-        int total = (result_ans+result_cons)/2;
+
+        int total = result_ans+result_cons+1;
         getMvpView().addFinishFragment(total);
 
 

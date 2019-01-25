@@ -5,8 +5,12 @@ import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uibenglish.aslan.mvpmindorkssample.MvpApp;
@@ -73,6 +77,17 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView,
     public void showToastMessage(int resId) {
         Toast.makeText(getApplicationContext(),
                 getString(resId), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
+                message, Snackbar.LENGTH_SHORT);
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView
+                .findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(ContextCompat.getColor(this, R.color.whiteText));
+        snackbar.show();
     }
 
     @Override

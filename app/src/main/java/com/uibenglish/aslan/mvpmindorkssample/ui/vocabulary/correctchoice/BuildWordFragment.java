@@ -51,7 +51,6 @@ public class BuildWordFragment extends Fragment implements  OnAudioTTSCompleteLi
     private static final String FAKE_LIST = "fakeList";
     private static final String WORD_DATA = "wordData";
 
-
     private AudioSyntethis audioSyntethis;
 
     @BindView(R.id.btnNext)
@@ -166,12 +165,10 @@ public class BuildWordFragment extends Fragment implements  OnAudioTTSCompleteLi
                         isCorrect = 1;
                     }
                     else if (trimText.length()!=0){
-                        editText.setError("Incorrect");
                         mButtonNext.setVisibility(View.VISIBLE);
                         editText.setBackgroundColor(getResources().getColor(R.color.colorIncorrect));
                         editText.setFocusable(false);
                     }
-
                 return false;
             }
         });

@@ -34,17 +34,17 @@ public class ReaderFragment extends Fragment{
 
     private FragmentsListener listener;
     private AddWordListener addWordListener;
+
+    private String text;
+
     @BindView(R.id.textView)
     CustomTextView textView;
 
     @BindView(R.id.btnFinishReading)
     Button mFinishReading;
-    private String text;
-    /***
-     *
-     * @param str
-     * @return
-     */
+
+
+
     public static ReaderFragment newInstance(String str) {
         Bundle args = new Bundle();
         ReaderFragment fragment = new ReaderFragment();
@@ -95,7 +95,6 @@ public class ReaderFragment extends Fragment{
     public void finishReading(){
         listener.sendData(0, "");
     }
-
 
     @Override
     public void onDestroyView() {

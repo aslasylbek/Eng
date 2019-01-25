@@ -62,6 +62,7 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
     private ViewPagerAdapter adapter;
     private TaskChoicePresenter presenter;
     private float mLastPositionOffset = 0f;
+    private List<ChoiceItemTest> choiceItemTests = new ArrayList<>();
 
     /*
     @toDo Refactor all things
@@ -112,7 +113,6 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
 
     private void prepareWindowForAnimation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Log.e(TAG, "prepareWindowForAnimation: " );
             Slide transition = new Slide();
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -124,26 +124,44 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
 
     @Override
     public void setViewPagerData(LessonChildItem lessonChildItem) {
-        List<ChoiceItemTest> choiceItemTests = new ArrayList<>();
         switch (lessonChildItem.getTopicName()) {
             case "Vocabulary":
                 String[] items = getResources().getStringArray(R.array.vocabulary_task);
                 for (int i = 1; i <= 4; i++) {
                     choiceItemTests.add(new ChoiceItemTest(i, "Task " + i, R.drawable.ic_university, items[i - 1], 1));
                 }
+                updateAdapter();
                 break;
             case "Reading":
                 choiceItemTests.add(new ChoiceItemTest(1, "Reading", R.drawable.ic_word_book, "Read the text and put the missed word.", 2));
+                updateAdapter();
                 break;
             case "Listening":
                 choiceItemTests.add(new ChoiceItemTest(1, "Listening", R.drawable.ic_headset, "Listen to the text and put the missed word.", 3));
-
+                updateAdapter();
                 break;
             case "Grammar":
-                choiceItemTests.add(new ChoiceItemTest(1, "Grammar", R.drawable.ic_search, "Put the missing word and building a proposal.", 4));
-
+                presenter.getGrammar(topicId);
                 break;
         }
+    }
+
+    @Override
+    public void addGrammar(int identifier) {
+        Log.e(TAG, "addGrammar: "+identifier );
+        if(identifier==2) {
+            choiceItemTests.add(new ChoiceItemTest(1, "Grammar", R.drawable.ic_search, "Put the missing word and building a proposal.", 4));
+            choiceItemTests.add(new ChoiceItemTest(2, "Grammar", R.drawable.ic_search, "Building a proposal.", 4));
+        }
+        else if(identifier==1){
+            choiceItemTests.add(new ChoiceItemTest(2, "Grammar", R.drawable.ic_search, "Building a proposal.", 4));
+        }
+        else
+            choiceItemTests.add(new ChoiceItemTest(1, "Grammar", R.drawable.ic_search, "Put the missing word and building a proposal.", 4));
+        updateAdapter();
+    }
+
+    public void updateAdapter(){
         mViewPager.setOffscreenPageLimit(choiceItemTests.size());
         adapter.setNewData(choiceItemTests);
     }
@@ -173,7 +191,7 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
             case 4:
                 intent = GrammarActivity.getGrammarActivity(this);
                 intent.putExtra("position", choiceItemTest.getId());
-                intent.putExtra("topicId", topicId);
+                intent.putExtra("topicId", "366");
                 startActivity(intent);
                 break;
         }
@@ -223,12 +241,13 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+
                 if (adapter!=null){
                     adapter = null;
                 }
                 if (mViewPager!=null)
                     mViewPager.setAdapter(null);
+                onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -8,4 +8,6 @@ public interface TaskChoiceMvpView extends MvpView, LoadingView{
 
     void setViewPagerData(LessonChildItem lessonChildItem);
 
+    void addGrammar(int identifier);
+
 }

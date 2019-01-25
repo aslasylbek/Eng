@@ -49,7 +49,6 @@ public class BBCLessonActivity extends BaseActivity implements BBCLessonContract
     @BindView(R.id.avPlayerFrame)
     FrameLayout mAudioFrame;
 
-
     @BindView(R.id.tabLayoutBBCTask)
     TabLayout mTabBBCTasks;
 

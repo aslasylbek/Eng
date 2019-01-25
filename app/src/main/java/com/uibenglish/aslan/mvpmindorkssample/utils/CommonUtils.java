@@ -1,5 +1,7 @@
 package com.uibenglish.aslan.mvpmindorkssample.utils;
 
+import android.os.Build;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,5 +18,14 @@ public class CommonUtils {
         matcher = pattern.matcher(barcode);
         return matcher.matches();
 
+    }
+
+    public static String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        if (model.startsWith(manufacturer)) {
+            return model;
+        }
+        return manufacturer + " " + model;
     }
 }

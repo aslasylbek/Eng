@@ -12,5 +12,7 @@ public interface MvpView extends LoadingView {
 
     void showToastMessage(int resId);
 
+    void showSnackbar(String message);
+
 
 }

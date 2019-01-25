@@ -4,15 +4,18 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.SubMenu;
 import android.view.View;
@@ -23,6 +26,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -156,8 +161,32 @@ public class Main2Activity extends BaseActivity
 
     @OnClick(R.id.fab)
     public void onFabClicked(View view) {
-        Snackbar.make(view, "We are working on it", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        final EditText editText = new EditText(this);
+        editText.setHint("Ваше сообщение");
+        FrameLayout container = new FrameLayout(this);
+        FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.margin_20);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.margin_20);
+        editText.setLayoutParams(params);
+        container.addView(editText);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Рекомендации")
+                .setCancelable(true)
+                .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton("Отправить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.sendUserMessage(editText.getText().toString());
+                    }
+                });
+        builder.setView(container);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -192,7 +221,7 @@ public class Main2Activity extends BaseActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         int groupId = item.getGroupId();

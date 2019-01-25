@@ -216,7 +216,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
             startFormatDate = " from "+DateTimeUtils.formatRelativeTime(startTime);
             endFormatDate = " until "+DateTimeUtils.formatRelativeTime(endTime);
             if (timeStamp >= startTime && timeStamp <= endTime) {
-                imageId = R.drawable.ic_lock_open;
+                imageId = 0;
                 if (nearUpdateTime<=endTime)
                     nearUpdateTime = endTime;
             }
@@ -230,7 +230,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
             long startTime = Long.parseLong(startChapterTime);
             startFormatDate = " from "+DateTimeUtils.formatRelativeTime(startTime);
             if (timeStamp >= startTime) {
-                imageId = R.drawable.ic_lock_open;
+                imageId = 0;
             }
             else {
                 imageId = R.drawable.ic_lock_outline;
@@ -242,14 +242,14 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
             long endTime = Long.parseLong(endChapterTime);
             endFormatDate = " until "+DateTimeUtils.formatRelativeTime(endTime);
             if (timeStamp <= endTime) {
-                imageId = R.drawable.ic_lock_open;
+                imageId = 0;
                 if (nearUpdateTime<=endTime)
                     nearUpdateTime = endTime;
             }
             else imageId = R.drawable.ic_lock_outline;
         }
         else
-            imageId = R.drawable.ic_lock_open;
+            imageId = 0;
 
         return new LessonChildItem(
                 getString(childTitle),

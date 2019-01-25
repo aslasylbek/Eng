@@ -34,6 +34,7 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
    private VocabularyAdapter adapter;
    private GrammarPresenter presenter;
    private String topicId;
+   private int taskPosition;
 
    private long startTime;
    private int res_ans = 0;
@@ -57,6 +58,8 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
         mGrammarViewPager.disableScroll(true);
         mGrammarViewPager.setAdapter(adapter);
         topicId = getIntent().getStringExtra("topicId");
+        taskPosition = getIntent().getIntExtra("position", 3);
+
         DataManager manager = ((MvpApp)getApplication()).getDataManager();
         presenter = new GrammarPresenter(manager);
         presenter.attachView(this);
@@ -69,18 +72,17 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
         Grammar grammar = grammarList.get(0);
         sizeOfConstructor = grammar.getConstructor().size();
         sizeOfMissword = grammar.getMissword().size();
-        if (!grammar.getConstructor().isEmpty()){
+        if (taskPosition==2){
             for (int i=0; i<grammar.getConstructor().size(); i++) {
                 fragmentList.add(GrammarFragment.newInstance(grammar.getConstructor().get(i).getSentence(), grammar.getConstructor().get(i).getTranslate()));
             }
         }
 
-        if (!grammar.getMissword().isEmpty()){
+        if (taskPosition == 1){
             for (int i=0; i<grammar.getMissword().size(); i++){
-                fragmentList.add(0, TrueFalseFragment.newInstance(grammar.getMissword().get(i).getQuestion(), grammar.getMissword().get(i).getAnswer(), true));
+                fragmentList.add(TrueFalseFragment.newInstance(grammar.getMissword().get(i).getQuestion(), grammar.getMissword().get(i).getAnswer(), true));
             }
         }
-
         adapter.notifyDataSetChanged();
     }
 
@@ -99,13 +101,14 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
             res_ans+=isCorrect;
         }
         if (item==fragmentList.size()){
-            if (sizeOfMissword>0)
-                res_ans = res_ans*100/sizeOfMissword;
-            else
+            if (taskPosition==1) {
+                res_ans = res_ans * 100 / sizeOfMissword;
+                res_cons = -1;
+            }
+            else if (taskPosition==2) {
+                res_cons = res_cons * 100 / sizeOfConstructor;
                 res_ans = -1;
-            if (sizeOfConstructor>0)
-                res_cons = res_cons*100/sizeOfConstructor;
-            else res_cons = -1;
+            }
             presenter.sendGrammarResult( topicId, res_ans, res_cons, startTime);
         }
         mGrammarViewPager.setCurrentItem(item);

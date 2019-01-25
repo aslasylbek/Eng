@@ -31,6 +31,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
+import com.uibenglish.aslan.mvpmindorkssample.utils.CommonUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -181,6 +182,26 @@ public class DataManager implements DataManagerContract {
 
 
     //TODO: English information
+
+
+    public void postUserFeedback(String message, final GetVoidPostCallback callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
+        ApiFactory.recreate();
+        ApiFactory
+                .getApiService()
+                .postUserFeedback(getPrefUserid(), Build.VERSION.RELEASE, CommonUtils.getDeviceName(), message)
+                .enqueue(new Callback<PostDataResponse>() {
+            @Override
+            public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
+                callback.onSuccess(response);
+            }
+            @Override
+            public void onFailure(Call<PostDataResponse> call, Throwable t) {
+                callback.onError(t);
+            }
+        });
+
+    }
 
 
     public void sendForToken(String username, String password, final GetTokenCallbacks callback) {

@@ -82,6 +82,11 @@ public class DefinitionFragment extends BottomSheetDialogFragment
             mLoadingView.hideLoading();
     }
 
+    @Override
+    public void showSnackbar(String message) {
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

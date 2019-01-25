@@ -5,12 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.uibenglish.aslan.mvpmindorkssample.R;
 import com.uibenglish.aslan.mvpmindorkssample.general.LoadingDialog;
 import com.uibenglish.aslan.mvpmindorkssample.general.LoadingView;
 import com.uibenglish.aslan.mvpmindorkssample.utils.NetworkUtils;
@@ -63,6 +67,18 @@ public abstract class BaseFragment extends Fragment implements MvpView {
     public void showToastMessage(int resId) {
         Toast.makeText(getContext(),
                 getString(resId), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(view.findViewById(android.R.id.content),
+                message, Snackbar.LENGTH_SHORT);
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView
+                .findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(ContextCompat.getColor(
+                mActivity, R.color.whiteText));
+        snackbar.show();
     }
 
     @Override

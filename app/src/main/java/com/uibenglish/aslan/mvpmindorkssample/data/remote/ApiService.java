@@ -1,5 +1,7 @@
 package com.uibenglish.aslan.mvpmindorkssample.data.remote;
 
+import android.os.Build;
+
 import com.uibenglish.aslan.mvpmindorkssample.data.content.EngInformationResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.content.LoginResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.content.TranslationResponse;
@@ -60,6 +62,14 @@ public interface ApiService {
      *
      * @return
      */
+
+    @FormUrlEncoded
+    @POST("post/user_feedback.php")
+    Call<PostDataResponse> postUserFeedback(
+            @Field("user_id") String user_id,
+            @Field("os") String build_version,
+            @Field("model") String device_name,
+            @Field("message") String message);
 
     @FormUrlEncoded
     @POST("modules/online_lessons/add_results.php")
