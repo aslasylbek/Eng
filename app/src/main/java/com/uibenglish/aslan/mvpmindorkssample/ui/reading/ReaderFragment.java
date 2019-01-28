@@ -58,9 +58,9 @@ public class ReaderFragment extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reader, container, false);
         ButterKnife.bind(this, view);
-        listener = (FragmentsListener) getActivity();
+        //listener = (FragmentsListener) getActivity();
         addWordListener = (AddWordListener)getActivity();
-        mFinishReading.setText(getString(R.string.button_understand));
+        mFinishReading.setVisibility(View.GONE);
         if (getArguments()!=null)
             text = getArguments().getString(ARTICLE);
         setTextFromDb(text);
@@ -91,14 +91,14 @@ public class ReaderFragment extends Fragment{
 
     }
 
-    @OnClick(R.id.btnFinishReading)
+/*    @OnClick(R.id.btnFinishReading)
     public void finishReading(){
         listener.sendData(0, "");
-    }
+    }*/
 
     @Override
     public void onDestroyView() {
-        listener = null;
+        //listener = null;
         addWordListener = null;
         super.onDestroyView();
     }

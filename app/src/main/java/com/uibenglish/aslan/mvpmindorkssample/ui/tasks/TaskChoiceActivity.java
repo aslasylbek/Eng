@@ -150,14 +150,14 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
     public void addGrammar(int identifier) {
         Log.e(TAG, "addGrammar: "+identifier );
         if(identifier==2) {
-            choiceItemTests.add(new ChoiceItemTest(1, "Grammar", R.drawable.ic_search, "Put the missing word and building a proposal.", 4));
-            choiceItemTests.add(new ChoiceItemTest(2, "Grammar", R.drawable.ic_search, "Building a proposal.", 4));
+            choiceItemTests.add(new ChoiceItemTest(1, "Task 1", R.drawable.ic_edit, "Filling the gaps", 4));
+            choiceItemTests.add(new ChoiceItemTest(2, "Task 2", R.drawable.ic_search, "Translate the phrase with given words.", 4));
         }
         else if(identifier==1){
-            choiceItemTests.add(new ChoiceItemTest(2, "Grammar", R.drawable.ic_search, "Building a proposal.", 4));
+            choiceItemTests.add(new ChoiceItemTest(2, "Task 2", R.drawable.ic_search, "Translate the phrase with given words.", 4));
         }
         else
-            choiceItemTests.add(new ChoiceItemTest(1, "Grammar", R.drawable.ic_search, "Put the missing word and building a proposal.", 4));
+            choiceItemTests.add(new ChoiceItemTest(1, "Task 1", R.drawable.ic_edit, "Filling the gaps", 4));
         updateAdapter();
     }
 

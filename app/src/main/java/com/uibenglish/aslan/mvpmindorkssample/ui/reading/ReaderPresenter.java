@@ -97,7 +97,6 @@ public class ReaderPresenter<V extends ReaderMvpContract.ReaderMvpView> extends 
                 List<Translate> translateList = response.getTranslate();
                 String[] translates = new String[translateList.size()];
                 for (int i=0; i<translateList.size(); i++){
-                    System.out.println(translateList.get(i).getValue());
                     translates[i] = translateList.get(i).getValue();
                 }
                 getMvpView().setTranslate(translates[0]);

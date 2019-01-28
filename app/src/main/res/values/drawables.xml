@@ -12,5 +12,7 @@
     <item name="ic_headset" type="drawable">@android:drawable/ic_menu_compass</item>
     <item name="ic_expanded" type="drawable">@android:drawable/arrow_down_float</item>
     <item name="ic_collapse" type="drawable">@android:drawable/arrow_up_float</item>
+    <item name="ic_edit" type="drawable">@android:drawable/ic_menu_edit</item>
+
 
 </resources>

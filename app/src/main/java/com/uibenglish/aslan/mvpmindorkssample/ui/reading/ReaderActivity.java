@@ -7,9 +7,12 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.uibenglish.aslan.mvpmindorkssample.MvpApp;
 import com.uibenglish.aslan.mvpmindorkssample.R;
@@ -34,6 +37,9 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
     @BindView(R.id.viewPagerReader)
     VocabularyViewPager mArticleViewPager;
 
+    @BindView(R.id.frameReader)
+    FrameLayout mFrameReader;
+
     @BindView(R.id.toolbarReading)
     Toolbar mReadingToolbar;
 
@@ -44,7 +50,9 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
     private VocabularyAdapter mArticleAdapter;
     private String topicId;
     private List<Fragment> fragmentList;
-    private int item = 1;
+    private int item = 0;
+
+    private ReaderFragment readerFragment;
 
     private int result_ans = 0;
     private int total_ans = 0;
@@ -80,23 +88,17 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if(tab.getPosition()==0){
-            mArticleViewPager.setCurrentItem(0);
-            setScrollFlags(true);
+            mArticleViewPager.setVisibility(View.GONE);
+            if (readerFragment!=null)
+                fragmentTransaction.show(readerFragment).commit();
         }
         else if (tab.getPosition()==1){
-            setScrollFlags(false);
+            mArticleViewPager.setVisibility(View.VISIBLE);
+            fragmentTransaction.hide(readerFragment).commit();
             mArticleViewPager.setCurrentItem(item);
         }
-    }
-
-    private void setScrollFlags(boolean isActive){
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)mReadingToolbar.getLayoutParams();
-        if(isActive) {
-            Log.e(TAG, "setScrollFlags: " );
-            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-        }
-        else params.setScrollFlags(0);
     }
 
     @Override
@@ -116,25 +118,25 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
 
     @Override
     public void spreadTextToFragments(List<Reading> readingList) {
+
         startTime = System.currentTimeMillis()/1000;
         /**
          * get Also position
          */
-
-
         Reading reading = readingList.get(0);
-
         if(!reading.getReading().isEmpty())
             mReadingTabLayout.addTab(mReadingTabLayout.newTab().setText("Text"));
         if(reading.getQuestionanswer().size()>0||reading.getTruefalse().size()>0)
             mReadingTabLayout.addTab(mReadingTabLayout.newTab().setText("Exercise"));
-        fragmentList.add(ReaderFragment.newInstance(reading.getReading()));
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        readerFragment = ReaderFragment.newInstance(reading.getReading());
+        fragmentTransaction.add(R.id.frameReader, readerFragment).commit();
         for (int i=0; i<reading.getQuestionanswer().size(); i++) {
             fragmentList.add(TrueFalseFragment.newInstance(reading.getQuestionanswer().get(i).getQuestion(),
                     reading.getQuestionanswer().get(i).getAnswer(), true));
             total_ans++;
         }
-
         for (int i=0; i<reading.getTruefalse().size(); i++){
             fragmentList.add(TrueFalseFragment.newInstance(reading.getTruefalse().get(i).getQuestion(),
                     reading.getTruefalse().get(i).getTruefalse(), false));
@@ -152,12 +154,9 @@ public class ReaderActivity extends BaseActivity implements ReaderMvpContract.Re
         else if (wordId.equals("qa")){
             result_ans+=isCorrect;
         }
-
-        if (item==fragmentList.size()&&fragmentList.size()>1){
+        if (item==fragmentList.size()&&fragmentList.size()>0){
             presenter.postResultToServer(topicId, result_tf, result_ans, total_tf, total_ans, startTime);
         }
-        else if (fragmentList.size()==1)
-            finish();
 
         mArticleViewPager.setCurrentItem(item);
 

@@ -165,11 +165,11 @@ public class TrueFalseFragment extends Fragment implements TextView.OnEditorActi
     @OnClick({R.id.btnNot, R.id.btnFalse, R.id.btnTrue})
     public void onChooseAnswer(Button button){
         if (Integer.parseInt(button.getTag().toString())!=0){
-            button.setBackgroundColor(Color.GREEN);
+            button.setBackgroundColor(getResources().getColor(R.color.colorCorrect));
             isCorrect = 1;
         }
         else{
-            button.setBackgroundColor(Color.RED);
+            button.setBackgroundColor(getResources().getColor(R.color.colorIncorrect));
             mLinearTrueFalse.findViewWithTag(1).setBackgroundColor(Color.GREEN);
         }
         mBtnNext.setVisibility(View.VISIBLE);
