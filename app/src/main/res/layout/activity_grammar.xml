@@ -9,19 +9,19 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/AlertDialog.AppCompat.Light">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
+            android:id="@+id/mProgressToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AppTheme.PopupOverlay">
+            app:popupTheme="@style/AppTheme.PopupOverlay">
         </android.support.v7.widget.Toolbar>
 
         <ProgressBar
-            android:id="@+id/progressBar2"
+            android:id="@+id/mCustomProgress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:progress="50"
             android:layout_height="wrap_content" />
     </android.support.design.widget.AppBarLayout>
 

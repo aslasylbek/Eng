@@ -44,7 +44,8 @@
             android:textSize="@dimen/text.18"
             android:textColor="@color/whiteText"
             android:background="@drawable/btn_fab"
-            android:drawableRight="@drawable/ic_chevron_right"/>
+            android:drawableRight="@drawable/ic_chevron_right"
+            android:drawableEnd="@drawable/ic_chevron_right" />
     </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>

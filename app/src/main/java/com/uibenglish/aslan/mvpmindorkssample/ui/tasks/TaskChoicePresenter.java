@@ -22,10 +22,10 @@ public class TaskChoicePresenter<V extends TaskChoiceMvpView>extends BasePresent
         if (!isAttached())
             return;
         getMvpView().showLoading();
-        getDataManager().getGrammarArray("366", new DataManager.GetGrammarListCallback() {
+        getDataManager().getGrammarArray(topic_id, new DataManager.GetGrammarListCallback() {
             @Override
             public void onSuccess(List<Grammar> grammarList) {
-                if(grammarList.get(0).getMissword().size()>0&&grammarList.get(0).getConstructor().size()>0){
+                if(grammarList.get(0).getMissword().size()>0 && grammarList.get(0).getConstructor().size()>0){
                     getMvpView().addGrammar(2);
                 }
                 else if (grammarList.get(0).getConstructor().size()>0){

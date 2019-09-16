@@ -62,6 +62,40 @@
     <string name="loading">Loading…</string>
 
 
+    <string name="play_icon_upper_path_data">M 44 32 L 44 64 L 100 64 L 100 64 Z</string>
+
+    <string name="play_icon_bottom_path_data">M 44 96 L 44 64 L 100 64 L 100 64 Z</string>
+
+
+    <!-- Play Icon -->
+    <string name="pause_icon_upper_path_data">M 32 40 L 32 56  L 96 56 L 96 40 Z</string>
+    <string name="pause_icon_bottom_path_data">M 32 88 L 32 72 L 96 72 L 96 88 Z</string>
+    <!-- Pause Icon -->
+    <string name="audio_service_notification">Audio Service Notification</string>
+    <string name="play">Play</string>
+
+
+    <string name="pause">Pause</string>
+    <string name="forward">Forward</string>
+    <string name="replay">Replay</string>
+    <string name="default_display_time">00:00</string>
+    <string name="cache_start">Downloading audio</string>
+    <string name="cache_complete">Completed</string>
+
+    <string name="add_to_word_book">+ WordBook</string>
+    <string name="added_to_word_book">Added to WordBook</string>
+
+    <string name="custom_word_book">Word Book</string>
+    <string name="no_audio">No audio</string>
+    <string name="definition">Definition</string>
+    <string name="add_to_favourites">Add to Favorites</string>
+
+    <string name="notification_new_content">New content from</string>
+    <string name="vocabulary_refactored">Word marked as known</string>
+
+
+    <string name="undo">undo</string>
+    <string name="title_activity_tamagochi">TamagochiActivity</string>
     <string-array name="drawer_sample">
         <item>Dashboard</item>
         <item>Activity</item>
@@ -69,45 +103,12 @@
         <item>Profile</item>
         <item>Something</item>
     </string-array>
-
     <string-array name="vocabulary_task">
         <item>Listen to the phrase and find it on the list.</item>
         <item>Listen to the phrase and find its translation.</item>
         <item>Read the phrase and find its translation.</item>
         <item>Write the phrase at dictation.</item>
     </string-array>
-
-
-    <!-- Play Icon -->
-    <string name="play_icon_upper_path_data">M 44 32 L 44 64 L 100 64 L 100 64 Z</string>
-    <string name="play_icon_bottom_path_data">M 44 96 L 44 64 L 100 64 L 100 64 Z</string>
-    <!-- Pause Icon -->
-    <string name="pause_icon_upper_path_data">M 32 40 L 32 56  L 96 56 L 96 40 Z</string>
-    <string name="pause_icon_bottom_path_data">M 32 88 L 32 72 L 96 72 L 96 88 Z</string>
-
-
-    <string name="audio_service_notification">Audio Service Notification</string>
-    <string name="play">Play</string>
-    <string name="pause">Pause</string>
-    <string name="forward">Forward</string>
-    <string name="replay">Replay</string>
-    <string name="default_display_time">00:00</string>
-
-    <string name="cache_start">Downloading audio</string>
-    <string name="cache_complete">Completed</string>
-
-    <string name="add_to_word_book">+ WordBook</string>
-    <string name="added_to_word_book">Added to WordBook</string>
-    <string name="custom_word_book">Word Book</string>
-    <string name="no_audio">No audio</string>
-
-    <string name="definition">Definition</string>
-    <string name="add_to_favourites">Add to Favorites</string>
-
-
-    <string name="notification_new_content">New content from</string>
-    <string name="vocabulary_refactored">Word marked as known</string>
-    <string name="undo">undo</string>
 
 
 </resources>

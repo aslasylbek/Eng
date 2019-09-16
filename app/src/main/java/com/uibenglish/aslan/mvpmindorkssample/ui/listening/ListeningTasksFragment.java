@@ -1,12 +1,15 @@
 package com.uibenglish.aslan.mvpmindorkssample.ui.listening;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,7 +38,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListeningTasksFragment extends BaseFragment implements ListeningTaskContract.ListeningTaskMvpView{
+public class ListeningTasksFragment extends BaseFragment implements ListeningTaskContract.ListeningTaskMvpView, DialogInterface.OnClickListener {
 
     private static final String TAG = "ListeningTasksFragment";
     private static final String ARTICLE_KEY = "key";
@@ -55,6 +58,7 @@ public class ListeningTasksFragment extends BaseFragment implements ListeningTas
     private ListeningTaskPresenter presenter;
     private long startTime;
     private String topicId;
+    private int result;
 
 
     public static ListeningTasksFragment newInstance(List<Listening> list, String topicId) {
@@ -99,30 +103,50 @@ public class ListeningTasksFragment extends BaseFragment implements ListeningTas
     @OnClick(R.id.btnSentResult)
     public void onSendClicked(){
         mTaskRView.clearFocus();
+
         if (editModelArrayList.size()>0) {
-            int result = correct * 100 / editModelArrayList.size();
+            result = correct * 100 / editModelArrayList.size();
             if (mSendResult.getText().toString().equals("Next")){
-                for (int i = 0; i < editModelArrayList.size(); i++) {
-                    Questionanswer questionObject =  editModelArrayList.get(i);
-                    int mEditTextColor = R.color.colorIncorrect;
-                    if (questionObject.getUserAnswer() != null) {
-                        String convertToLower = questionObject.getUserAnswer().toLowerCase();
-                        String trimText = convertToLower.trim();
-                        if (questionObject.getAnswer().equals(trimText)) {
-                            mEditTextColor = R.color.colorCorrect;
-                            correct++;
-                        }
-                    }
-                    editModelArrayList.get(i).setUserAnswer(questionObject.getAnswer());
-                    questionObject.setEditTextColor("#" + Integer.toHexString(ContextCompat.getColor(getBaseActivity(), mEditTextColor)));
-                }
-                presenter.postListeningResult(topicId, result, startTime);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getBaseActivity());
+                builder.setTitle("Send result and check answer?")
+                        .setCancelable(true)
+                        .setNegativeButton("Cancel", this)
+                        .setPositiveButton("OK", this);
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
             else{
+
                 listener.sendData(result, "");
             }
         }
         else getBaseActivity().finish();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (which==-2){
+            dialog.cancel();
+            return;
+        }
+
+        for (int i = 0; i < editModelArrayList.size(); i++) {
+            Questionanswer questionObject =  editModelArrayList.get(i);
+            int mEditTextColor = R.color.colorIncorrect;
+            if (questionObject.getUserAnswer() != null) {
+                String convertToLower = questionObject.getUserAnswer().toLowerCase();
+                String trimText = convertToLower.trim();
+                if (questionObject.getAnswer().equals(trimText)) {
+                    mEditTextColor = R.color.colorCorrect;
+                    correct++;
+                }
+            }
+            editModelArrayList.get(i).setUserAnswer(questionObject.getAnswer());
+            questionObject.setEditTextColor("#" + Integer.toHexString(ContextCompat.getColor(getBaseActivity(), mEditTextColor)));
+        }
+        presenter.postListeningResult(topicId, result, startTime);
+
     }
 
 

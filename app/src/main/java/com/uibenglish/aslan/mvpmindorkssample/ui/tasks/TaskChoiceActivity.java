@@ -191,7 +191,7 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
             case 4:
                 intent = GrammarActivity.getGrammarActivity(this);
                 intent.putExtra("position", choiceItemTest.getId());
-                intent.putExtra("topicId", "366");
+                intent.putExtra("topicId", topicId);
                 startActivity(intent);
                 break;
         }

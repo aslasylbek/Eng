@@ -69,7 +69,8 @@ public class SyllabusPresenter<V extends SyllabusMvpView> extends BasePresenter<
                     getMvpView().setOnErrorMessage();
                     getMvpView().showToastMessage(R.string.no_english);
                 }
-                getMvpView().hideLoading();
+                if(isAttached())
+                    getMvpView().hideLoading();
             }
 
             @Override

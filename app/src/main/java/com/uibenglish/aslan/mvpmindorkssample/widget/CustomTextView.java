@@ -56,6 +56,8 @@ public class CustomTextView extends AppCompatTextView {
             @Override
             public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
                 menu.removeItem(android.R.id.selectAll);
+                menu.removeItem(android.R.id.copy);
+                menu.removeItem(android.R.id.shareText);
                 return true;
             }
 

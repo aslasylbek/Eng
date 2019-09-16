@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -37,6 +39,9 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
     @BindView(R.id.audio_player_container)
     FrameLayout mAudioContainer;
 
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
     private ListeningPresenter listeningPresenter;
     private String topicId;
     private int position;
@@ -46,7 +51,8 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
     }
     @Override
     protected void init(@Nullable Bundle state) {
-        setTitle(getString(R.string.item_listening));
+        mToolbar.setTitle(getString(R.string.item_listening));
+        setSupportActionBar(mToolbar);
         if (getSupportActionBar()!=null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -84,10 +90,16 @@ public class ListeningActivity extends BaseActivity implements ListeningContract
 
     @Override
     public void sendData(int isCorrect, String wordId) {
+        scrollFlags();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.listeningTaskContainer, FinishFragment.newInstance(isCorrect));
         ft.commit();
         //listeningPresenter.setListeningResult(topicId, isCorrect, startTime);
+    }
+
+    private void scrollFlags(){
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)mToolbar.getLayoutParams();
+        params.setScrollFlags(0);
     }
 
     @Override

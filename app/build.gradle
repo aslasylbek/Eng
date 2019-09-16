@@ -10,8 +10,8 @@ android {
         applicationId 'com.uibenglish.aslan.mvpmindorkssample'
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 9
-        versionName "1.9"
+        versionCode 10
+        versionName "1.91"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 

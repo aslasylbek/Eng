@@ -71,7 +71,7 @@ public abstract class BaseFragment extends Fragment implements MvpView {
 
     @Override
     public void showSnackbar(String message) {
-        Snackbar snackbar = Snackbar.make(view.findViewById(android.R.id.content),
+        Snackbar snackbar = Snackbar.make(mActivity.findViewById(android.R.id.content),
                 message, Snackbar.LENGTH_SHORT);
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView

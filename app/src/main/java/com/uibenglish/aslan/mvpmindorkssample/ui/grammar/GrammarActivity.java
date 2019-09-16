@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.uibenglish.aslan.mvpmindorkssample.MvpApp;
 import com.uibenglish.aslan.mvpmindorkssample.R;
@@ -43,13 +45,20 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
     @BindView(R.id.mGrammarViewPager)
     VocabularyViewPager mGrammarViewPager;
 
+    @BindView(R.id.mProgressToolbar)
+    Toolbar mProgressToolbar;
+
+    @BindView(R.id.mCustomProgress)
+    ProgressBar mProgress;
+
     public static Intent getGrammarActivity(Context context){
         return new Intent(context, GrammarActivity.class);
     }
 
     @Override
     protected void init(@Nullable Bundle state) {
-        setTitle(getString(R.string.item_grammar));
+        mProgressToolbar.setTitle(getString(R.string.item_grammar));
+        setSupportActionBar(mProgressToolbar);
         if (getSupportActionBar()!=null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -84,11 +93,17 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
             }
         }
         adapter.notifyDataSetChanged();
+        mProgress.setMax(fragmentList.size());
+        updateUI();
     }
 
     @Override
     protected int getContentResource() {
         return R.layout.activity_grammar;
+    }
+
+    private void updateUI(){
+        mProgress.setProgress(item);
     }
 
     @Override
@@ -112,6 +127,7 @@ public class GrammarActivity extends BaseActivity implements FragmentsListener, 
             presenter.sendGrammarResult( topicId, res_ans, res_cons, startTime);
         }
         mGrammarViewPager.setCurrentItem(item);
+        updateUI();
     }
 
     @Override
