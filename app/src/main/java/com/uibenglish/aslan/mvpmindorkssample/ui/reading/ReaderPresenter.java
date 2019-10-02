@@ -19,6 +19,7 @@ import retrofit2.Response;
 
 public class ReaderPresenter<V extends ReaderMvpContract.ReaderMvpView> extends BasePresenter<V> implements ReaderMvpContract.ReaderMvpPresenter<V>{
 
+    private static final String TAG = "ReaderPresenter";
     public ReaderPresenter(DataManager mDataManager) {
         super(mDataManager);
 
@@ -41,7 +42,6 @@ public class ReaderPresenter<V extends ReaderMvpContract.ReaderMvpView> extends 
                 getMvpView().showToastMessage(R.string.get_wrong);
             }
         });
-        //getMvpView().spreadTextToFragments(getDataManager().getTextByTopicId(topicId).get(0).getReading());
 
     }
 
@@ -90,24 +90,25 @@ public class ReaderPresenter<V extends ReaderMvpContract.ReaderMvpView> extends 
 
     @Override
     public void getWordTranslate(String word) {
-        getMvpView().showLoading();
-        getDataManager().requestForWordTranslation(word, new DataManager.GetWordTranslation() {
-            @Override
-            public void onSuccess(TranslationResponse response) {
-                List<Translate> translateList = response.getTranslate();
-                String[] translates = new String[translateList.size()];
-                for (int i=0; i<translateList.size(); i++){
-                    translates[i] = translateList.get(i).getValue();
-                }
-                getMvpView().setTranslate(translates[0]);
-                getMvpView().hideLoading();
-            }
-
-            @Override
-            public void onError() {
-                getMvpView().hideLoading();
-            }
-        });
+        Log.e(TAG, "getWordTranslate: Havent be call Check" );
+//        getMvpView().showLoading();
+//        getDataManager().requestForWordTranslation(word, new DataManager.GetWordTranslation() {
+//            @Override
+//            public void onSuccess(TranslationResponse response) {
+//                List<Translate> translateList = response.getTranslate();
+//                String[] translates = new String[translateList.size()];
+//                for (int i=0; i<translateList.size(); i++){
+//                    translates[i] = translateList.get(i).getValue();
+//                }
+//                getMvpView().setTranslate(translates[0]);
+//                getMvpView().hideLoading();
+//            }
+//
+//            @Override
+//            public void onError() {
+//                getMvpView().hideLoading();
+//            }
+//        });
     }
 
     @Override

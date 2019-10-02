@@ -18,9 +18,9 @@ public class TranslationResponse implements Parcelable {
     @SerializedName("translate_source")
     @Expose
     private String translateSource;
-    @SerializedName("is_user")
+    @SerializedName("status")
     @Expose
-    private Integer isUser;
+    private String status;
     @SerializedName("word_forms")
     @Expose
     private List<WordForm> wordForms = null;
@@ -44,10 +44,10 @@ public class TranslationResponse implements Parcelable {
     private String soundUrl;
 
 
-    public TranslationResponse(String errorMsg, String translateSource, Integer isUser, List<WordForm> wordForms, String picUrl, List<Translate> translate, String transcription, Integer wordId, Integer wordTop, String soundUrl) {
+    public TranslationResponse(String errorMsg, String translateSource, String status, List<WordForm> wordForms, String picUrl, List<Translate> translate, String transcription, Integer wordId, Integer wordTop, String soundUrl) {
         this.errorMsg = errorMsg;
         this.translateSource = translateSource;
-        this.isUser = isUser;
+        this.status = status;
         this.wordForms = wordForms;
         this.picUrl = picUrl;
         this.translate = translate;
@@ -73,12 +73,12 @@ public class TranslationResponse implements Parcelable {
         this.translateSource = translateSource;
     }
 
-    public Integer getIsUser() {
-        return isUser;
+    public String getIsUser() {
+        return status;
     }
 
-    public void setIsUser(Integer isUser) {
-        this.isUser = isUser;
+    public void setIsUser(String isUser) {
+        this.status = status;
     }
 
     public List<WordForm> getWordForms() {
@@ -140,7 +140,7 @@ public class TranslationResponse implements Parcelable {
     public TranslationResponse(Parcel in) {
         errorMsg = in.readString();
         translateSource = in.readString();
-        isUser = in.readInt();
+        status = in.readString();
         in.readList(this.wordForms, WordForm.class.getClassLoader());
         picUrl = in.readString();
         in.readList(this.translate, Translate.class.getClassLoader());
@@ -159,7 +159,7 @@ public class TranslationResponse implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(errorMsg);
         dest.writeString(translateSource);
-        dest.writeInt(isUser);
+        dest.writeString(status);
         dest.writeList(wordForms);
         dest.writeString(picUrl);
         dest.writeList(translate);

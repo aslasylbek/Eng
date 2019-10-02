@@ -162,7 +162,25 @@ public class DataManager implements DataManagerContract {
                 ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_ENG);
                 ApiFactory.recreate();
                 ApiFactory.getApiService()
-                        .sendTokenToServer(getPrefUserid(), newToken)
+                        .sendTokenToServer(
+                                getPrefUserid(),
+                                newToken,
+                                "android",
+                                Build.DEVICE,
+                                Build.BOARD,
+                                Build.BOOTLOADER,
+                                Build.BRAND,
+                                Build.DISPLAY,
+                                Build.FINGERPRINT,
+                                Build.HARDWARE,
+                                Build.HOST,
+                                Build.ID,
+                                Build.MANUFACTURER,
+                                Build.MODEL,
+                                Build.PRODUCT,
+                                Build.TAGS,
+                                Build.TYPE,
+                                Build.VERSION.RELEASE)
                         .enqueue(new Callback<PostDataResponse>() {
                             @Override
                             public void onResponse(Call<PostDataResponse> call, Response<PostDataResponse> response) {
@@ -255,7 +273,7 @@ public class DataManager implements DataManagerContract {
     public void requestForWordTranslation(String word, final GetWordTranslation callback) {
         ApiFactory
                 .getApiService()
-                .getWordTranslate("http://api.lingualeo.com/gettranslates?word=" + word)
+                .getWordTranslate("https://api.lingualeo.com/gettranslates?port=1001&word=" + word)
                 .enqueue(new Callback<TranslationResponse>() {
                     @Override
                     public void onResponse(Call<TranslationResponse> call, Response<TranslationResponse> response) {

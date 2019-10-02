@@ -55,7 +55,6 @@ public class WordBookMainFragment extends BaseFragment implements WordBookContra
         mTabLayout.addOnTabSelectedListener(this);
         mViewPager.disableScroll(true);
         pagerAdapter = new WordBookPagerAdapter(getChildFragmentManager(), fragmentList);
-        Log.d(TAG, "init: "+fragmentList.size());
         mViewPager.setAdapter(pagerAdapter);
         DataManager manager = ((MvpApp)getBaseActivity().getApplicationContext()).getDataManager();
         presenter = new WordBookPresenter(manager);

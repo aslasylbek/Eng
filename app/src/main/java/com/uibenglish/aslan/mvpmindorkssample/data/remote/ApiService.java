@@ -51,6 +51,8 @@ public interface ApiService {
      * @param url lingualeo
      * @return
      */
+
+
     @GET
     Call<TranslationResponse> getWordTranslate(
             @Url String url);
@@ -128,14 +130,44 @@ public interface ApiService {
     @POST("mobile/tokens.php")
     Call<PostDataResponse> sendTokenToServer(
             @Field("user_id") String user_id,
-            @Field("device_token") String device_token);
-
-
-
+            @Field("token") String device_token,
+            @Field("device_type") String device_type,
+            @Field("device") String device,
+            @Field("device_board") String device_board,
+            @Field("device_bootloader") String device_bootloader,
+            @Field("device_brand") String device_brand,
+            @Field("device_display") String device_display,
+            @Field("device_fingerprint") String device_fingerprint,
+            @Field("device_hardware") String device_hardware,
+            @Field("device_host") String device_host,
+            @Field("device_id") String device_id,
+            @Field("device_manufacturer") String device_manufacturer,
+            @Field("device_model") String device_model,
+            @Field("device_product") String device_product,
+            @Field("device_tags") String device_tags,
+            @Field("device_build_type") String device_build_type,
+            @Field("os_version") String os_version
+            );
     /***
      *
      * @param user_id
      * @return
+     *  params.put(" device ", Build.DEVICE);
+     *             params.put("device_board", Build.BOARD);
+     *             params.put("device_bootloader", Build.BOOTLOADER);
+     *             params.put("device_brand", Build.BRAND);
+     *             params.put("device_display", Build.DISPLAY);
+     *             params.put("device_fingerprint", Build.FINGERPRINT);
+     *             params.put("device_hardware", Build.HARDWARE);
+     *             params.put("device_host", Build.HOST);
+     *             params.put("device_id", Build.ID);
+     *             params.put("device_manufacturer", Build.MANUFACTURER);
+     *             params.put("device_model", Build.MODEL);
+     *             params.put("device_product", Build.PRODUCT);
+     *             params.put("device_tags", Build.TAGS);
+     *             params.put("device_build_type", Build.TYPE);
+     *
+     *             params.put("os_version", Build.VERSION.RELEASE);
      */
 
     //Get

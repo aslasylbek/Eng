@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,6 +139,7 @@ public class WordBookFragment extends Fragment implements
     @Override
     public void OnPronunciationClick(String audioHref) {
         audioSyntethis.setText(audioHref);
+        Log.e("AAA", "OnPronunciationClick: " );
         audioSyntethis.playSyntethMedia();
         /*if (TextUtils.isEmpty(audioHref)) {
             Toast.makeText(getContext(), R.string.no_audio, Toast.LENGTH_SHORT).show();
