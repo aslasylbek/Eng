@@ -16,6 +16,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/btn_check"
+        android:textColor="@color/whiteText"
         android:text="Next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

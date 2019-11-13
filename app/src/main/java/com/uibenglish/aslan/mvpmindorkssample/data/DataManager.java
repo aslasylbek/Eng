@@ -16,6 +16,7 @@ import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCCategories;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCEnglish;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLesson;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLessonsList;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.EnglishInfo;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.PostDataResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.ResultStudentTasks;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.WordCollection;
@@ -223,6 +224,8 @@ public class DataManager implements DataManagerContract {
 
 
     public void sendForToken(String username, String password, final GetTokenCallbacks callback) {
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_MOODLE);
+        ApiFactory.recreate();
         ApiFactory
                 .getApiService()
                 .getValidationInfo(username, password)
@@ -235,6 +238,27 @@ public class DataManager implements DataManagerContract {
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
                         callback.onError(t);
+                    }
+                });
+    }
+
+    public void requestForStudentInformation(final GetStudentInformation callback){
+        ApiFactory.changeApiBaseUrl(BuildConfig.API_ENDPOINT_MOODLE);
+        ApiFactory.recreate();
+        ApiFactory
+                .getApiService()
+                .getStudentInformation(getPrefUserid())
+                .enqueue(new Callback<EnglishInfo>() {
+                    @Override
+                    public void onResponse(Call<EnglishInfo> call, Response<EnglishInfo> response) {
+                        if (response.isSuccessful())
+                            callback.onSuccess(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<EnglishInfo> call, Throwable t) {
+                        Log.e(TAG, "onFailure: "+t.getMessage()+" "+t.getStackTrace().toString()+ t.getLocalizedMessage() );
+                        callback.onError();
                     }
                 });
     }
@@ -663,6 +687,13 @@ public class DataManager implements DataManagerContract {
 
         void onError();
     }
+
+    public interface GetStudentInformation {
+        void onSuccess(EnglishInfo response);
+        void onError();
+    }
+
+
 
     public interface GetVoidPostCallback {
         void onSuccess(Response<PostDataResponse> response);

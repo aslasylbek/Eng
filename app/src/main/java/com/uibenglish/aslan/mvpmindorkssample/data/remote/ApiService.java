@@ -8,6 +8,7 @@ import com.uibenglish.aslan.mvpmindorkssample.data.content.TranslationResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCEnglish;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLesson;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCLessonsList;
+import com.uibenglish.aslan.mvpmindorkssample.data.models.EnglishInfo;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.PostDataResponse;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.ResultStudentTasks;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.WordCollection;
@@ -44,6 +45,11 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("mobile_eng/data.php")
     Call<EngInformationResponse> getStudentSubjectInformation(
+            @Field("user_id") String user_id);
+
+    @FormUrlEncoded
+    @POST("mobile_eng/data.php")
+    Call<EnglishInfo> getStudentInformation(
             @Field("user_id") String user_id);
 
     /***

@@ -22,25 +22,30 @@ public class WordBookPresenter<V extends WordBookContract.WordBookMvpView> exten
 
     @Override
     public void requestWordsCollection() {
-        getMvpView().showLoading();
-        getDataManager().getStudentDictionary(new DataManager.GetWordCollectionCallback() {
-            @Override
-            public void onSuccess(List<WordCollection> wordCollectionList) {
-                if (wordCollectionList.size()>0)
-                    getMvpView().setWordsCollection(wordCollectionList);
-                getMvpView().hideLoading();
-            }
 
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getDataManager().getStudentDictionary(new DataManager.GetWordCollectionCallback() {
                 @Override
-                public void onError (Throwable t){
-                    getMvpView().showToastMessage(R.string.get_wrong);
+                public void onSuccess(List<WordCollection> wordCollectionList) {
+                    if (wordCollectionList.size() > 0)
+                        getMvpView().setWordsCollection(wordCollectionList);
                     getMvpView().hideLoading();
                 }
-            });
-        }
 
-        @Override
-        public void addWordAsKnown (String word_id){
+                @Override
+                public void onError(Throwable t) {
+                    getMvpView().showToastMessage(R.string.get_wrong);
+                    getMvpView().hideLoading();
+                    getMvpView().setOnErrorMessage();
+                }
+            });
+        }else getMvpView().noInternetConnection();
+    }
+
+    @Override
+    public void addWordAsKnown (String word_id){
+        if (getMvpView().isNetworkConnected()){
             getMvpView().showLoading();
             getDataManager().postToChangeWordAsKnown(word_id, new DataManager.GetVoidPostCallback() {
                 @Override
@@ -55,5 +60,6 @@ public class WordBookPresenter<V extends WordBookContract.WordBookMvpView> exten
                     getMvpView().hideLoading();
                 }
             });
-        }
+        }else getMvpView().noInternetConnection();
     }
+}

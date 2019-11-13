@@ -22,6 +22,10 @@ public class Info {
     @SerializedName("course")
     @Expose
     private String course;
+    @SerializedName("time")
+    @Expose
+    private long currentTime;
+
 
     public String getFio() {
         return fio;
@@ -71,4 +75,11 @@ public class Info {
         this.course = course;
     }
 
+    public long getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(long currentTime) {
+        this.currentTime = currentTime;
+    }
 }

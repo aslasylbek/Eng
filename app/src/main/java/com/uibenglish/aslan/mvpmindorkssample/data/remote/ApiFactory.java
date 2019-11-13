@@ -82,6 +82,8 @@ public final class ApiFactory {
     private static OkHttpClient buildClient(){
         return new OkHttpClient.Builder()
                 .addInterceptor(LoggingInterceptor.create())
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.uibenglish.aslan.mvpmindorkssample.ui.base;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +63,19 @@ public abstract class BaseFragment extends Fragment implements MvpView {
         if (mActivity!=null)
             return mActivity.isNetworkConnected();
         return false;
+    }
+
+    @Override
+    public void noInternetConnection() {
+        new AlertDialog.Builder(mActivity)
+                .setTitle("Failed to connect")
+                .setMessage("Check internet connection and try again")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
     @Override

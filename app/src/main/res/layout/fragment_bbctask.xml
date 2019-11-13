@@ -42,6 +42,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:textSize="@dimen/text.18"
+            android:fontFamily="sans-serif-light"
             android:textColor="@color/whiteText"
             android:background="@drawable/btn_fab"
             android:drawableRight="@drawable/ic_chevron_right"

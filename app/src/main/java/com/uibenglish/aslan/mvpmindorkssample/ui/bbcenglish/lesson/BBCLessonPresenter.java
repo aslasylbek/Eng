@@ -12,18 +12,21 @@ public class BBCLessonPresenter<V extends BBCLessonContract.BBCLessonMvpView> ex
 
     @Override
     public void requestBBCLessonDataById(String lessonId) {
-        getMvpView().showLoading();
-        getDataManager().getBBCLesson(lessonId, new DataManager.GetBBCLesson() {
-            @Override
-            public void onSuccess(BBCLesson bbcLessons) {
-                getMvpView().updateUI(bbcLessons);
-                getMvpView().hideLoading();
-            }
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getDataManager().getBBCLesson(lessonId, new DataManager.GetBBCLesson() {
+                @Override
+                public void onSuccess(BBCLesson bbcLessons) {
+                    getMvpView().updateUI(bbcLessons);
+                    getMvpView().hideLoading();
+                }
 
-            @Override
-            public void onError(Throwable t) {
-                getMvpView().hideLoading();
-            }
-        });
+                @Override
+                public void onError(Throwable t) {
+                    getMvpView().hideLoading();
+                }
+            });
+        }
+        else getMvpView().noInternetConnection();
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SyllabusMvpView extends MvpView{
 
-    void setTopicsData(List<Topic> topicsData);
+    void setTopicsData(List<Topic> topicsData, long mCurrentTime);
 
     void setOnErrorMessage();
 }

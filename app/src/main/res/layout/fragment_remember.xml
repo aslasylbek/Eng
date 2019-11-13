@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:text="Next"
         android:background="@drawable/btn_check"
+        android:textColor="@color/whiteText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

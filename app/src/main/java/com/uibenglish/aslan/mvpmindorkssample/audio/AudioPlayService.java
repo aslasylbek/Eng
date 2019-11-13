@@ -13,16 +13,13 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.uibenglish.aslan.mvpmindorkssample.MvpApp;
 import com.uibenglish.aslan.mvpmindorkssample.R;
-import com.uibenglish.aslan.mvpmindorkssample.utils.NotificationUtility;
 
 import java.io.File;
 import java.io.IOException;

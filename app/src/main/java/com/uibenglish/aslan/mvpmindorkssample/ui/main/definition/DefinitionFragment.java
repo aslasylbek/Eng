@@ -68,6 +68,11 @@ public class DefinitionFragment extends BottomSheetDialogFragment
     }
 
     @Override
+    public void noInternetConnection() {
+
+    }
+
+    @Override
     public void showLoading() {
         hideLoading();
         if (mLoadingView==null&&getActivity()!=null){

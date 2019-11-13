@@ -127,7 +127,7 @@ public class TaskChoiceActivity extends BaseActivity implements ViewPagerAdapter
         switch (lessonChildItem.getTopicName()) {
             case "Vocabulary":
                 String[] items = getResources().getStringArray(R.array.vocabulary_task);
-                for (int i = 1; i <= 4; i++) {
+                for (int i = 1; i <= 5; i++) {
                     choiceItemTests.add(new ChoiceItemTest(i, "Task " + i, R.drawable.ic_university, items[i - 1], 1));
                 }
                 updateAdapter();

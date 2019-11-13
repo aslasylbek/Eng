@@ -11,10 +11,10 @@ public interface MainMvpView extends MvpView{
     //Set some content
     void setHeaderView(String name, String group, String program);
 
-    //Set menu from model
-    void setNavigationView();
-
     void openSlashActivity();
+
+    void startDeviceTokenRouting();
+
 
     List<Topic> setHolderData(List<Topic> topics);
 

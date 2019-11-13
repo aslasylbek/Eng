@@ -45,13 +45,12 @@ public class MvpApp extends Application {
         appDatabase = AppDatabase.getAppDatabase(this);
         dataManager = new DataManager(sharedPrefsHelper, appDatabase);
         ApiFactory.recreate();
-        ViewPump.init(ViewPump.builder()
-                .addInterceptor(new CalligraphyInterceptor(
-                        new CalligraphyConfig.Builder()
-                                .setDefaultFontPath("fonts/Roboto-Light.ttf")
-                                .setFontAttrId(R.attr.fontPath)
-                                .build())).
-                        build());
+//        ViewPump.init(ViewPump.builder()
+//                .addInterceptor(new CalligraphyInterceptor(
+//                        new CalligraphyConfig.Builder()
+//                                .setDefaultFontPath("fonts/Roboto-Light.ttf")
+//                                .setFontAttrId(R.attr.fontPath)
+//                                .build())).build());
 
     }
 

@@ -46,6 +46,7 @@
             <Button
                 android:id="@+id/btnNext"
                 android:background="@drawable/btn_check"
+                android:textColor="@color/whiteText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Next"

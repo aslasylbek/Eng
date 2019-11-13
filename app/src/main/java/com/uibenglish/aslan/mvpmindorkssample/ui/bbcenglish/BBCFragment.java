@@ -70,8 +70,6 @@ public class BBCFragment extends BaseFragment implements BBCContract.BBCMvpView,
             tab.setTag(categoriesList.get(i).getId());
             tabCategories.addTab(tab);
         }
-
-
     }
 
     @Override

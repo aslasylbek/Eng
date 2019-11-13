@@ -46,11 +46,16 @@
 
     <!-- Errors handler -->
 
+
     <string name="not_single_word">Don not use for sentence :)</string>
     <string name="oops_placeholder">Ooops, try to reopen</string>
     <string name="default_text">No internet connection</string>
     <string name="get_wrong">Sorry, something get wrong</string>
     <string name="error_message">Something wrong</string>
+    <string name="error_token">Token not sent</string>
+    <string name="error_profile">Profile load</string>
+
+    <string name="error_profile_size">Press Exercise manually</string>
 
     <string name="no_english">Probably you are not English student</string>
     <string name="item_reading">Reading</string>
@@ -104,10 +109,11 @@
         <item>Something</item>
     </string-array>
     <string-array name="vocabulary_task">
-        <item>Listen to the phrase and find it on the list.</item>
+        <item>Listen to the phrase and try to remember</item>
         <item>Listen to the phrase and find its translation.</item>
         <item>Read the phrase and find its translation.</item>
         <item>Write the phrase at dictation.</item>
+        <item>Listen to the phrase and find it on the list.</item>
     </string-array>
 
 

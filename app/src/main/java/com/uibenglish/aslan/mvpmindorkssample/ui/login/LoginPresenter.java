@@ -49,7 +49,6 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
         else{
             getDataManager().clear();
         }
-
         getMvpView().showLoading();
         getDataManager()
                 .sendForToken(user.getBarcode(), user.getPassword(), new DataManager.GetTokenCallbacks() {
@@ -70,6 +69,7 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
             }
             @Override
             public void onError(Throwable t) {
+                Log.e("jubak onError", t.toString());
                 getMvpView().showToastMessage(R.string.get_wrong);
                 getMvpView().hideLoading();
             }

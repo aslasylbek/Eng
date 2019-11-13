@@ -100,21 +100,18 @@ public class Main2Activity extends BaseActivity
         DataManager manager = ((MvpApp) getApplication()).getDataManager();
         presenter = new Main2Presenter(manager);
         presenter.attachView(this);
-        presenter.requestForStudentDiscipline();
         presenter.sendDeviceToken();
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mToggle.syncState();
+    }
+
+    @Override
+    public void startDeviceTokenRouting() {
+        presenter.requestForStudentDiscipline();
     }
 
     @Override
@@ -133,25 +130,6 @@ public class Main2Activity extends BaseActivity
         setTitle(R.string.category_dashboard);
     }
 
-    @Override
-    public void setNavigationView() {
-        /*//Have receive some object from internet
-        Menu menum = mNavView.getMenu();
-        menum
-                .add(0, 1, 0, "Dashboard")
-                .setIcon(R.drawable.ic_dashboard_black_24dp)
-                .setCheckable(true)
-                .setChecked(true);
-        menum
-                .add(0, 2, 0, "My Dictionary")
-                .setIcon(R.drawable.ic_word_book)
-                .setCheckable(true);
-
-
-        SubMenu subMenu = menum.addSubMenu("Settings");
-        subMenu.add(2, 10, 0, "Sign out").setIcon(R.drawable.ic_error_outline);
-        mNavView.setCheckedItem(1);*/
-    }
 
     @Override
     public List<Topic> setHolderData(List<Topic> topics) {

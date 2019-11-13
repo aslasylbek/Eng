@@ -18,16 +18,6 @@ public class GrammarPresenter<V extends GrammarContract.GrammarMvpView> extends 
         super(mDataManager);
     }
 
-    /*@Override
-    public void getGrammarLocalData(String topic_id) {
-        getMvpView().showLoading();
-        List<Grammar> grammarList = getDataManager().getGrammarByTopicId(topic_id);
-        if (grammarList!=null) {
-            getMvpView().setNewDataFromRoom(grammarList);
-        }
-        getMvpView().hideLoading();
-    }*/
-
     @Override
     public void requestGrammarCollection(String topic_id) {
         getMvpView().showLoading();

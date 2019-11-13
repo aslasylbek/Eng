@@ -8,6 +8,5 @@ public interface TopicClickListener {
 
     void itemTopicNoAccess(View view, String deadlineTime);
 
-
-
+    void itemOpenTaskOne(String topicId);
 }

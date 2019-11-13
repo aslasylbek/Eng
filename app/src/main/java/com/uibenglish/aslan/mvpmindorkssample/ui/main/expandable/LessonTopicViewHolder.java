@@ -2,6 +2,7 @@ package com.uibenglish.aslan.mvpmindorkssample.ui.main.expandable;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,7 +17,11 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
 
     @BindView(R.id.ivAccess) ImageView mIconAccess;
     @BindView(R.id.mTopicName) TextView mTopicTitle;
-    @BindView(R.id.mTopicPhoto) ImageView mTopicPhoto;
+    @BindView(R.id.mTopicPhoto)
+    ImageView mTopicPhoto;
+    @BindView(R.id.ivTaskOne)
+    ImageButton mTaskOne;
+
     private TopicClickListener listener;
     private LessonChildItem lessonChildItem;
     private View view;
@@ -28,6 +33,7 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
         view = itemView;
         view.setOnClickListener(this);
         mIconAccess.setOnClickListener(this);
+        mTaskOne.setOnClickListener(this);
         listener = topicClickListener;
     }
 
@@ -39,10 +45,17 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
                 mIconAccess.setImageResource(item.getIconAccess());
                 mIconAccess.setTag(item.getIconAccess());
                 mIconAccess.setVisibility(View.VISIBLE);
+                if (item.getTopicName().equals("Vocabulary")) {
+                    mTaskOne.setImageResource(R.drawable.ic_university);
+                    mTaskOne.setVisibility(View.VISIBLE);
+                }
+                else mTaskOne.setVisibility(View.INVISIBLE);
+
             }
             else if(item.getIconAccess()==0){
                 mIconAccess.setVisibility(View.INVISIBLE);
                 mIconAccess.setTag(item.getIconAccess());
+                mTaskOne.setVisibility(View.INVISIBLE);
             }
             mTopicTitle.setText(item.getTopicName());
             mTopicPhoto.setImageResource(item.getTopicPhoto());
@@ -52,6 +65,9 @@ public class LessonTopicViewHolder extends ChildViewHolder implements View.OnCli
     public void onClick(View v) {
         if (v.getId()==R.id.ivAccess){
             listener.itemTopicNoAccess(v, lessonChildItem.getStartTime() + lessonChildItem.getEndTime());
+        }
+        else if (v.getId()==R.id.ivTaskOne){
+            listener.itemOpenTaskOne(lessonChildItem.getTopicId());
         }
         else {
             String s = String.valueOf(mIconAccess.getTag());

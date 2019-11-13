@@ -3,7 +3,6 @@ package com.uibenglish.aslan.mvpmindorkssample.data.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Word;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

@@ -1,5 +1,7 @@
 package com.uibenglish.aslan.mvpmindorkssample.ui.bbcenglish;
 
+import android.util.Log;
+
 import com.uibenglish.aslan.mvpmindorkssample.data.DataManager;
 import com.uibenglish.aslan.mvpmindorkssample.data.models.BBCCategories;
 import com.uibenglish.aslan.mvpmindorkssample.ui.base.BasePresenter;
@@ -14,19 +16,21 @@ public class BBCPresenter<V extends BBCContract.BBCMvpView> extends BasePresente
 
     @Override
     public void requestForBCCCategories() {
-        getMvpView().showLoading();
-        getDataManager().getBBCCategories(new DataManager.GetBBCCategories() {
-            @Override
-            public void onSuccess(List<BBCCategories> bbcCategories) {
-                getMvpView().setTabbarTitles(bbcCategories);
-                getMvpView().hideLoading();
-            }
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getDataManager().getBBCCategories(new DataManager.GetBBCCategories() {
+                @Override
+                public void onSuccess(List<BBCCategories> bbcCategories) {
+                    Log.e("BBC", "onSuccess: "+bbcCategories );
+                    getMvpView().setTabbarTitles(bbcCategories);
+                    getMvpView().hideLoading();
+                }
 
-            @Override
-            public void onError(Throwable t) {
-                //getMvpView().showToastMessage();
-                getMvpView().hideLoading();
-            }
-        });
+                @Override
+                public void onError(Throwable t) {
+                    getMvpView().hideLoading();
+                }
+            });
+        } else getMvpView().noInternetConnection();
     }
 }

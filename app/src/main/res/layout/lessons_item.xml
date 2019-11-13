@@ -17,6 +17,7 @@
         android:layout_weight="5"
         android:textSize="@dimen/text.22"
         android:textStyle="bold"
+        android:fontFamily="sans-serif-thin"
         android:autoSizeMaxTextSize="@dimen/text.24"
         android:text="@string/error_message" />
 

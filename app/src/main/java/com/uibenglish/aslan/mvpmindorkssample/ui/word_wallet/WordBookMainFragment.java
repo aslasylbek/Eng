@@ -7,7 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +34,8 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WordBookMainFragment extends BaseFragment implements WordBookContract.WordBookMvpView, TabLayout.OnTabSelectedListener, AddWordListener {
+public class WordBookMainFragment extends BaseFragment implements WordBookContract.WordBookMvpView,
+        TabLayout.OnTabSelectedListener, AddWordListener, SwipeRefreshLayout.OnRefreshListener {
 
 
     private static final String TAG = "WordBookMainFragment";
@@ -43,6 +46,9 @@ public class WordBookMainFragment extends BaseFragment implements WordBookContra
     @BindView(R.id.vp_word_book)
     VocabularyViewPager mViewPager;
 
+    @BindView(R.id.srl_content_container)
+    SwipeRefreshLayout mSwipeContainer;
+
     private WordBookPresenter presenter;
 
     private WordBookPagerAdapter pagerAdapter;
@@ -51,6 +57,8 @@ public class WordBookMainFragment extends BaseFragment implements WordBookContra
     @Override
     protected void init(@Nullable Bundle bundle) {
 
+        mSwipeContainer.setOnRefreshListener(this);
+        mSwipeContainer.setColorSchemeColors(ContextCompat.getColor(getBaseActivity(), R.color.colorAccent));
         getActivity().setTitle(R.string.custom_word_book);
         mTabLayout.addOnTabSelectedListener(this);
         mViewPager.disableScroll(true);
@@ -68,25 +76,39 @@ public class WordBookMainFragment extends BaseFragment implements WordBookContra
     }
 
     @Override
+    public void onRefresh() {
+        presenter.requestWordsCollection();
+    }
+
+    @Override
     public void setWordsCollection(List<WordCollection> wordsCollections) {
 
         /**
          * @// TODO: 12.09.2018 refactor if there 3 category of wallet
          */
+        mSwipeContainer.setRefreshing(false);
+
         for (int j = 0; j < 2; j++) {
             List<WordCollection> newWordCollection = new ArrayList<>();
             for (int i = 0; i < wordsCollections.size(); i++) {
                 WordCollection wordCollection = wordsCollections.get(i);
                 if (j == 0 && wordCollection.getRating().equals("0")) {
                     newWordCollection.add(wordCollection);
+                    Log.e(TAG, "setWordsCollection: "+wordCollection );
                 }
                 else if (j==1 && !wordCollection.getRating().equals("0")){
                     newWordCollection.add(wordCollection);
+                    Log.e(TAG, "setWordsCollection: saved"+wordCollection );
                 }
             }
             fragmentList.add(WordBookFragment.newInstance(j, newWordCollection));
         }
         pagerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setOnErrorMessage() {
+        mSwipeContainer.setRefreshing(false);
     }
 
     @Override

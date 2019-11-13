@@ -52,7 +52,6 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     private VocabularyTrainPresenter presenter;
     private VocabularyAdapter adapter;
     private int sizeOfData = 0;
-    private int sizeOfResponse = 0;
     private int index;
     private int correctAns;
     private String topicId;
@@ -95,7 +94,7 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
 
     @Override
     public void setData(List<Word> response) {
-        sizeOfResponse = sizeOfData = response.size();
+        sizeOfData = response.size();
         ArrayList<String> fakeArr = new ArrayList<>();
         ArrayList<String> fakeTranslateArr = new ArrayList<>();
         for (int i=0; i<response.size(); i++) {
@@ -107,41 +106,58 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
                 finish();
                 break;
             case 1:
-                prepareFragmentList(fakeArr, response, 1);
+                prepareFragmentList(fakeArr, response, -1);
                 break;
             case 2:
                 prepareFragmentList(fakeTranslateArr, response, 2);
                 break;
             case 3:
-                index = 5;
+                index = 5; // for result ch5 cause of backend
                 prepareFragmentList(fakeTranslateArr, response, 3);
                 break;
             case 4:
-                index = 6;
+                index = 6; //for result ch6
                 prepareFragmentList(fakeTranslateArr, response, 4);
+                break;
+
+            case 5:
+                index = 1; // for result ch1
+                prepareFragmentList(fakeArr, response, 1);
                 break;
 
         }
         adapter.notifyDataSetChanged();
     }
 
+    private void showCards(){
+
+    }
+
     public void prepareFragmentList(ArrayList<String> fakeArr, List<Word> response, int index){
 
-        for (int i = 0; i < response.size(); i++) {
-            Collections.shuffle(fakeArr);
-            Word word = response.get(i);
-            if (index==1) {
-                fakeArr.remove(word.getWord());
-                fakeArr.add(0, word.getWord());
+        if (index==-1){//showing card
+            for (int i = 0; i < response.size(); i++) {
+                Word word = response.get(i);
                 fragmentList.add(0, RememberFragment.newInstance(word));
-                sizeOfData++;
             }
-            else {
-                fakeArr.remove(word.getTranslateWord());
-                fakeArr.add(0, word.getTranslateWord());
+        }
+        else {
+            for (int i = 0; i < response.size(); i++) {
+                Collections.shuffle(fakeArr);
+                Word word = response.get(i);
+
+                if (index==1) {
+                    fakeArr.remove(word.getWord());
+                    fakeArr.add(0, word.getWord());
+                }
+                else {
+                    fakeArr.remove(word.getTranslateWord());
+                    fakeArr.add(0, word.getTranslateWord());
+                }
+
+                eachResult = new HashMap<>();
+                fragmentList.add(BuildWordFragment.newInstance(index, word, fakeArr.subList(0, 4)));
             }
-            eachResult = new HashMap<>();
-            fragmentList.add(BuildWordFragment.newInstance(index, word, fakeArr.subList(0,4)));
         }
         mProgressBar.setMax(sizeOfData);
     }
@@ -149,24 +165,21 @@ public class VocabularyActivity extends BaseActivity implements VocabularyMvpVie
     @Override
     public void sendData(int responses, String wordId) {
 
-        if (responses!=2){
+        if (responses!=2){//2 is RememberFragment
             eachResult.put("g_ans["+wordId+"]", responses);
             correctAns = correctAns+responses;
         }
 
         item++;
-        mProgressBar.setProgress(item);
+
         if (item == sizeOfData) {
-
-            int result;
-            if (sizeOfData==sizeOfResponse) {
-                 result = correctAns * 100 / sizeOfData;
+            if (responses==2) addFinishFragment(100);
+            else {
+                int result = correctAns * 100 / sizeOfData;
+                presenter.requestSendResult(eachResult, result, topicId, "ch" + index, startTime);
             }
-            else result = correctAns *100 / (sizeOfData/2);
-
-            presenter.requestSendResult(eachResult, result, topicId, "ch"+index, startTime);
-
         }
+        mProgressBar.setProgress(item);
         viewPager.setCurrentItem(item);
 
     }

@@ -23,20 +23,19 @@
             android:text="Known" />
     </android.support.design.widget.TabLayout>
 
-    <com.uibenglish.aslan.mvpmindorkssample.widget.VocabularyViewPager
-        android:id="@+id/vp_word_book"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_content_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/audio_player_height"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/audio_player_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
-    </FrameLayout>
+        <com.uibenglish.aslan.mvpmindorkssample.widget.VocabularyViewPager
+            android:id="@+id/vp_word_book"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/audio_player_height"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

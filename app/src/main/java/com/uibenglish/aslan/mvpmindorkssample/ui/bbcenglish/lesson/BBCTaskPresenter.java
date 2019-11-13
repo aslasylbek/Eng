@@ -20,25 +20,25 @@ public class BBCTaskPresenter<V extends BBCTaskContract.BBCTaskMvpView> extends 
     @Override
     public void sendBBCQuestions(String lesson_id, int taskId, long startTime, Map<String, String> transcript) {
         if(isAttached()){
-            getMvpView().showLoading();
-            getDataManager().postBBCQuestions(lesson_id, taskId, startTime, transcript, new DataManager.GetVoidPostCallback() {
-                @Override
-                public void onSuccess(Response<PostDataResponse> response) {
-                    if (response.isSuccessful()){
-                        Log.e("AAA", "onSuccess: ");
-                        response.body().getMessage();
+            if (getMvpView().isNetworkConnected()) {
+                getMvpView().showLoading();
+                getDataManager().postBBCQuestions(lesson_id, taskId, startTime, transcript, new DataManager.GetVoidPostCallback() {
+                    @Override
+                    public void onSuccess(Response<PostDataResponse> response) {
+                        if (response.isSuccessful()) {
+                            response.body().getMessage();
+                        }
+                        getMvpView().updateUI();
+                        getMvpView().hideLoading();
                     }
-                    getMvpView().updateUI();
-                    getMvpView().hideLoading();
-                }
 
-                @Override
-                public void onError(Throwable t) {
-                    Log.e("AAA", "onError: "+t.getLocalizedMessage());
-                    getMvpView().updateUI();
-                    getMvpView().hideLoading();
-                }
-            });
+                    @Override
+                    public void onError(Throwable t) {
+                        getMvpView().updateUI();
+                        getMvpView().hideLoading();
+                    }
+                });
+            }else getMvpView().noInternetConnection();
         }
     }
 }

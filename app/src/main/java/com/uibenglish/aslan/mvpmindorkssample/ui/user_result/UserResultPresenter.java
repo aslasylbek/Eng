@@ -14,21 +14,23 @@ public class UserResultPresenter<V extends UserResultContract.UserResultMvpView>
 
     @Override
     public void requestToUserResult() {
-        getMvpView().showLoading();
-        getDataManager().getUserResult(new DataManager.GetUserResultCallback() {
-            @Override
-            public void onSuccess(ResultStudentTasks resultStudentTasks) {
-                if (resultStudentTasks.getTopics()!=null) {
-                    getMvpView().spreadUserResults(resultStudentTasks.getTopics());
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getDataManager().getUserResult(new DataManager.GetUserResultCallback() {
+                @Override
+                public void onSuccess(ResultStudentTasks resultStudentTasks) {
+                    if (resultStudentTasks.getTopics() != null) {
+                        getMvpView().spreadUserResults(resultStudentTasks.getTopics());
+                    }
+                    getMvpView().hideLoading();
                 }
-                getMvpView().hideLoading();
-            }
 
-            @Override
-            public void onError(Throwable t) {
-                getMvpView().showToastMessage(R.string.get_wrong);
-                getMvpView().hideLoading();
-            }
-        });
+                @Override
+                public void onError(Throwable t) {
+                    getMvpView().showToastMessage(R.string.get_wrong);
+                    getMvpView().hideLoading();
+                }
+            });
+        }else getMvpView().noInternetConnection();
     }
 }

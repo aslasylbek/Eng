@@ -1,12 +1,14 @@
 package com.uibenglish.aslan.mvpmindorkssample.ui.base;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -71,6 +73,19 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView,
     @Override
     public boolean isNetworkConnected() {
         return NetworkUtils.isNetworkConnected(getApplicationContext());
+    }
+
+    @Override
+    public void noInternetConnection() {
+        new AlertDialog.Builder(this)
+                .setTitle("Failed to connect")
+                .setMessage("Check internet connection and try again")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
     @Override

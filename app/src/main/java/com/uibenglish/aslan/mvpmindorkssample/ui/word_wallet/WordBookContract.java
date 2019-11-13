@@ -10,8 +10,8 @@ public interface WordBookContract {
 
     interface WordBookMvpView extends MvpView{
         void setWordsCollection(List<WordCollection> wordsCollection);
-
         void showSnackbar();
+        void setOnErrorMessage();
     }
 
     interface WordBookMvpPresenter<V extends WordBookContract.WordBookMvpView> extends MvpPresenter<V>{

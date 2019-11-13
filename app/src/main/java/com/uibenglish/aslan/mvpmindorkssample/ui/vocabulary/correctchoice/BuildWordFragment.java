@@ -118,6 +118,9 @@ public class BuildWordFragment extends Fragment implements  OnAudioTTSCompleteLi
                 fakeList.addAll(getArguments().getStringArrayList(FAKE_LIST));
                 setButtonsData();
             }
+            Log.e(TAG, "onCreateView: "+ fakeList);
+            Log.e(TAG, "onCreateView: "+st.getTranslateWord() );
+            Log.e(TAG, "onCreateView: "+st.getWord() );
         }
 
         audioSyntethis = new AudioSyntethis(getActivity(), this);

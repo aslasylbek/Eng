@@ -10,6 +10,7 @@ import com.uibenglish.aslan.mvpmindorkssample.data.remote.ApiFactory;
 import com.uibenglish.aslan.mvpmindorkssample.ui.base.BasePresenter;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.English;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.content.Topic;
+import com.uibenglish.aslan.mvpmindorkssample.utils.NetworkUtils;
 
 import retrofit2.Response;
 
@@ -25,67 +26,67 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
         if (!isAttached()){
             return;
         }
-        getMvpView().showLoading();
-        getDataManager().putUserId("");
-        getDataManager().sendDeviceToken(new DataManager.GetVoidPostCallback() {
-            @Override
-            public void onSuccess(Response<PostDataResponse> response) {
-                getDataManager().setLoggedMode(false);
-                getDataManager().putProgram(null);
-                getDataManager().putName(null);
-                getDataManager().putGroup(null);
-                getMvpView().openSlashActivity();
-                getMvpView().hideLoading();
-            }
 
-            @Override
-            public void onError(Throwable t) {
-                getDataManager().setLoggedMode(false);
-                getDataManager().putProgram(null);
-                getDataManager().putName(null);
-                getDataManager().putGroup(null);
-                getMvpView().openSlashActivity();
-                getMvpView().hideLoading();
-            }
-        });
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getDataManager().putUserId("");
+            getDataManager().sendDeviceToken(new DataManager.GetVoidPostCallback() {
+                @Override
+                public void onSuccess(Response<PostDataResponse> response) {
+                    getDataManager().setLoggedMode(false);
+                    getDataManager().putProgram(null);
+                    getDataManager().putName(null);
+                    getDataManager().putGroup(null);
+                    getMvpView().openSlashActivity();
+                    getMvpView().hideLoading();
+                }
 
+                @Override
+                public void onError(Throwable t) {
+                    getDataManager().setLoggedMode(false);
+                    getDataManager().putProgram(null);
+                    getDataManager().putName(null);
+                    getDataManager().putGroup(null);
+                    getMvpView().openSlashActivity();
+                    getMvpView().hideLoading();
+                }
+            });
+        } else getMvpView().noInternetConnection();
     }
 
     @Override
     public void requestForStudentDiscipline() {
-        getMvpView().showLoading();
-        getMvpView().setNavigationView();
-        getDataManager().requestForEnglishInformation(new DataManager.GetEnglishInformation() {
-            @Override
-            public void onSuccess(EngInformationResponse response) {
-                if (response.getSuccess()==1){
-                    //getMvpView().setHeaderView(response.getInfo().get(0));
-                    if (!response.getInfo().isEmpty()){
-                        getDataManager().putGroup(response.getInfo().get(0).getGroup());
-                        getDataManager().putName(response.getInfo().get(0).getFio());
-                        getDataManager().putProgram(response.getInfo().get(0).getProgram());
-                        getMvpView().setHeaderView(getDataManager().getName(), getDataManager().getGroup(), getDataManager().getProgram());
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getDataManager().requestForEnglishInformation(new DataManager.GetEnglishInformation() {
+                @Override
+                public void onSuccess(EngInformationResponse response) {
+                    if (response.getSuccess() == 1) {
+                        if (!response.getInfo().isEmpty()) {
+                            getDataManager().putGroup(response.getInfo().get(0).getGroup());
+                            getDataManager().putName(response.getInfo().get(0).getFio());
+                            getDataManager().putProgram(response.getInfo().get(0).getProgram());
+                            getMvpView().setHeaderView(getDataManager().getName(), getDataManager().getGroup(), getDataManager().getProgram());
+                        }
+                        //check if
+                        if (!response.getEnglish().isEmpty()) {
+                            English english = response.getEnglish().get(0);
+                            getDataManager().putCourseId(english.getCourseId());
+                        }
+                    } else {
+                        getMvpView().showToastMessage(R.string.error_profile_size);
+                        Log.e("AA", "onSuccess: Error in success");
                     }
-                    //check if
-                    if (!response.getEnglish().isEmpty()) {
-                        English english = response.getEnglish().get(0);
-                        getDataManager().putCourseId(english.getCourseId());
-                    }
+                    getMvpView().hideLoading();
                 }
-                else {
-                    getMvpView().showToastMessage(R.string.get_wrong);
-                    getMvpView().setHeaderView(getDataManager().getName(), getDataManager().getGroup(), getDataManager().getProgram());
-                }
-                getMvpView().hideLoading();
-            }
 
-            @Override
-            public void onError() {
-                getMvpView().showToastMessage(R.string.get_wrong);
-                getMvpView().setHeaderView(getDataManager().getName(), getDataManager().getGroup(), getDataManager().getProgram());
-                getMvpView().hideLoading();
-            }
-        });
+                @Override
+                public void onError() {
+                    getMvpView().showToastMessage(R.string.error_profile);
+                    getMvpView().hideLoading();
+                }
+            });
+        }else getMvpView().noInternetConnection();
     }
 
     @Override
@@ -104,30 +105,32 @@ public class Main2Presenter<V extends MainMvpView> extends BasePresenter<V> impl
 
                 @Override
                 public void onError(Throwable t) {
-                    //getMvpView().showSnackbar(t.getLocalizedMessage());
                     getMvpView().hideLoading();
                 }
             });
         }
         else {
-            getMvpView().showSnackbar("Check internet connection");
+            getMvpView().noInternetConnection();
         }
     }
 
     @Override
     public void sendDeviceToken() {
-        getMvpView().showLoading();
-        getDataManager().sendDeviceToken(new DataManager.GetVoidPostCallback() {
-            @Override
-            public void onSuccess(Response<PostDataResponse> response) {
-                getMvpView().hideLoading();
-            }
+        Log.e("Main", "sendDeviceToken: " );
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getDataManager().sendDeviceToken(new DataManager.GetVoidPostCallback() {
+                @Override
+                public void onSuccess(Response<PostDataResponse> response) {
+                    getMvpView().startDeviceTokenRouting();
+                    getMvpView().hideLoading();
+                }
 
-            @Override
-            public void onError(Throwable t) {
-                getMvpView().showToastMessage(R.string.get_wrong);
-                getMvpView().hideLoading();
-            }
-        });
+                @Override
+                public void onError(Throwable t) {
+                    getMvpView().hideLoading();
+                }
+            });
+        }else getMvpView().noInternetConnection();
     }
 }

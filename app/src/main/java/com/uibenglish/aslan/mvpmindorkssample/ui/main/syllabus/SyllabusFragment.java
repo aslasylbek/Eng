@@ -31,6 +31,7 @@ import com.uibenglish.aslan.mvpmindorkssample.ui.main.expandable.LessonParentIte
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.expandable.LessonChildItem;
 import com.uibenglish.aslan.mvpmindorkssample.ui.main.expandable.TopicClickListener;
 import com.uibenglish.aslan.mvpmindorkssample.ui.tasks.TaskChoiceActivity;
+import com.uibenglish.aslan.mvpmindorkssample.ui.vocabulary.VocabularyActivity;
 import com.uibenglish.aslan.mvpmindorkssample.utils.DateTimeUtils;
 import com.uibenglish.aslan.mvpmindorkssample.widget.DividerItemDecoration;
 import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
@@ -73,9 +74,6 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         linearLayoutManager = new LinearLayoutManager(getActivity());
         mRView.setLayoutManager(linearLayoutManager);
         mRView.setAdapter(adapter);
-        /***
-         * Check Item decor
-         */
         if (getActivity()!=null)
             mRView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mRView.setHasFixedSize(true);
@@ -87,16 +85,16 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     }
 
     /***
-     * YOUR LAST CHANGE
+     * YOUR LAST CHANGE Make timer nearTime - currentTime = time update when time = 0
      */
-    @Override
+  /*  @Override
     public void onStart() {
         super.onStart();
         Log.e(TAG, "onStart: "+nearUpdateTime);
         if (nearUpdateTime>System.currentTimeMillis()/1000){
             restartNotify(nearUpdateTime);
         }
-    }
+    }*/
 
     @Override
     protected int getContentResource() {
@@ -114,6 +112,14 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
         Snackbar.make(view, "Available"+deadline, Snackbar.LENGTH_LONG).show();
     }
 
+    @Override
+    public void itemOpenTaskOne(String topicId) {
+        Intent intent = VocabularyActivity.getVocabularyIntent(getActivity());
+        intent.putExtra("position", 1);
+        intent.putExtra("topicId", topicId);
+        startActivity(intent);
+    }
+
     public void changedData(List<LessonParentItem> lessonParentItems){
         int resId = R.anim.layout_animation_fall_down;
        // LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mRView.getContext(), resId);
@@ -123,8 +129,8 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
 
         adapter.addAll(lessonParentItems);
         Log.e(TAG, "changedData: "+nearUpdateTime);
-        if (nearUpdateTime>0)
-            restartNotify(nearUpdateTime);
+        /*if (nearUpdateTime>0)
+            restartNotify(nearUpdateTime);*/
         //mRView.setLayoutAnimation(controller);
         adapter.setOnGroupClickListener(new OnGroupClickListener() {
             @Override
@@ -136,10 +142,10 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
     }
 
     @Override
-    public void setTopicsData(List<Topic> topicsData) {
+    public void setTopicsData(List<Topic> topicsData, long mCurrentTime) {
+        Log.e(TAG, "setTopiuc: "+mCurrentTime);
         mSwipeContainer.setRefreshing(false);
         List<LessonParentItem> parent = new ArrayList<>();
-        long timeStamp = System.currentTimeMillis()/1000;
         nearUpdateTime = 0;
         for (int j = 0; j <topicsData.size(); j++){
             String mTitle = topicsData.get(j).getTitle();
@@ -150,7 +156,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
                 LessonChildItem lessonChildItem = addToList(
                         topic.getStartGram(),
                         topic.getEndGram(),
-                        timeStamp, R.string.item_grammar,
+                        mCurrentTime, R.string.item_grammar,
                         R.drawable.rsz_grammar_background,
                         R.drawable.grammar_background,
                         mTitle,
@@ -162,7 +168,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
                 LessonChildItem lessonChildItem = addToList(
                         topic.getStartListen(),
                         topic.getEndListen(),
-                        timeStamp,
+                        mCurrentTime,
                         R.string.item_listening,
                         R.drawable.rsz_listening_background,
                         R.drawable.listening_background11,
@@ -175,7 +181,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
                 LessonChildItem lessonChildItem = addToList(
                         topic.getStartRead(),
                         topic.getEndRead(),
-                        timeStamp,
+                        mCurrentTime,
                         R.string.item_reading,
                         R.drawable.rsz_reading_background,
                         R.drawable.reading_background,
@@ -188,7 +194,7 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
                 LessonChildItem lessonChildItem = addToList(
                         topic.getStartVoc(),
                         topic.getEndVoc(),
-                        timeStamp,
+                        mCurrentTime,
                         R.string.item_vocabulary,
                         R.drawable.rsz_vocabulary_background,
                         R.drawable.vocabulary_background,
@@ -280,10 +286,10 @@ public class SyllabusFragment extends BaseFragment implements TopicClickListener
                 PendingIntent.FLAG_UPDATE_CURRENT );
     }
 
-    private void restartNotify(long timeStamp) {
+/*    private void restartNotify(long timeStamp) {
         am = (AlarmManager) getBaseActivity().getSystemService(Context.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, timeStamp*1000, pendingIntent);
-    }
+    }*/
 
     @Override
     public void onRefresh() {
